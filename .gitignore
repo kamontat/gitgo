@@ -146,5 +146,8 @@ tags
 !.vscode/extensions.json
 .history
 
+### Go compiled ###
+gitgo
+
 
 # End of https://www.gitignore.io/api/emacs,go,godot,linux,macos,vim,visualstudiocode
