@@ -20,6 +20,7 @@ func _addAll() cli.Command {
 	}
 }
 
+// AddGit will generate cli command of 'git add'
 func AddGit() cli.Command {
 	return cli.Command{
 		Name:      "add",

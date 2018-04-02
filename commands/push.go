@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// PushGit will generate cli command of 'git push'
 func PushGit() cli.Command {
 	return cli.Command{
 		Name:      "push",

@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// PullGit will generate cli command of 'git pull'
 func PullGit() cli.Command {
 	return cli.Command{
 		Name:      "pull",

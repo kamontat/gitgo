@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// InitGit will generate cli command of 'git init'
 func InitGit() cli.Command {
 	return cli.Command{
 		Name:      "init",

@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// DestroyGit will generate cli command of 'rm -rf .git'
 func DestroyGit() cli.Command {
 	return cli.Command{
 		Name:      "destroy",

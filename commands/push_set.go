@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// AddSetPush will generate cli command of 'git remote add' and 'git push -u'
 func AddSetPush() cli.Command {
 	return cli.Command{
 		Name:      "set",
