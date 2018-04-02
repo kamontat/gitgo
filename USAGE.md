@@ -13,7 +13,17 @@ git config|g <key> <value>
 git config|g --key <key>
 git config|g <key>
 
-## GitAdd
+## Initial (0.0.1-alpha.2)
+
+<!-- create .git folder -->
+git init|i [--force|-f]
+
+## Destroy (0.0.1-alpha.3)
+
+<!-- delete .git folder -->
+git destroy|d [--force|-f]
+
+## GitAdd (0.0.1-alpha.2)
 
 <!-- add every changes -->
 git add|a all|--all
@@ -34,11 +44,11 @@ git commit|c text|t [<title>] [<message>]
 ## Push
 
 <!-- push code and create upstream -->
-git push|p setting|s [--force|-f] [<branch>]
+git push|p set|s <repository> <link> [<branch>]
 <!-- push code -->
-git push|p [--force|-f] [<branch>]
+git push|p [--force|-f] [<repository>] [<branch>]
 
 ## Pull
 
 <!-- pull code -->
-git pull|P [--force|-f] [<branch>]
+git pull|P [--force|-f] [<repository>] [<branch>]

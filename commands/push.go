@@ -1,0 +1,40 @@
+package command
+
+import (
+	"gitgo/flags"
+
+	"gitgo/client"
+
+	"github.com/urfave/cli"
+)
+
+func PushGit() cli.Command {
+	return cli.Command{
+		Name:      "push",
+		Aliases:   []string{"p"},
+		Category:  "Server",
+		Usage:     "push local git to server",
+		UsageText: "gitgo push [--force|-f] [--repo|-r <repo>] [<branch>]",
+		Flags: []cli.Flag{
+			flag.ForceFlag("push code to server"),
+			flag.CustomRepoFlag(),
+		},
+		Subcommands: []cli.Command{
+			AddSetPush(),
+		},
+		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial!", 4)
+			}
+			if client.GitDontHaveRemote() {
+				return cli.NewExitError("Never set git remote!", 4)
+			}
+
+			err := client.GitPush(flag.IsForce(), flag.GetRepository(), c.Args().Tail())
+			if err != nil {
+				return cli.NewExitError(err, 4)
+			}
+			return nil
+		},
+	}
+}

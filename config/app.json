@@ -1,7 +1,23 @@
 {
     "name": "gitgo",
     "description": "git commit as formatting",
+    "since": "1, April 2018",
+    "authors": [
+        {
+            "name": "Kamontat Chantrachirathumrong",
+            "email": "kamontat.c@hotmail.com"
+        }
+    ],
+    "license": "© 2018 Kamontat Chantrachirathumrong",
     "versions": [
+        {
+            "version": "0.0.1-alpha.5",
+            "description": "Add 'Push-Set' command and improve help code"
+        },
+        {
+            "version": "0.0.1-alpha.4",
+            "description": "Add 'Push' command"
+        },
         {
             "version": "0.0.1-alpha.3",
             "description": "Add 'Destroy' and helper flags/commands"
@@ -14,13 +30,5 @@
             "version": "0.0.1-alpha.1",
             "description": "Start project"
         }
-    ],
-    "since": "1, April 2018",
-    "authors": [
-        {
-            "name": "Kamontat Chantrachirathumrong",
-            "email": "kamontat.c@hotmail.com"
-        }
-    ],
-    "license": "© 2018 Kamontat Chantrachirathumrong"
+    ]
 }

@@ -15,7 +15,7 @@ func InitGit() cli.Command {
 		Category: "Setting",
 		Usage:    "Inital git",
 		Flags: []cli.Flag{
-			flag.ForceFlag(),
+			flag.ForceFlag("initial git"),
 		},
 		Action: func(c *cli.Context) error {
 			if client.GitIsNotInit() || flag.IsForce() {

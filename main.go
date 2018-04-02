@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"sort"
-	"time"
 
 	"github.com/urfave/cli"
 
@@ -128,10 +127,9 @@ func main() {
 
 	// app.UsageText = "gitgo [global options] [command] [command options] [subcommand] [subcommand options] [arguments...]"
 
-	app.Compiled = time.Now()
-
 	app.Commands = []cli.Command{
 		command.InitGit(), command.AddGit(), command.DestroyGit(),
+		command.PushGit(), command.PullGit(),
 		addVersion(appConfig), addListVersion(appConfig),
 	}
 
