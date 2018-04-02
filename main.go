@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/urfave/cli"
 
-	"gitgo/flags"
-	"gitgo/git"
+	"gitgo/commands"
 )
 
 type appConfig struct {
@@ -32,8 +32,82 @@ type versionConfig struct {
 	Description string
 }
 
+func (appConfig appConfig) printEveryVersions() {
+	for _, v := range appConfig.Versions {
+		v.printVersion(appConfig.Name)
+	}
+}
+
+func (appConfig appConfig) printFullEveryVersions() {
+	for _, v := range appConfig.Versions {
+		v.printFullVersion(appConfig.Name)
+	}
+}
+
+func (v versionConfig) printVersion(name string) {
+	fmt.Printf("%s version %s\n", name, v.Version)
+}
+
+func (v versionConfig) printFullVersion(name string) {
+	fmt.Printf("%s version %s: %s\n", name, v.Version, v.Description)
+}
+
+func addVersion(appConfig appConfig) cli.Command {
+	var full bool
+	return cli.Command{
+		Name:    "version",
+		Aliases: []string{"v"},
+		Usage:   "show version, same as --version",
+		Flags: []cli.Flag{
+			cli.BoolFlag{
+				Name:        "full, F",
+				Usage:       "show full output",
+				Destination: &full,
+			},
+		},
+		Action: func(c *cli.Context) error {
+			if full {
+				appConfig.latestVersion().printFullVersion(appConfig.Name)
+			} else {
+				appConfig.latestVersion().printVersion(appConfig.Name)
+			}
+			return nil
+		},
+	}
+}
+
+func addListVersion(appConfig appConfig) cli.Command {
+	var full bool
+	return cli.Command{
+		Name:    "list-version",
+		Aliases: []string{"L"},
+		Usage:   "list every version, same as --list-version",
+		Flags: []cli.Flag{
+			cli.BoolFlag{
+				Name:        "full, F",
+				Usage:       "show full output",
+				Destination: &full,
+			},
+		},
+		Action: func(c *cli.Context) error {
+			if full {
+				appConfig.printFullEveryVersions()
+			} else {
+				appConfig.printEveryVersions()
+			}
+			return nil
+		},
+	}
+}
+
 func main() {
-	file, e := ioutil.ReadFile("./config/app.json")
+	// lv - list-version
+	var full, lv bool
+	if os.Getenv("GOPATH") == "" {
+		cli.HandleExitCoder(cli.NewExitError("$GOPATH must be set", 2))
+	}
+
+	file, e := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/gitgo/config/app.json")
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
 		os.Exit(1)
@@ -50,57 +124,52 @@ func main() {
 	app.Authors = appConfig.Authors
 	app.Copyright = appConfig.License
 
+	app.EnableBashCompletion = true
+
 	// app.UsageText = "gitgo [global options] [command] [command options] [subcommand] [subcommand options] [arguments...]"
 
 	app.Compiled = time.Now()
 
-	// app.Action = func(ctx *cli.Context) error {
-	// 	return cli.NewExitError("it is not in the soup", 86)
-	// }
-
-	// Flag !
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "lang, l",
-			Value: "english",
-			Usage: "Language for the greeting",
-		},
-		cli.StringFlag{
-			Name:  "config, c",
-			Usage: "Load configuration from `FILE`",
-		},
-	}
-
-	global.AddForceAsGlobalFlag(app)
-	// flags.AddForceAsGlobalFlag(app)
-
-	// Command !
 	app.Commands = []cli.Command{
-		{
-			Name:    "init",
-			Aliases: []string{"i"},
-			Usage:   "Inital git",
-			Action: func(c *cli.Context) error {
-				if git.IsNotInit() || global.IsForce() {
-					git.Init()
-				} else {
-					fmt.Println("Initial already!", "Add --force")
-				}
-				fmt.Println(global.IsForce())
-				return nil
-			},
-		},
-		{
-			Name:    "add",
-			Aliases: []string{"a"},
-			Usage:   "Add every file and folder to git",
-			Action: func(c *cli.Context) error {
-				git.AddAll()
-				// fmt.Println(global.IsForce())
-				return nil
-			},
+		command.InitGit(), command.AddGit(), command.DestroyGit(),
+		addVersion(appConfig), addListVersion(appConfig),
+	}
+
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name:        "full, F",
+			Usage:       "show full output",
+			Destination: &full,
+		}, cli.BoolFlag{
+			Name:        "list-version, L",
+			Usage:       "list all version",
+			Destination: &lv,
 		},
 	}
+
+	cli.VersionPrinter = func(c *cli.Context) {
+		if full {
+			appConfig.latestVersion().printFullVersion(appConfig.Name)
+		} else {
+			appConfig.latestVersion().printVersion(appConfig.Name)
+		}
+	}
+
+	app.Action = func(c *cli.Context) error {
+		if lv {
+			if full {
+				appConfig.printFullEveryVersions()
+			} else {
+				appConfig.printEveryVersions()
+			}
+		} else {
+			cli.ShowAppHelp(c)
+		}
+		return nil
+	}
+
+	sort.Sort(cli.FlagsByName(app.Flags))
+	// sort.Sort(cli.CommandsByName(app.Commands))
 
 	err := app.Run(os.Args)
 	if err != nil {

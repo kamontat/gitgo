@@ -1,18 +1,18 @@
-package git
+package client
 
 import (
 	"os"
 )
 
-func Init() {
+func GitInit() {
 	rawGitCommand("init")
 }
 
-func IsNotInit() bool {
-	return !IsInit()
+func GitIsNotInit() bool {
+	return !GitIsInit()
 }
 
-func IsInit() bool {
+func GitIsInit() bool {
 	_, err := os.Stat("./.git")
 	if err == nil {
 		return true

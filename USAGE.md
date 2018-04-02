@@ -13,7 +13,7 @@ git config|g <key> <value>
 git config|g --key <key>
 git config|g <key>
 
-## Add
+## GitAdd
 
 <!-- add every changes -->
 git add|a all|--all

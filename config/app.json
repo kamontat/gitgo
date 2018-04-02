@@ -3,6 +3,14 @@
     "description": "git commit as formatting",
     "versions": [
         {
+            "version": "0.0.1-alpha.3",
+            "description": "Add 'Destroy' and helper flags/commands"
+        },
+        {
+            "version": "0.0.1-alpha.2",
+            "description": "Add 'Init' and 'Add' commands"
+        },
+        {
             "version": "0.0.1-alpha.1",
             "description": "Start project"
         }
