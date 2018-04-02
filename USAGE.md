@@ -44,11 +44,11 @@ git commit|c text|t [<title>] [<message>]
 ## Push
 
 <!-- push code and create upstream -->
-git push|p set|s <repository> <link> [<branch>]
+git push|p set|s [--repo <repository>] [--branch <branch>] <link>
 <!-- push code -->
-git push|p [--force|-f] [<repository>] [<branch>]
+git push|p [--force|-f] [--repo <repository>] [<branch>...] 
 
 ## Pull
 
 <!-- pull code -->
-git pull|P [--force|-f] [<repository>] [<branch>]
+git pull|P [--force|-f] [<repository>] [<branch>...]

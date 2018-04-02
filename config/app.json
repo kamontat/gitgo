@@ -11,6 +11,10 @@
     "license": "© 2018 Kamontat Chantrachirathumrong",
     "versions": [
         {
+            "version": "0.0.1-alpha.7",
+            "description": "Completed 'pull' feature"
+        },
+        {
             "version": "0.0.1-alpha.6",
             "description": "Completed push feature and improve usability"
         },
