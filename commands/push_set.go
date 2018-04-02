@@ -12,7 +12,7 @@ func AddSetPush() cli.Command {
 		Name:      "set",
 		Aliases:   []string{"s"},
 		Usage:     "set push server and remote, and push code",
-		UsageText: "gitgo push set [--force|-f] [--repo|-r <repo>] [--branch|-b <branch>] <link>",
+		UsageText: "gitgo push|p set|s [--force|-f] [--repo|-r <repo>] [--branch|-b <branch>] <link>",
 		Flags: []cli.Flag{
 			flag.ForceFlag("setup and push code"),
 			flag.CustomRepoFlag(),
@@ -33,7 +33,7 @@ func AddSetPush() cli.Command {
 				client.GitAddRemote(flag.GetRepository(), c.Args().First())
 			}
 
-			err := client.GitSetupPush(flag.IsForce(), true, flag.GetRepository(), c.Args().Tail())
+			err := client.GitSetupPush(flag.IsForce(), true, flag.GetRepository(), flag.GetBranchs())
 			if err != nil {
 				return cli.NewExitError(err, 4)
 			}

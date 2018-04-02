@@ -28,6 +28,7 @@ func GitSetupPush(withForce bool, withUpstream bool, repo string, branch []strin
 		arr = append(arr, "--set-upstream")
 	}
 
+	arr = append(arr, repo)
 	arr = append(arr, branch...)
 
 	return rawGitCommand(arr...)

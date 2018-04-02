@@ -2,13 +2,13 @@ package client
 
 // GitHasRemote check is git has spectify remote
 func GitHasRemote(repoName string) bool {
-	err := rawGitCommand("remote", "get-url", repoName)
+	_, err := rawGitCommandNoLog("remote", "get-url", repoName)
 	return err == nil
 }
 
 // GitHaveRemote check is any remote exist?
 func GitHaveRemote() bool {
-	err := rawGitCommand("ls-remote", "--exit-code")
+	_, err := rawGitCommandNoLog("ls-remote", "--exit-code")
 	return err == nil
 }
 

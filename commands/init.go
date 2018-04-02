@@ -10,10 +10,11 @@ import (
 
 func InitGit() cli.Command {
 	return cli.Command{
-		Name:     "init",
-		Aliases:  []string{"i"},
-		Category: "Setting",
-		Usage:    "Inital git",
+		Name:      "init",
+		Aliases:   []string{"i"},
+		Category:  "Setting",
+		Usage:     "Inital git",
+		UsageText: "gitgo init|i [--force|-f]",
 		Flags: []cli.Flag{
 			flag.ForceFlag("initial git"),
 		},

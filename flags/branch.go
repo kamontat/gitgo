@@ -1,14 +1,18 @@
 package flag
 
-import "github.com/urfave/cli"
+import (
+	"strings"
+
+	"github.com/urfave/cli"
+)
 
 var branch string
 
-func GetBranch() string {
+func GetBranchs() []string {
 	if branch == "" {
-		return "master"
+		return []string{"master"}
 	}
-	return branch
+	return strings.Split(branch, " ")
 }
 
 func CustomBranchFlag() cli.Flag {

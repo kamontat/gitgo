@@ -1,7 +1,6 @@
 package command
 
 import (
-	"fmt"
 	client "gitgo/client"
 	flag "gitgo/flags"
 
@@ -10,12 +9,12 @@ import (
 
 func _addAll() cli.Command {
 	return cli.Command{
-		Name:    "all",
-		Aliases: []string{"a"},
-		Usage:   "GitAdd every files to git",
+		Name:      "all",
+		Aliases:   []string{"a"},
+		Usage:     "GitAdd every files to git",
+		UsageText: "gitgo add|a all|a",
 		Action: func(c *cli.Context) error {
 			client.GitAddAll()
-			fmt.Println("GitAdd all")
 			return nil
 		},
 	}
@@ -26,8 +25,8 @@ func AddGit() cli.Command {
 		Name:      "add",
 		Aliases:   []string{"a"},
 		Category:  "Action",
-		Usage:     "GitAdd file/folder to git",
-		UsageText: "gitgo add [all|-all]",
+		Usage:     "Add file/folder to git",
+		HelpName:  "gitgo add|a [--force|-f] [--all|-a]",
 		ArgsUsage: "[<files|folder>]",
 		Flags: []cli.Flag{
 			flag.AllFlag(),

@@ -14,7 +14,7 @@ func PushGit() cli.Command {
 		Aliases:   []string{"p"},
 		Category:  "Server",
 		Usage:     "push local git to server",
-		UsageText: "gitgo push [--force|-f] [--repo|-r <repo>] [<branch>]",
+		UsageText: "gitgo push|p [--force|-f] [--repo|-r <repo>] [<branch>]",
 		Flags: []cli.Flag{
 			flag.ForceFlag("push code to server"),
 			flag.CustomRepoFlag(),

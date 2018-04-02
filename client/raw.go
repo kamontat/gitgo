@@ -3,13 +3,18 @@ package client
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 )
 
 // rawGitCommand is interface to exec git commandline
 func rawGitCommand(arg ...string) error {
 	return rawCommand("git", arg...)
+}
+
+// rawGitCommand is interface to exec git commandline
+func rawGitCommandNoLog(arg ...string) (out string, err error) {
+	out, _, err = rawCommandAndReturn("git", arg...)
+	return
 }
 
 // RawLSCommand for exec ls cli
@@ -23,7 +28,8 @@ func rawCommand(name string, arg ...string) (err error) {
 	if err == nil {
 		fmt.Printf(out)
 	} else {
-		log.Fatal(stderr)
+		fmt.Printf(stderr)
+		// log.Fatal()
 	}
 	return
 }

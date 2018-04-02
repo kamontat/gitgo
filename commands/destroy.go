@@ -11,10 +11,11 @@ import (
 
 func DestroyGit() cli.Command {
 	return cli.Command{
-		Name:     "destroy",
-		Aliases:  []string{"d"},
-		Category: "Setting",
-		Usage:    "Destroy git",
+		Name:      "destroy",
+		Aliases:   []string{"d"},
+		Category:  "Setting",
+		Usage:     "Destroy git",
+		UsageText: "gitgo destroy|d [--force|-f]",
 		Flags: []cli.Flag{
 			flag.ForceFlag("delete git without prompt"),
 		},
