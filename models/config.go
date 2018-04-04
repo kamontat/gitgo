@@ -140,6 +140,7 @@ type UserConfig struct {
 			Message  InputType
 			ShowSize int
 		}
+		Editor string
 	}
 }
 

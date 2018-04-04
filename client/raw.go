@@ -2,7 +2,9 @@ package client
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 )
 
@@ -21,6 +23,18 @@ func rawGitCommandNoLog(arg ...string) (out string, err error) {
 func RawLSCommand(arg ...string) (str string, err error) {
 	str, _, err = rawCommandAndReturn("ls", arg...)
 	return
+}
+
+func RawOpenCommand(editor string, arg ...string) (err error) {
+	return rawCommandWithCustomSTD(editor, os.Stdin, os.Stdout, arg...)
+}
+
+func RawOpenEditorCommand(arg ...string) (err error) {
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		return errors.New("$EDITOR must be set, before open")
+	}
+	return RawOpenCommand(editor, arg...)
 }
 
 func rawCommand(name string, arg ...string) (err error) {
@@ -44,5 +58,14 @@ func rawCommandAndReturn(name string, arg ...string) (strout string, strerr stri
 	err = cmd.Run()
 	strout = stdout.String()
 	strerr = stderr.String()
+	return
+}
+
+func rawCommandWithCustomSTD(name string, in *os.File, out *os.File, arg ...string) (err error) {
+	cmd := exec.Command(name, arg...)
+	cmd.Stdin = in
+	cmd.Stdout = out
+
+	err = cmd.Run()
 	return
 }

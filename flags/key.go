@@ -10,10 +10,14 @@ func GetKey() string {
 	return key
 }
 
+func IsKeyExist() bool {
+	return key != ""
+}
+
 func AddKeyFlag(use string) cli.Flag {
 	return cli.StringFlag{
 		Name:        "key, k",
-		Usage:       "add key of " + use,
+		Usage:       "set key of " + use,
 		Destination: &key,
 	}
 }

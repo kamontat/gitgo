@@ -10,3 +10,4 @@ config:
         message:
             require: true
         showsize: 8
+    editor: ''
