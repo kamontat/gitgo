@@ -122,15 +122,21 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	skipTitle := !models.GetUserConfig().Config.Commit.Title.Require
 	skipMessage := !models.GetUserConfig().Config.Commit.Message.Require
 
-	fmt.Printf(
-		"Key=%t (%s), \nTitle=%t (%s), \nMessage=%t (%s)",
-		keyExist,
-		key,
-		titleExist,
-		title,
-		messageExist,
-		strings.Join(message, ", "),
-	)
+	// fmt.Printf(
+	// 	"Key=\"%s\" (%t),\n",
+	// 	key,
+	// 	keyExist,
+	// )
+	// fmt.Printf(
+	// 	"Title=\"%s\" (%t),\n",
+	// 	title,
+	// 	titleExist,
+	// )
+	// fmt.Printf(
+	// 	"Message=\"%s\" (%t)\n",
+	// 	strings.Join(message, ", "),
+	// 	messageExist,
+	// )
 
 	if !models.GetUserConfig().Config.Commit.Key.Require &&
 		!models.GetUserConfig().Config.Commit.Title.Require {
@@ -183,6 +189,17 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	if !skipTitle {
 		titleExist = _isExist(title)
 	}
+
+	fmt.Printf(
+		"Key=\"%s\" (%t),\n",
+		key,
+		keyExist,
+	)
+	fmt.Printf(
+		"Title=\"%s\" (%t),\n",
+		title,
+		titleExist,
+	)
 
 	// TITLE
 	if !titleExist && !skipTitle {
