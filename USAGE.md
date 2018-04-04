@@ -37,18 +37,26 @@ git commit|c
 <!-- commit with default inital commit -->
 git commit|c [emoji|moji|e|m|text|t] initial|i
 <!-- change commit with emoji -->
-git commit|c emoji|moji|e|m [<message>]
+<!-- 
+[key]: title
+message
+-->
+git commit|c emoji|moji|e|m [--key|k <key>] [--title|t <title>] [<message>]
 <!-- change commit with text -->
-git commit|c text|t [<title>] [<message>]
+<!-- 
+[key]: title
+message
+-->
+git commit|c text|t [--key|k <key>] [--title|t <title>] [<message>]
 
-## Push
+## Push (0.0.1-alpha.6)
 
 <!-- push code and create upstream -->
 git push|p set|s [--repo <repository>] [--branch <branch>] <link>
 <!-- push code -->
 git push|p [--force|-f] [--repo <repository>] [<branch>...] 
 
-## Pull
+## Pull (0.0.1-alpha.7)
 
 <!-- pull code -->
 git pull|P [--force|-f] [<repository>] [<branch>...]

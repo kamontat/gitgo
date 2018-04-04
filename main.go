@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -11,47 +9,10 @@ import (
 	"github.com/urfave/cli"
 
 	"gitgo/commands"
+	"gitgo/models"
 )
 
-type appConfig struct {
-	Name        string
-	Description string
-	Versions    []versionConfig
-	Since       string
-	Authors     []cli.Author
-	License     string
-}
-
-func (appConfig appConfig) latestVersion() versionConfig {
-	return appConfig.Versions[0]
-}
-
-type versionConfig struct {
-	Version     string
-	Description string
-}
-
-func (appConfig appConfig) printEveryVersions() {
-	for _, v := range appConfig.Versions {
-		v.printVersion(appConfig.Name)
-	}
-}
-
-func (appConfig appConfig) printFullEveryVersions() {
-	for _, v := range appConfig.Versions {
-		v.printFullVersion(appConfig.Name)
-	}
-}
-
-func (v versionConfig) printVersion(name string) {
-	fmt.Printf("%s version %s\n", name, v.Version)
-}
-
-func (v versionConfig) printFullVersion(name string) {
-	fmt.Printf("%s version %s: %s\n", name, v.Version, v.Description)
-}
-
-func addVersion(appConfig appConfig) cli.Command {
+func addVersion(appConfig models.AppConfig) cli.Command {
 	var full bool
 	return cli.Command{
 		Name:    "version",
@@ -66,16 +27,16 @@ func addVersion(appConfig appConfig) cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			if full {
-				appConfig.latestVersion().printFullVersion(appConfig.Name)
+				appConfig.LatestVersion().PrintFullVersion(appConfig.Name)
 			} else {
-				appConfig.latestVersion().printVersion(appConfig.Name)
+				appConfig.LatestVersion().PrintVersion(appConfig.Name)
 			}
 			return nil
 		},
 	}
 }
 
-func addListVersion(appConfig appConfig) cli.Command {
+func addListVersion(appConfig models.AppConfig) cli.Command {
 	var full bool
 	return cli.Command{
 		Name:    "list-version",
@@ -90,9 +51,9 @@ func addListVersion(appConfig appConfig) cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			if full {
-				appConfig.printFullEveryVersions()
+				appConfig.PrintFullEveryVersions()
 			} else {
-				appConfig.printEveryVersions()
+				appConfig.PrintEveryVersions()
 			}
 			return nil
 		},
@@ -102,24 +63,19 @@ func addListVersion(appConfig appConfig) cli.Command {
 func main() {
 	// lv - list-version
 	var full, lv bool
-	if os.Getenv("GOPATH") == "" {
-		cli.HandleExitCoder(cli.NewExitError("$GOPATH must be set", 2))
-	}
 
-	file, e := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/gitgo/config/app.json")
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
-	}
+	models.Setup(true)
 
-	var appConfig appConfig
-	json.Unmarshal(file, &appConfig)
+	// config := models.SetupConfig(true)
+	appConfig := models.GetAppConfig()
+
+	fmt.Println(models.GetUserConfig())
 
 	app := cli.NewApp()
 	app.Name = appConfig.Name
 	app.HelpName = appConfig.Name
 	app.Usage = appConfig.Description
-	app.Version = appConfig.latestVersion().Version
+	app.Version = appConfig.LatestVersion().Version
 	app.Authors = appConfig.Authors
 	app.Copyright = appConfig.License
 
@@ -130,6 +86,8 @@ func main() {
 	app.Commands = []cli.Command{
 		command.InitGit(), command.AddGit(), command.DestroyGit(),
 		command.PushGit(), command.PullGit(),
+
+		command.CommitGit(),
 		addVersion(appConfig), addListVersion(appConfig),
 	}
 
@@ -147,18 +105,18 @@ func main() {
 
 	cli.VersionPrinter = func(c *cli.Context) {
 		if full {
-			appConfig.latestVersion().printFullVersion(appConfig.Name)
+			appConfig.LatestVersion().PrintFullVersion(appConfig.Name)
 		} else {
-			appConfig.latestVersion().printVersion(appConfig.Name)
+			appConfig.LatestVersion().PrintVersion(appConfig.Name)
 		}
 	}
 
 	app.Action = func(c *cli.Context) error {
 		if lv {
 			if full {
-				appConfig.printFullEveryVersions()
+				appConfig.PrintFullEveryVersions()
 			} else {
-				appConfig.printEveryVersions()
+				appConfig.PrintEveryVersions()
 			}
 		} else {
 			cli.ShowAppHelp(c)

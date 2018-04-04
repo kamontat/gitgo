@@ -1,0 +1,13 @@
+# name to show on the list
+- name: ""
+# header of commit
+  key:
+# emoji for commit [text]
+    text: ""
+# emoji for commit [emoji]
+    emoji:
+      icon: ""
+      name: ""
+# description, default of commit title
+  title: ""
+  

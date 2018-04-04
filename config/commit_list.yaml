@@ -1,0 +1,40 @@
+-
+    name: Feature
+    key:
+        text: feature
+        emoji:
+            icon: ✨
+            name: sparkles
+    title: GitAdd new features
+-
+    name: Configuration
+    key:
+        text: config
+        emoji:
+            icon: "\U0001F527"
+            name: wrench
+    title: Update config
+-
+    name: Fix
+    key:
+        text: fix
+        emoji:
+            icon: "\U0001F48A"
+            name: pill
+    title: Fix
+-
+    name: Document
+    key:
+        text: doc
+        emoji:
+            icon: "\U0001F4CB"
+            name: clipboard
+    title: Write some document
+-
+    name: Improvement
+    key:
+        text: improve
+        emoji:
+            icon: "\U0001F4C8"
+            name: chart_with_upwards_trend
+    title: Improve
