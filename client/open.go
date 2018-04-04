@@ -3,8 +3,8 @@ package client
 // OpenFile open file by default $EDITOR env
 func OpenFile(defaultEditor string, file string) {
 	if defaultEditor != "" {
-		RawOpenCommand(defaultEditor, file)
+		rawOpenCommand(defaultEditor, file)
 	} else {
-		RawOpenEditorCommand(file)
+		rawOpenEditorCommand(file)
 	}
 }

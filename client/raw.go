@@ -20,21 +20,23 @@ func rawGitCommandNoLog(arg ...string) (out string, err error) {
 }
 
 // RawLSCommand for exec ls cli
-func RawLSCommand(arg ...string) (str string, err error) {
+func rawLSCommand(arg ...string) (str string, err error) {
 	str, _, err = rawCommandAndReturn("ls", arg...)
 	return
 }
 
-func RawOpenCommand(editor string, arg ...string) (err error) {
+// RawOpenCommand this method will open arg... by input editor command (1st parameter)
+func rawOpenCommand(editor string, arg ...string) (err error) {
 	return rawCommandWithCustomSTD(editor, os.Stdin, os.Stdout, arg...)
 }
 
-func RawOpenEditorCommand(arg ...string) (err error) {
+// RawOpenEditorCommand open arg by $EDITOR environment
+func rawOpenEditorCommand(arg ...string) (err error) {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
 		return errors.New("$EDITOR must be set, before open")
 	}
-	return RawOpenCommand(editor, arg...)
+	return rawOpenCommand(editor, arg...)
 }
 
 func rawCommand(name string, arg ...string) (err error) {
