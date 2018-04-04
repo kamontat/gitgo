@@ -141,6 +141,17 @@ type UserConfig struct {
 	}
 }
 
+func (user UserConfig) IsEmojiType() bool {
+	return user.Config.Commit.Type == "emoji" ||
+		user.Config.Commit.Type == "moji" ||
+		user.Config.Commit.Type == "e"
+}
+
+func (user UserConfig) IsTextType() bool {
+	return user.Config.Commit.Type == "text" ||
+		user.Config.Commit.Type == "t"
+}
+
 type InputType struct {
 	Require bool
 	Auto    bool

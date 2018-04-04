@@ -10,14 +10,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-func _gitCommit(withAdd bool, key string, title string, msg ...string) {
+func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...string) {
 	var opt string
 	if withAdd {
 		opt = "-am"
 	} else {
 		opt = "-m"
 	}
-	rawGitCommand("commit", opt, fmt.Sprintf("[%s]: %s\n%s", key, title, strings.Join(msg, " ")))
+	str := fmt.Sprintf("[%s]: %s, \n%s", key, title, strings.Join(msg, " "))
+	if emoji {
+		str = fmt.Sprintf("%s: %s, \n%s", key, title, strings.Join(msg, " "))
+	}
+	rawGitCommand("commit", opt, str)
 }
 
 func _isExist(a string) bool {
@@ -230,7 +234,7 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 		messageExist = _isNotEmpty(message)
 	}
 
-	_gitCommit(withAdd, key, title, message...)
+	_gitCommit(withAdd, key, emoji, title, message...)
 	return nil
 	// var keystr, tilstr, msgstr string = "not-required", "not-required", "not-required"
 	// if skipKey {

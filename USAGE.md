@@ -30,10 +30,10 @@ git add|a all|--all
 <!-- add only input folders|files -->
 git add|a <folder|file>...
 
-## Commit
+## Commit (1.0.0-beta.1)
 
 <!-- open commitment prompt -->
-git commit|c
+git commit|c [--add|-a] [--all|-A]
 <!-- commit with default inital commit -->
 git commit|c [emoji|moji|e|m|text|t] initial|i
 <!-- change commit with emoji -->
@@ -41,13 +41,13 @@ git commit|c [emoji|moji|e|m|text|t] initial|i
 [key]: title
 message
 -->
-git commit|c emoji|moji|e|m [--key|k <key>] [--title|t <title>] [<message>]
+git commit|c emoji|moji|e|m [--add|-a] [--all|-A] [--key|k <key>] [--title|t <title>] [<message>]
 <!-- change commit with text -->
 <!-- 
 [key]: title
 message
 -->
-git commit|c text|t [--key|k <key>] [--title|t <title>] [<message>]
+git commit|c text|t [--add|-a] [--all|-A] [--key|k <key>] [--title|t <title>] [<message>]
 
 ## Push (0.0.1-alpha.6)
 

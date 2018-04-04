@@ -21,7 +21,13 @@ func commitAsText() cli.Command {
 			flag.AddTitleFlag("text commit"),
 			flag.AddKeyFlag("text commit"),
 		},
+		Subcommands: []cli.Command{
+			AddCommitInital(false),
+		},
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial git", 3)
+			}
 			if flag.IsAll() {
 				client.GitAddAll()
 			}
@@ -43,7 +49,14 @@ func commitAsEmoji() cli.Command {
 			flag.AddTitleFlag("emoji commit"),
 			flag.AddKeyFlag("emoji commit"),
 		},
+		Subcommands: []cli.Command{
+			AddCommitInital(true),
+		},
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial git", 3)
+			}
+
 			if flag.IsAll() {
 				client.GitAddAll()
 			}
@@ -70,6 +83,7 @@ func CommitGit() cli.Command {
 		Subcommands: []cli.Command{
 			commitAsText(),
 			commitAsEmoji(),
+			AddCommitInital(models.GetUserConfig().IsEmojiType()),
 		},
 		Action: func(c *cli.Context) error {
 			if client.GitIsNotInit() {

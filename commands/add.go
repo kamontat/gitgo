@@ -14,6 +14,9 @@ func _addAll() cli.Command {
 		Usage:     "GitAdd every files to git",
 		UsageText: "gitgo add|a all|a",
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial git", 5)
+			}
 			client.GitAddAll()
 			return nil
 		},
@@ -34,9 +37,16 @@ func AddGit() cli.Command {
 			// flag.FileAndFolderFlag(),
 		},
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial git", 5)
+			}
+
 			if flag.IsAll() {
 				client.GitAddAll()
 			} else {
+				if c.NArg() == 0 {
+					return cli.NewExitError("no args exist, add must have argument", 5)
+				}
 				client.GitAdd(c.Args()...)
 			}
 			return nil
