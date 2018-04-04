@@ -10,8 +10,16 @@ func IsAll() bool {
 
 func AllFlag() cli.Flag {
 	return cli.BoolFlag{
-		Name:        "all, a, A",
+		Name:        "all, A",
 		Usage:       "get all",
+		Destination: &isAll,
+	}
+}
+
+func AllFlagCustom(msg string) cli.Flag {
+	return cli.BoolFlag{
+		Name:        "all, A",
+		Usage:       msg,
 		Destination: &isAll,
 	}
 }

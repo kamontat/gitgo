@@ -14,14 +14,19 @@ func commitAsText() cli.Command {
 		Name:      "text",
 		Aliases:   []string{"t"},
 		Usage:     "Commit as text key",
-		UsageText: "gitgo commit|cm|c text|t [--key|k <key>] [--title|t <title>] [<message>]",
+		UsageText: "gitgo commit|cm|c text|t [--add|-a] [--all|-A] [--key|k <key>] [--title|t <title>] [<message>]",
 		Flags: []cli.Flag{
+			flag.AddAddFlag(),
+			flag.AllFlagCustom("add all before commit"),
 			flag.AddTitleFlag("text commit"),
 			flag.AddKeyFlag("text commit"),
 		},
 		Action: func(c *cli.Context) error {
-			client.MakeGitCommitWithText(flag.GetKey(), flag.GetTitle(), c.Args().First())
-			return nil
+			if flag.IsAll() {
+				client.GitAddAll()
+			}
+
+			return client.MakeGitCommitWithText(flag.IsNeedAdd(), flag.GetKey(), flag.GetTitle(), c.Args()...)
 		},
 	}
 }
@@ -31,14 +36,19 @@ func commitAsEmoji() cli.Command {
 		Name:      "emoji",
 		Aliases:   []string{"moji", "e"},
 		Usage:     "Commit as emoji key",
-		UsageText: "gitgo commit|cm|c emoji|moji|e [--key|k <key>] [--title|t <title>] [<message>]",
+		UsageText: "gitgo commit|cm|c emoji|moji|e [--add|-a] [--all|-A] [--key|k <key>] [--title|t <title>] [<message>]",
 		Flags: []cli.Flag{
+			flag.AddAddFlag(),
+			flag.AllFlagCustom("add all before commit"),
 			flag.AddTitleFlag("emoji commit"),
 			flag.AddKeyFlag("emoji commit"),
 		},
 		Action: func(c *cli.Context) error {
-			client.MakeGitCommitWithEmoji(flag.GetKey(), flag.GetTitle(), c.Args().First())
-			return nil
+			if flag.IsAll() {
+				client.GitAddAll()
+			}
+
+			return client.MakeGitCommitWithEmoji(flag.IsNeedAdd(), flag.GetKey(), flag.GetTitle(), c.Args()...)
 		},
 	}
 }
@@ -50,8 +60,10 @@ func CommitGit() cli.Command {
 		Aliases:   []string{"cm", "c"},
 		Category:  "Action",
 		Usage:     "Commit changes",
-		UsageText: "gitgo commit|cm|c [text|emoji] [--key|k <key>] [--title|t <title>] [<message>]",
+		UsageText: "gitgo commit [--add|-a] [--all|-A] [subcommand] [--key|k <key>] [--title|t <title>] [<message>]",
 		Flags: []cli.Flag{
+			flag.AddAddFlag(),
+			flag.AllFlagCustom("add all before commit"),
 			flag.AddKeyFlag("commit"),
 			flag.AddTitleFlag("commit"),
 		},
@@ -60,6 +72,9 @@ func CommitGit() cli.Command {
 			commitAsEmoji(),
 		},
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial git", 3)
+			}
 			commit := models.GetUserConfig().Config.Commit.Type
 			if commit == "" {
 				commit = os.Getenv("COMMIT_TYPE")
@@ -71,19 +86,17 @@ func CommitGit() cli.Command {
 				return cli.NewExitError("COMMIT_TYPE not exist, please call commit with subcommand instead.", 5)
 			}
 
+			if flag.IsAll() {
+				client.GitAddAll()
+			}
+
 			if commit == "e" || commit == "emoji" || commit == "moji" {
-				client.MakeGitCommitWithEmoji(flag.GetKey(), flag.GetTitle(), c.Args().First())
+				return client.MakeGitCommitWithEmoji(flag.IsNeedAdd(), flag.GetKey(), flag.GetTitle(), c.Args()...)
 			} else if commit == "text" || commit == "t" {
-				client.MakeGitCommitWithText(flag.GetKey(), flag.GetTitle(), c.Args().First())
+				return client.MakeGitCommitWithText(flag.IsNeedAdd(), flag.GetKey(), flag.GetTitle(), c.Args()...)
 			} else {
 				return cli.NewExitError("COMMIT_TYPE must be 'text' or 'emoji'", 5)
 			}
-			// if client.GitIsNotInit() || flag.IsForce() {
-			// 	client.GitInit()
-			// } else {
-			// 	return cli.NewExitError("Initial already!, GitAdd --force", 4)
-			// }
-			return nil
 		},
 	}
 }

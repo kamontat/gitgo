@@ -1,3 +1,11 @@
 config:
     commit:
         type: text
+        key:
+            require: true
+        title:
+            require: true
+            auto: true
+            size: 8
+        message:
+            require: true

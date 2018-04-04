@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"sort"
@@ -69,7 +68,7 @@ func main() {
 	// config := models.SetupConfig(true)
 	appConfig := models.GetAppConfig()
 
-	fmt.Println(models.GetUserConfig())
+	// fmt.Println(models.GetUserConfig())
 
 	app := cli.NewApp()
 	app.Name = appConfig.Name

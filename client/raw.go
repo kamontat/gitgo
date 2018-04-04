@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
 // rawGitCommand is interface to exec git commandline
@@ -37,7 +38,7 @@ func rawCommand(name string, arg ...string) (err error) {
 func rawCommandAndReturn(name string, arg ...string) (strout string, strerr string, err error) {
 	var stdout, stderr bytes.Buffer
 
-	fmt.Println(name, arg)
+	fmt.Println(name, strings.Join(arg, " "))
 	cmd := exec.Command(name, arg...)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr

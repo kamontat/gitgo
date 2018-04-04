@@ -4,10 +4,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli"
 	yaml "gopkg.in/yaml.v2"
 )
+
+func filter(vs []CommitDB, f func(CommitDB) bool) []CommitDB {
+	vsf := make([]CommitDB, 0)
+	for _, v := range vs {
+		if f(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
+}
 
 type Config struct {
 	AppConfig    AppConfig
@@ -60,10 +71,10 @@ func (v VersionConfig) PrintFullVersion(name string) {
 }
 
 type CommitConfig struct {
-	db []commitDB
+	DB []CommitDB
 }
 
-type commitDB struct {
+type CommitDB struct {
 	Name string
 	Key  struct {
 		Text  string
@@ -75,12 +86,39 @@ type commitDB struct {
 	Title string
 }
 
+func (db CommitConfig) GetEmojiByKey(key string) string {
+	return "emoji-icon"
+}
+
+func (db CommitConfig) SearchTitleByEmojiKey(key string) string {
+	return filter(db.DB, func(input CommitDB) bool {
+		return strings.Contains(input.Key.Emoji.Name, key)
+		// return input.Key.Emoji.Name == key
+	})[0].Title
+}
+
+func (db CommitConfig) SearchTitleByTextKey(key string) string {
+	return filter(db.DB, func(input CommitDB) bool {
+		return strings.Contains(input.Key.Text, key)
+		// return input.Key.Text == key
+	})[0].Title
+}
+
 type UserConfig struct {
 	Config struct {
 		Commit struct {
-			Type string
+			Type    string
+			Key     InputType
+			Title   InputType
+			Message InputType
 		}
 	}
+}
+
+type InputType struct {
+	Require bool
+	Auto    bool
+	Size    int
 }
 
 func _setupPath(location string, filename string) string {
@@ -116,7 +154,7 @@ func setupUserConfig(appLocation string) (userConfig UserConfig) {
 }
 
 func setupCommitDBConfig(location string) (commitConfig CommitConfig) {
-	var db []commitDB
+	var db []CommitDB
 	file, e := ioutil.ReadFile(_setupPath(location, "commit_list.yaml"))
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
@@ -125,7 +163,7 @@ func setupCommitDBConfig(location string) (commitConfig CommitConfig) {
 
 	yaml.Unmarshal(file, &db)
 	return CommitConfig{
-		db: db,
+		DB: db,
 	}
 }
 

@@ -21,7 +21,7 @@
         emoji:
             icon: "\U0001F48A"
             name: pill
-    title: Fix
+    title: Fix something
 -
     name: Document
     key:
@@ -37,4 +37,4 @@
         emoji:
             icon: "\U0001F4C8"
             name: chart_with_upwards_trend
-    title: Improve
+    title: Improvement
