@@ -5,7 +5,7 @@ config:
             require: true
         title:
             require: true
-            auto: true
+            auto: false
             size: 50
         message:
             require: true
