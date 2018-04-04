@@ -213,11 +213,25 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 			if err != nil {
 				return
 			}
-			title = commitDB.Title
+			if models.GetUserConfig().Config.Commit.Title.Auto {
+				title = commitDB.Title
+			} else {
+				title, err = promptTitle()
+				if err != nil {
+					return
+				}
+			}
 		} else {
-			title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
-			if err != nil {
-				return
+			if models.GetUserConfig().Config.Commit.Title.Auto {
+				title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
+				if err != nil {
+					return
+				}
+			} else {
+				title, err = promptTitle()
+				if err != nil {
+					return
+				}
 			}
 		}
 		titleExist = _isExist(title)
