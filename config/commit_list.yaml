@@ -38,3 +38,11 @@
             icon: "\U0001F4C8"
             name: chart_with_upwards_trend
     title: Improvement
+-
+    name: Logging
+    key:
+        text: log
+        emoji:
+            icon: "\U0001F4E0"
+            name: fax
+    title: Log

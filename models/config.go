@@ -107,10 +107,11 @@ func (db CommitConfig) SearchTitleByTextKey(key string) string {
 type UserConfig struct {
 	Config struct {
 		Commit struct {
-			Type    string
-			Key     InputType
-			Title   InputType
-			Message InputType
+			Type     string
+			Key      InputType
+			Title    InputType
+			Message  InputType
+			ListSize int
 		}
 	}
 }

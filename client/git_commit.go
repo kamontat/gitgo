@@ -33,7 +33,7 @@ func _rawSelectPrompt(db []models.CommitDB, templates promptui.SelectTemplates) 
 		Label:     "Commit header",
 		Items:     db,
 		Templates: &templates,
-		Size:      5,
+		Size:      models.GetUserConfig().Config.Commit.ListSize,
 		Searcher: func(input string, index int) bool {
 			commit := db[index]
 			name := strings.Replace(strings.ToLower(commit.Name), " ", "", -1)
@@ -72,7 +72,7 @@ func promptEmojiKey() (key string, title string, err error) {
 	index, _, err := _rawSelectPrompt(db, *templates)
 	key = db[index].Key.Emoji.Icon
 	title = db[index].Title
-	fmt.Printf("You choose emoji number %d: %s\n", index+1, db[index])
+	// fmt.Printf("You choose emoji number %d: %s\n", index+1, db[index])
 	return
 }
 
@@ -92,13 +92,13 @@ func promptTextKey() (key string, title string, err error) {
 	index, _, err := _rawSelectPrompt(db, *templates)
 	key = db[index].Key.Text
 	title = db[index].Title
-	fmt.Printf("You choose text number %d: %s\n", index+1, db[index])
+	// fmt.Printf("You choose text number %d: %s\n", index+1, db[index])
 	return
 }
 
 func promptTitle( /* index int */ ) (t string, err error) {
 	t, err = _rawPrompt("Commit title", "", func(input string) error {
-		if len(input) > 50 {
+		if len(input) > models.GetUserConfig().Config.Commit.Title.Size {
 			return errors.New("Commit title shouldn't more than 50 characters")
 		}
 		return nil
