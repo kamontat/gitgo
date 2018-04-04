@@ -17,7 +17,7 @@ func _gitCommit(withAdd bool, key string, title string, msg ...string) {
 	} else {
 		opt = "-m"
 	}
-	rawGitCommand("commit", opt, fmt.Sprintf("\"[%s]: %s\n%s\"", key, title, strings.Join(msg, " ")))
+	rawGitCommand("commit", opt, fmt.Sprintf("[%s]: %s\n%s", key, title, strings.Join(msg, " ")))
 }
 
 func _isExist(a string) bool {
@@ -33,7 +33,7 @@ func _rawSelectPrompt(db []models.CommitDB, templates promptui.SelectTemplates) 
 		Label:     "Commit header",
 		Items:     db,
 		Templates: &templates,
-		Size:      models.GetUserConfig().Config.Commit.ListSize,
+		Size:      models.GetUserConfig().Config.Commit.ShowSize,
 		Searcher: func(input string, index int) bool {
 			commit := db[index]
 			name := strings.Replace(strings.ToLower(commit.Name), " ", "", -1)
@@ -60,11 +60,11 @@ func promptEmojiKey() (key string, title string, err error) {
 	db := models.GetCommitDBConfig().DB
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "{{ .Key.Emoji.Icon }} {{ .Name | cyan }}",
-		Inactive: "  {{ .Name | cyan }}",
-		Selected: "{{ .Key.Emoji.Icon }} {{ .Name | red | cyan }}",
+		Active:   "{{ .Key.Emoji.Icon }} {{ .Name | cyan }} [{{ .Title | blue }}]",
+		Inactive: "  {{ .Name | cyan }} [{{ .Title | blue }}]",
+		Selected: "{{ .Key.Emoji.Icon }} {{ .Name | underline | red | cyan }}",
 		Details: `
---------- Commit detail ----------
+--------- Commit emoji detail ----------
 {{ "Name:" | faint }}	{{ .Name }},
 {{ "Key:" | faint }}	{{ .Key.Emoji.Icon }} ({{ .Key.Emoji.Name }})
 {{ "Title:" | faint }}	{{ .Title }}`,
@@ -80,11 +80,11 @@ func promptTextKey() (key string, title string, err error) {
 	db := models.GetCommitDBConfig().DB
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "{{ .Key.Emoji.Icon }}  {{ .Name | cyan }}",
-		Inactive: "   {{ .Name | cyan }}",
-		Selected: "[{{ .Key.Emoji.Icon }}] {{ .Name | underline | red | cyan }}",
+		Active:   "{{ .Key.Emoji.Icon }}  {{ .Name | cyan }} [{{ .Title | blue }}]",
+		Inactive: "   {{ .Name | cyan }} [{{ .Title | blue }}]",
+		Selected: "{{ .Key.Emoji.Icon }} {{ .Name | underline | red | cyan }}",
 		Details: `
---------- Commit detail ----------
+--------- Commit text detail ----------
 {{ "Name:" | faint }}	{{ .Name }},
 {{ "Key:" | faint }}	{{ .Key.Text }}
 {{ "Title:" | faint }}	{{ .Title }}`,
@@ -114,17 +114,54 @@ func promptMessage() (m string, err error) {
 }
 
 func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, message ...string) (err error) {
-	skipKey := _isExist(key) || !models.GetUserConfig().Config.Commit.Key.Require
-	skipTitle := _isExist(title) || !models.GetUserConfig().Config.Commit.Title.Require
-	skipMessage := _isNotEmpty(message) || !models.GetUserConfig().Config.Commit.Message.Require
+	keyExist := _isExist(key)
+	titleExist := _isExist(title)
+	messageExist := _isNotEmpty(message)
+
+	skipKey := !models.GetUserConfig().Config.Commit.Key.Require
+	skipTitle := !models.GetUserConfig().Config.Commit.Title.Require
+	skipMessage := !models.GetUserConfig().Config.Commit.Message.Require
+
+	fmt.Printf(
+		"Key=%t (%s), \nTitle=%t (%s), \nMessage=%t (%s)",
+		keyExist,
+		key,
+		titleExist,
+		title,
+		messageExist,
+		strings.Join(message, ", "),
+	)
 
 	if !models.GetUserConfig().Config.Commit.Key.Require &&
 		!models.GetUserConfig().Config.Commit.Title.Require {
 		return cli.NewExitError("either 'KEY' or 'TITLE' must be required", 9)
 	}
 
-	if !skipKey {
+	// KEY
+	if keyExist && !skipKey { // exist and required
+		var commitDB models.CommitDB
+		if emoji {
+			// convert string key -> emoji icon
+			commitDB, err = models.GetCommitDBConfig().GetCommitDBByEmojiName(key)
+			if err != nil {
+				return
+			}
+			key = commitDB.Key.Emoji.Icon
+		}
+		// update title, if auto is true, no title exist from option
+		if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
+			if emoji {
+				title = commitDB.Title
+			} else {
+				title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
+				if err != nil {
+					return
+				}
+			}
+		}
+	} else if !skipKey {
 		var t string
+		// prompt key and title
 		if emoji {
 			key, t, err = promptEmojiKey()
 		} else {
@@ -133,44 +170,62 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 		if err != nil {
 			return
 		}
-		if models.GetUserConfig().Config.Commit.Title.Auto && !skipTitle {
+		// only title auto have been set and no title before
+		if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
 			title = t
 		}
-		skipKey = _isExist(key)
-		skipTitle = _isExist(title)
 	}
 
-	if skipKey && emoji {
-		key = models.GetCommitDBConfig().GetEmojiByKey(key)
-	} else if skipKey && !emoji {
-		if models.GetUserConfig().Config.Commit.Title.Auto {
-			title = models.GetCommitDBConfig().SearchTitleByTextKey(key)
-			skipTitle = _isExist(title)
+	// Update skip only not skipped
+	if !skipKey {
+		keyExist = _isExist(key)
+	}
+	if !skipTitle {
+		titleExist = _isExist(title)
+	}
+
+	// TITLE
+	if !titleExist && !skipTitle {
+		if emoji {
+			var commitDB models.CommitDB
+			commitDB, err = models.GetCommitDBConfig().GetCommitDBByEmojiName(key)
+			if err != nil {
+				return
+			}
+			title = commitDB.Title
+		} else {
+			title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
+			if err != nil {
+				return
+			}
 		}
+		titleExist = _isExist(title)
 	}
 
-	if !models.GetUserConfig().Config.Commit.Title.Auto && !skipTitle {
-		title, err = promptTitle()
-		if err != nil {
-			return
-		}
-		skipTitle = _isExist(title)
-	}
-
-	if !skipMessage {
+	// MESSAGE
+	if !messageExist && !skipMessage {
 		var m string
 		m, err = promptMessage()
 		if err != nil {
 			return
 		}
 		message = []string{m}
+		messageExist = _isNotEmpty(message)
 	}
 
-	if skipKey && skipTitle /* && skipMessage */ {
-		_gitCommit(withAdd, key, title, message...)
-		return nil
-	}
-	return cli.NewExitError(fmt.Sprintf("required string no exist, key=%t, title=%t, message=%t", skipKey, skipTitle, skipMessage), 5)
+	_gitCommit(withAdd, key, title, message...)
+	return nil
+	// var keystr, tilstr, msgstr string = "not-required", "not-required", "not-required"
+	// if skipKey {
+	// 	keystr = "required"
+	// }
+	// if skipTitle {
+	// 	tilstr = "required"
+	// }
+	// if skipMessage {
+	// 	msgstr = "required"
+	// }
+	// return cli.NewExitError(str, 5)
 }
 
 func MakeGitCommitWithText(withAdd bool, key string, title string, message ...string) error {

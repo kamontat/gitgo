@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -86,22 +87,46 @@ type CommitDB struct {
 	Title string
 }
 
-func (db CommitConfig) GetEmojiByKey(key string) string {
-	return "emoji-icon"
+func (db CommitConfig) GetCommitDBByEmojiIcon(key string) (result CommitDB, err error) {
+	results := filter(db.DB, func(input CommitDB) bool {
+		// return strings.Contains(input.Key.Emoji.Icon, key)
+		return strings.ToLower(input.Key.Emoji.Icon) == strings.ToLower(key)
+	})
+
+	if len(results) == 0 {
+		err = errors.New(key + " key not exist!, (get by emoji icon)")
+		return
+	}
+	result = results[0]
+	return
 }
 
-func (db CommitConfig) SearchTitleByEmojiKey(key string) string {
-	return filter(db.DB, func(input CommitDB) bool {
-		return strings.Contains(input.Key.Emoji.Name, key)
-		// return input.Key.Emoji.Name == key
-	})[0].Title
+func (db CommitConfig) GetCommitDBByEmojiName(key string) (result CommitDB, err error) {
+	results := filter(db.DB, func(input CommitDB) bool {
+		return strings.Contains(strings.ToLower(input.Name), key)
+		// return strings.ToLower(input.Name) == strings.ToLower(key)
+	})
+
+	if len(results) == 0 {
+		err = errors.New(key + " key not exist!, (get by emoji name)")
+		return
+	}
+	result = results[0]
+	return
 }
 
-func (db CommitConfig) SearchTitleByTextKey(key string) string {
-	return filter(db.DB, func(input CommitDB) bool {
+func (db CommitConfig) SearchTitleByTextKey(key string) (res string, err error) {
+	results := filter(db.DB, func(input CommitDB) bool {
 		return strings.Contains(input.Key.Text, key)
 		// return input.Key.Text == key
-	})[0].Title
+	})
+
+	if len(results) == 0 {
+		err = errors.New(key + " key not exist!, (get by text)")
+		return
+	}
+	res = results[0].Title
+	return
 }
 
 type UserConfig struct {
@@ -111,7 +136,7 @@ type UserConfig struct {
 			Key      InputType
 			Title    InputType
 			Message  InputType
-			ListSize int
+			ShowSize int
 		}
 	}
 }

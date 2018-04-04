@@ -9,4 +9,4 @@ config:
             size: 50
         message:
             require: true
-        list_size: 5
+        showsize: 8
