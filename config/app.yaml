@@ -8,6 +8,9 @@ author:
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
     -
+        version: 1.0.0-beta.4
+        description: Add 'get location' of config files
+    -
         version: 1.0.0-beta.3
         description: Update commit format
     -

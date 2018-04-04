@@ -87,7 +87,7 @@ func main() {
 		command.PushGit(), command.PullGit(),
 
 		command.AddGitStatus(), command.AddGit(), command.CommitGit(),
-		addVersion(appConfig), addListVersion(appConfig),
+		command.AddConfig(), addVersion(appConfig), addListVersion(appConfig),
 	}
 
 	app.Flags = []cli.Flag{
@@ -126,8 +126,8 @@ func main() {
 	sort.Sort(cli.FlagsByName(app.Flags))
 	// sort.Sort(cli.CommandsByName(app.Commands))
 
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
+	runError := app.Run(os.Args)
+	if runError != nil {
+		log.Fatal(runError)
 	}
 }

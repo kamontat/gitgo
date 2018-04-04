@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -22,6 +23,7 @@ func filter(vs []CommitDB, f func(CommitDB) bool) []CommitDB {
 }
 
 type Config struct {
+	Location     locationConfig
 	AppConfig    AppConfig
 	UserConfig   UserConfig
 	CommitConfig CommitConfig
@@ -165,11 +167,11 @@ func _setupPath(location string, filename string) string {
 	if location == "" {
 		return os.Getenv("GOPATH") + "/src/gitgo/config/" + filename
 	}
-	return location
+	return location + "/" + filename
 }
 
-func setupAppConfig(appLocation string) (appConfig AppConfig) {
-	file, e := ioutil.ReadFile(_setupPath(appLocation, "app.yaml"))
+func setupAppConfig(location string) (appConfig AppConfig) {
+	file, e := ioutil.ReadFile(location)
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
 		os.Exit(1)
@@ -179,8 +181,8 @@ func setupAppConfig(appLocation string) (appConfig AppConfig) {
 	return
 }
 
-func setupUserConfig(appLocation string) (userConfig UserConfig) {
-	file, e := ioutil.ReadFile(_setupPath(appLocation, "user.yaml"))
+func setupUserConfig(location string) (userConfig UserConfig) {
+	file, e := ioutil.ReadFile(location)
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
 		os.Exit(1)
@@ -192,7 +194,7 @@ func setupUserConfig(appLocation string) (userConfig UserConfig) {
 
 func setupCommitDBConfig(location string) (commitConfig CommitConfig) {
 	var db []CommitDB
-	file, e := ioutil.ReadFile(_setupPath(location, "commit_list.yaml"))
+	file, e := ioutil.ReadFile(location)
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
 		os.Exit(1)
@@ -204,42 +206,49 @@ func setupCommitDBConfig(location string) (commitConfig CommitConfig) {
 	}
 }
 
-func setupLocationConfig(dev bool) (locationConfig locationConfig) {
-	if dev {
-		return locationConfig
-	}
+func setupLocationConfig(dev bool) (location locationConfig, err error) {
 	home := os.Getenv("HOME")
-	userfile := "/user.yml"
-	appfile := "/app.yml"
-	commitdbfile := "/commit_list.yml"
-	location := ""
 	if home == "" {
-		cli.HandleExitCoder(cli.NewExitError("$HOME must be set", 2))
+		err = cli.NewExitError("$HOME must be set", 2)
+	}
+	var defaultLocation string
+	appfile := "app.yaml"
+	userfile := "user.yaml"
+	commitdbfile := "commit_list.yaml"
+
+	if !dev {
+		defaultLocation = home + "/.config/gitgo/config"
+	}
+
+	location = locationConfig{
+		AppLocation:      _setupPath(defaultLocation, appfile),
+		UserLocation:     _setupPath(defaultLocation, userfile),
+		CommitDBLocation: _setupPath(defaultLocation, commitdbfile),
+	}
+
+	if _, err = os.Stat(location.AppLocation); os.IsNotExist(err) {
 		return
+		// cli.HandleExitCoder(cli.NewExitError("App config not exist, Add to "+location.AppLocation, 2))
 	}
-	location = fmt.Sprintf("%s/.config/gitgo/config", home)
-	if _, err := os.Stat(location + userfile); os.IsNotExist(err) {
-		cli.HandleExitCoder(cli.NewExitError("User config not exist, Add to "+location, 2))
-	} else {
-		locationConfig.UserLocation = location + userfile
+	if _, err = os.Stat(location.CommitDBLocation); os.IsNotExist(err) {
+		return
+		// cli.HandleExitCoder(cli.NewExitError("Commit database not exist, Add to "+location.CommitDBLocation, 2))
 	}
-	if _, err := os.Stat(location + appfile); os.IsNotExist(err) {
-		cli.HandleExitCoder(cli.NewExitError("App config not exist, Add to "+location, 2))
-	} else {
-		locationConfig.AppLocation = location + appfile
+	if _, err = os.Stat(location.UserLocation); os.IsNotExist(err) {
+		return
+		// cli.HandleExitCoder(cli.NewExitError("User config not exist, Add to "+location.UserLocation, 2))
 	}
-	if _, err := os.Stat(location + commitdbfile); os.IsNotExist(err) {
-		cli.HandleExitCoder(cli.NewExitError("Commit config not exist, Add to "+location, 2))
-	} else {
-		locationConfig.CommitDBLocation = location + commitdbfile
-	}
+
 	return
 }
 
 func setupConfig(dev bool) Config {
-	location := setupLocationConfig(dev)
-
+	location, err := setupLocationConfig(dev)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return Config{
+		Location:     location,
 		AppConfig:    setupAppConfig(location.AppLocation),
 		UserConfig:   setupUserConfig(location.UserLocation),
 		CommitConfig: setupCommitDBConfig(location.CommitDBLocation),
@@ -247,6 +256,7 @@ func setupConfig(dev bool) Config {
 }
 
 var configFile Config
+var setupError error
 
 func Setup(dev bool) {
 	configFile = setupConfig(dev)
@@ -262,4 +272,8 @@ func GetUserConfig() UserConfig {
 
 func GetCommitDBConfig() CommitConfig {
 	return configFile.CommitConfig
+}
+
+func GetAppLocation() locationConfig {
+	return configFile.Location
 }

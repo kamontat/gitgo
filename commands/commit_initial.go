@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// AddCommitInital add command of 'commit initial'
 func AddCommitInital(emoji bool) cli.Command {
 	return cli.Command{
 		Name:    "initial",

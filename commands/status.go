@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// AddGitStatus add command of 'git status'
 func AddGitStatus() cli.Command {
 	return cli.Command{
 		Name:      "status",
