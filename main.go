@@ -83,10 +83,10 @@ func main() {
 	// app.UsageText = "gitgo [global options] [command] [command options] [subcommand] [subcommand options] [arguments...]"
 
 	app.Commands = []cli.Command{
-		command.InitGit(), command.AddGit(), command.DestroyGit(),
+		command.InitGit(), command.DestroyGit(),
 		command.PushGit(), command.PullGit(),
 
-		command.CommitGit(),
+		command.AddGitStatus(), command.AddGit(), command.CommitGit(),
 		addVersion(appConfig), addListVersion(appConfig),
 	}
 
