@@ -56,10 +56,6 @@ func setConfigValue(key string, value string) (result string, err error) {
 	return
 }
 
-func writeTo(out []byte, filename string) (err error) {
-	return nil
-}
-
 // AddConfig add command of setting(s)
 func AddConfig() cli.Command {
 	return cli.Command{
