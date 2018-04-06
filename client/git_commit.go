@@ -17,9 +17,13 @@ func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...strin
 	} else {
 		opt = "-m"
 	}
-	str := fmt.Sprintf("[%s]: %s, \n%s", key, title, strings.Join(msg, " "))
+	sep := ""
+	if len(msg) > 0 {
+		sep = ","
+	}
+	str := fmt.Sprintf("[%s]: %s%s \n%s", key, title, sep, strings.Join(msg, " "))
 	if emoji {
-		str = fmt.Sprintf("%s: %s, \n%s", key, title, strings.Join(msg, " "))
+		str = fmt.Sprintf("%s: %s%s \n%s", key, title, sep, strings.Join(msg, " "))
 	}
 	rawGitCommand("commit", opt, str)
 }
@@ -74,7 +78,15 @@ func promptEmojiKey() (key string, title string, err error) {
 {{ "Title:" | faint }}	{{ .Title }}`,
 	}
 	index, _, err := _rawSelectPrompt(db, *templates)
-	key = db[index].Key.Emoji.Icon
+	if models.GetUserConfig().Config.Commit.Emoji == "string" ||
+		models.GetUserConfig().Config.Commit.Emoji == "str" ||
+		models.GetUserConfig().Config.Commit.Emoji == "text" ||
+		models.GetUserConfig().Config.Commit.Emoji == "s" ||
+		models.GetUserConfig().Config.Commit.Emoji == "t" {
+		key = fmt.Sprintf(":%s:", db[index].Key.Emoji.Name)
+	} else {
+		key = db[index].Key.Emoji.Icon
+	}
 	title = db[index].Title
 	// fmt.Printf("You choose emoji number %d: %s\n", index+1, db[index])
 	return
@@ -125,22 +137,6 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	skipKey := !models.GetUserConfig().Config.Commit.Key.Require
 	skipTitle := !models.GetUserConfig().Config.Commit.Title.Require
 	skipMessage := !models.GetUserConfig().Config.Commit.Message.Require
-
-	// fmt.Printf(
-	// 	"Key=\"%s\" (%t),\n",
-	// 	key,
-	// 	keyExist,
-	// )
-	// fmt.Printf(
-	// 	"Title=\"%s\" (%t),\n",
-	// 	title,
-	// 	titleExist,
-	// )
-	// fmt.Printf(
-	// 	"Message=\"%s\" (%t)\n",
-	// 	strings.Join(message, ", "),
-	// 	messageExist,
-	// )
 
 	if !models.GetUserConfig().Config.Commit.Key.Require &&
 		!models.GetUserConfig().Config.Commit.Title.Require {
