@@ -18,7 +18,7 @@ func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...strin
 		opt = "-m"
 	}
 	sep := ""
-	if len(msg) > 0 {
+	if title != "" && len(msg) != 0 {
 		sep = ","
 	}
 	str := fmt.Sprintf("[%s]: %s%s \n%s", key, title, sep, strings.Join(msg, " "))
@@ -146,14 +146,17 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	// KEY
 	if keyExist && !skipKey { // exist and required
 		var commitDB models.CommitDB
-		if emoji {
-			// convert string key -> emoji icon
-			commitDB, err = models.GetCommitDBConfig().GetCommitDBByEmojiName(key)
-			if err != nil {
-				return
-			}
-			key = commitDB.Key.Emoji.Icon
+		// convert string key -> commit db
+		commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
+		if err != nil {
+			return
 		}
+		if emoji {
+			key = commitDB.Key.Emoji.Icon
+		} else {
+			key = commitDB.Key.Text
+		}
+
 		// update title, if auto is true, no title exist from option
 		if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
 			if emoji {
@@ -190,13 +193,11 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 		titleExist = _isExist(title)
 	}
 
+	// log
 	fmt.Printf(
-		"Key=\"%s\" (%t),\n",
+		"Key=\"%s\" (%t), Title=\"%s\" (%t)\n",
 		key,
 		keyExist,
-	)
-	fmt.Printf(
-		"Title=\"%s\" (%t),\n",
 		title,
 		titleExist,
 	)
@@ -205,7 +206,7 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	if !titleExist && !skipTitle {
 		if emoji {
 			var commitDB models.CommitDB
-			commitDB, err = models.GetCommitDBConfig().GetCommitDBByEmojiName(key)
+			commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
 			if err != nil {
 				return
 			}
@@ -240,23 +241,14 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 		if err != nil {
 			return
 		}
-		message = []string{m}
-		messageExist = _isNotEmpty(message)
+		if m != "" {
+			message = []string{m}
+			messageExist = _isNotEmpty(message)
+		}
 	}
 
 	_gitCommit(withAdd, key, emoji, title, message...)
 	return nil
-	// var keystr, tilstr, msgstr string = "not-required", "not-required", "not-required"
-	// if skipKey {
-	// 	keystr = "required"
-	// }
-	// if skipTitle {
-	// 	tilstr = "required"
-	// }
-	// if skipMessage {
-	// 	msgstr = "required"
-	// }
-	// return cli.NewExitError(str, 5)
 }
 
 // MakeGitCommitWithText create git commit by text format

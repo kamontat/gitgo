@@ -138,8 +138,8 @@ func (db CommitConfig) GetCommitDBByEmojiIcon(key string) (result CommitDB, err 
 	return
 }
 
-// GetCommitDBByEmojiName get commit db struct by commit name
-func (db CommitConfig) GetCommitDBByEmojiName(key string) (result CommitDB, err error) {
+// GetCommitDBByName get commit db struct by commit name
+func (db CommitConfig) GetCommitDBByName(key string) (result CommitDB, err error) {
 	results := filter(db.DB, func(input CommitDB) bool {
 		return strings.Contains(strings.ToLower(input.Name), key)
 		// return strings.ToLower(input.Name) == strings.ToLower(key)
