@@ -8,19 +8,13 @@ import (
 	"github.com/urfave/cli"
 
 	"gitgo/commands"
+	flag "gitgo/flags"
 	"gitgo/models"
 )
 
 func main() {
-	// lv - list-version
-	var full, lv bool
-
-	models.Setup(true)
-
-	// config := models.SetupConfig(true)
+	models.Setup(false)
 	appConfig := models.GetAppConfig()
-
-	// fmt.Println(models.GetUserConfig())
 
 	app := cli.NewApp()
 	app.Name = appConfig.Name
@@ -32,43 +26,29 @@ func main() {
 
 	app.EnableBashCompletion = true
 
-	// app.UsageText = "gitgo [global options] [command] [command options] [subcommand] [subcommand options] [arguments...]"
-
 	app.Commands = []cli.Command{
-		command.InitGit(), command.DestroyGit(),
-		command.PushGit(), command.PullGit(),
+		command.AddVersion(appConfig), command.AddListVersion(appConfig),
 
-		command.AddGitStatus(), command.AddGit(), command.CommitGit(),
-		command.AddConfig(), command.AddVersion(appConfig), command.AddListVersion(appConfig),
+		command.AddGit(), command.CommitGit(),
+
+		command.InitGit(), command.DestroyGit(),
+		command.AddGitStatus(), command.AddConfig(),
+
+		command.PushGit(), command.PullGit(),
 	}
 
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:        "full, F",
-			Usage:       "show full output",
-			Destination: &full,
-		}, cli.BoolFlag{
-			Name:        "list-version, L",
-			Usage:       "list all version",
-			Destination: &lv,
-		},
+		flag.FullFlag(),
+		flag.ListVersionFlag(),
 	}
 
 	cli.VersionPrinter = func(c *cli.Context) {
-		if full {
-			appConfig.LatestVersion().PrintFullVersion(appConfig.Name)
-		} else {
-			appConfig.LatestVersion().PrintVersion(appConfig.Name)
-		}
+		appConfig.LatestVersion().ChooseToPrintVersion(flag.IsFull())
 	}
 
 	app.Action = func(c *cli.Context) error {
-		if lv {
-			if full {
-				appConfig.PrintFullEveryVersions()
-			} else {
-				appConfig.PrintEveryVersions()
-			}
+		if flag.NeedToListVersion() {
+			appConfig.ChooseToPrintEveryVersions(flag.IsFull())
 		} else {
 			cli.ShowAppHelp(c)
 		}
