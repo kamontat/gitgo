@@ -1,21 +1,14 @@
 package client
 
-// func GitInitPush(repo string, branch string) error {
-// 	return nil
-// }
-
-// func GitPush(repo string, branch []string) error {
-// 	return _gitPush(false, false, repo, branch)
-// }
-
-// func GitForcePush(repo string, branch []string) error {
-// 	return _gitPush(true, false, repo, branch)
-// }
-
+// GitPush call GitSetupPush with NO set-upstream option
 func GitPush(withForce bool, repo string, branch []string) error {
 	return GitSetupPush(withForce, false, repo, branch)
 }
 
+// GitSetupPush setup for git push, run first time only
+//
+// call with set upstream (optional)
+// and force option (optional)
 func GitSetupPush(withForce bool, withUpstream bool, repo string, branch []string) error {
 	var arr = []string{"push"}
 

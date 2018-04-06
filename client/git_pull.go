@@ -1,5 +1,6 @@
 package client
 
+// GitPull exec git pull with repo (default as origin), branch (default as master)
 func GitPull(withForce bool, repo string, branch []string) error {
 	var arr = []string{"pull", "--quiet"}
 

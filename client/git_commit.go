@@ -259,10 +259,12 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 	// return cli.NewExitError(str, 5)
 }
 
+// MakeGitCommitWithText create git commit by text format
 func MakeGitCommitWithText(withAdd bool, key string, title string, message ...string) error {
 	return makeGitCommitWith(false, withAdd, key, title, message...)
 }
 
+// MakeGitCommitWithEmoji create git commit by emoji format
 func MakeGitCommitWithEmoji(withAdd bool, key string, title string, message ...string) error {
 	return makeGitCommitWith(true, withAdd, key, title, message...)
 }
