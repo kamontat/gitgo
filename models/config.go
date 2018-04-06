@@ -155,6 +155,11 @@ func (user UserConfig) IsTextType() bool {
 		user.Config.Commit.Type == "t"
 }
 
+func (user UserConfig) SetValue(key string, value string) error {
+	// TODO: implement this method
+	return nil
+}
+
 type InputType struct {
 	Require bool
 	Auto    bool
