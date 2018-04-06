@@ -7,7 +7,6 @@ import (
 	flag "gitgo/flags"
 	"gitgo/models"
 	"reflect"
-	"strings"
 
 	"github.com/urfave/cli"
 )
@@ -19,27 +18,9 @@ func openConfigFile() {
 
 func getConfigByKey(keys string) (res string, err error) {
 	var returnable string
-	var v reflect.Value
-	var result interface{}
 	var exist bool
-	var key string
 
-	arr := strings.Split(keys, ".")
-	kind := reflect.Struct
-	val := reflect.ValueOf(models.GetUserConfig())
-
-	for _, e := range arr {
-		if kind == reflect.Struct {
-			key = e
-			// fmt.Println("key: ", key)
-			v = reflect.Indirect(val).FieldByName(strings.Title(key))
-			result = v.Interface()
-			val = reflect.ValueOf(result)
-			kind = v.Kind()
-		} else {
-			break
-		}
-	}
+	var kind, v = models.GetUserConfig().GetConfigReflectByKey(keys)
 
 	if kind == reflect.String {
 		returnable = v.String()
@@ -55,7 +36,7 @@ func getConfigByKey(keys string) (res string, err error) {
 	}
 
 	if !exist && kind == reflect.Struct {
-		json, _ := json.MarshalIndent(result, "", "  ")
+		json, _ := json.MarshalIndent(v.Interface(), "", "  ")
 		res = string(json)
 		return
 	}

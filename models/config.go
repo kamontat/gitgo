@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -155,7 +156,36 @@ func (user UserConfig) IsTextType() bool {
 		user.Config.Commit.Type == "t"
 }
 
+func (user UserConfig) GetConfigReflectByKey(keys string) (kind reflect.Kind, val reflect.Value) {
+	var key string
+	var arr []string
+	var valueOf reflect.Value
+	var result interface{}
+
+	arr = strings.Split(keys, ".")
+	kind = reflect.Struct
+	valueOf = reflect.ValueOf(user)
+
+	for _, e := range arr {
+		if kind == reflect.Struct {
+			key = e
+			// fmt.Println("key: ", key)
+			val = reflect.Indirect(valueOf).FieldByName(strings.Title(key))
+			kind = val.Kind()
+			if !val.IsValid() {
+				return
+			}
+			result = val.Interface()
+			valueOf = reflect.ValueOf(result)
+		} else {
+			break
+		}
+	}
+	return
+}
+
 func (user UserConfig) SetValue(key string, value string) error {
+
 	// TODO: implement this method
 	return nil
 }
