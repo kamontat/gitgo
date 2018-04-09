@@ -1,10 +1,11 @@
 package command
 
 import (
-	"gitgo/client"
-	"gitgo/flags"
-	"gitgo/models"
 	"os"
+
+	"github.com/kamontat/gitgo/client"
+	"github.com/kamontat/gitgo/flags"
+	"github.com/kamontat/gitgo/models"
 
 	"github.com/urfave/cli"
 )

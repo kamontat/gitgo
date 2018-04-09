@@ -3,10 +3,11 @@ package command
 import (
 	"encoding/json"
 	"fmt"
-	"gitgo/client"
-	flag "gitgo/flags"
-	"gitgo/models"
 	"reflect"
+
+	"github.com/kamontat/gitgo/client"
+	flag "github.com/kamontat/gitgo/flags"
+	"github.com/kamontat/gitgo/models"
 
 	"github.com/urfave/cli"
 )

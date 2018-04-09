@@ -1,8 +1,8 @@
 package command
 
 import (
-	flag "gitgo/flags"
-	"gitgo/models"
+	flag "github.com/kamontat/gitgo/flags"
+	"github.com/kamontat/gitgo/models"
 
 	"github.com/urfave/cli"
 )

@@ -1,8 +1,8 @@
 package command
 
 import (
-	client "gitgo/client"
-	flag "gitgo/flags"
+	client "github.com/kamontat/gitgo/client"
+	flag "github.com/kamontat/gitgo/flags"
 
 	"github.com/urfave/cli"
 )

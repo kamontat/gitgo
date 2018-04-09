@@ -7,9 +7,9 @@ import (
 
 	"github.com/urfave/cli"
 
-	"gitgo/commands"
-	flag "gitgo/flags"
-	"gitgo/models"
+	"github.com/kamontat/gitgo/commands"
+	flag "github.com/kamontat/gitgo/flags"
+	"github.com/kamontat/gitgo/models"
 )
 
 func main() {

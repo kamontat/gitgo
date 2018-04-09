@@ -293,7 +293,7 @@ func _setupPath(location string, filename string) string {
 		cli.HandleExitCoder(cli.NewExitError("user location or $GOPATH must be set", 2))
 	}
 	if location == "" {
-		return os.Getenv("GOPATH") + "/src/gitgo/config/" + filename
+		return os.Getenv("GOPATH") + "/src/github.com/kamontat/gitgo/config/" + filename
 	}
 	return location + "/" + filename
 }
@@ -346,7 +346,7 @@ func setupLocationConfig(dev bool) (location LocationConfig, err error) {
 	commitdbfile := "commit_list.yaml"
 
 	if !dev {
-		defaultLocation = home + "/.config/gitgo/config"
+		defaultLocation = home + "/.config/github.com/kamontat/gitgo/config"
 	}
 
 	location = LocationConfig{

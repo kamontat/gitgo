@@ -3,8 +3,9 @@ package client
 import (
 	"errors"
 	"fmt"
-	"gitgo/models"
 	"strings"
+
+	"github.com/kamontat/gitgo/models"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"

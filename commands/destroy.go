@@ -2,8 +2,9 @@ package command
 
 import (
 	"fmt"
-	"gitgo/client"
-	flag "gitgo/flags"
+
+	"github.com/kamontat/gitgo/client"
+	flag "github.com/kamontat/gitgo/flags"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"

@@ -1,7 +1,7 @@
 package command
 
 import (
-	"gitgo/client"
+	"github.com/kamontat/gitgo/client"
 
 	"github.com/urfave/cli"
 )
