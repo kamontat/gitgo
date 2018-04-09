@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...string) {
+func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...string) error {
 	var opt string
 	if withAdd {
 		opt = "-am"
@@ -26,7 +26,7 @@ func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...strin
 	if emoji {
 		str = fmt.Sprintf("%s: %s%s \n%s", key, title, sep, strings.Join(msg, " "))
 	}
-	rawGitCommand("commit", opt, str)
+	return rawGitCommand("commit", opt, str)
 }
 
 func _isExist(a string) bool {
@@ -128,6 +128,18 @@ func promptMessage() (m string, err error) {
 		return nil
 	})
 	return
+}
+
+// BypassInitialCommit will bypass all check, and commit as initial
+func BypassInitialCommit(emoji bool, key string) error {
+	if key == "init" {
+		if emoji {
+			return _gitCommit(true, "🎉", emoji, "Initial commit")
+		} else {
+			return _gitCommit(true, "init", emoji, "Initial commit")
+		}
+	}
+	return errors.New("wrong key, this exception shouldn't be throwed")
 }
 
 func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, message ...string) (err error) {

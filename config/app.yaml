@@ -8,6 +8,9 @@ author:
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
     -
+        version: 1.1.5
+        description: Fix 'initial commit' not work
+    -
         version: 1.1.4
         description: Fix initial commit usage text
     -
