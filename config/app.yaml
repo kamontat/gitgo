@@ -2,68 +2,49 @@ name: gitgo
 description: git commit as formatting
 since: '1, April 2018'
 author:
-    -
-        name: Kamontat Chantrachirathumrong
-        email: kamontat.c@hotmail.com
+  - name: Kamontat Chantrachirathumrong
+    email: kamontat.c@hotmail.com
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
-    -
-        version: 1.1.5
-        description: Fix 'initial commit' not work
-    -
-        version: 1.1.4
-        description: Fix initial commit usage text
-    -
-        version: 1.1.3
-        description: Fix commit format error
-    -
-        version: 1.1.2
-        description: update colorize some output command
-    -
-        version: 1.1.1
-        description: 'Auto install, on first time'
-    -
-        version: 1.1.0
-        description: 'Completed, all neccessary basic for git command'
-    -
-        version: 1.1.0-beta.2
-        description: 'Fix, command not throw ''config not found'''
-    -
-        version: 1.1.0-beta.1
-        description: 'Able to open, get location, and get config settings'
-    -
-        version: 1.0.0-beta.4
-        description: Add 'get location' of config files
-    -
-        version: 1.0.0-beta.3
-        description: Update commit format
-    -
-        version: 1.0.0-beta.2
-        description: Add 'Status' features
-    -
-        version: 1.0.0-beta.1
-        description: Completed 'Commit' features
-    -
-        version: 0.0.1-beta.1
-        description: Completed 'Commit' as TEXT feature
-    -
-        version: 0.0.1-alpha.7
-        description: Completed 'pull' feature
-    -
-        version: 0.0.1-alpha.6
-        description: Completed push feature and improve usability
-    -
-        version: 0.0.1-alpha.5
-        description: Add 'Push-Set' command and improve help code
-    -
-        version: 0.0.1-alpha.4
-        description: Add 'Push' command
-    -
-        version: 0.0.1-alpha.3
-        description: Add 'Destroy' and helper flags/commands
-    -
-        version: 0.0.1-alpha.2
-        description: Add 'Init' and 'Add' commands
-    -
-        version: 0.0.1-alpha.1
-        description: Start project
+  - version: 1.1.6
+    description: Fix 'push' command
+  - version: 1.1.5
+    description: Fix 'initial commit' not work
+  - version: 1.1.4
+    description: Fix initial commit usage text
+  - version: 1.1.3
+    description: Fix commit format error
+  - version: 1.1.2
+    description: update colorize some output command
+  - version: 1.1.1
+    description: 'Auto install, on first time'
+  - version: 1.1.0
+    description: 'Completed, all neccessary basic for git command'
+  - version: 1.1.0-beta.2
+    description: 'Fix, command not throw ''config not found'''
+  - version: 1.1.0-beta.1
+    description: 'Able to open, get location, and get config settings'
+  - version: 1.0.0-beta.4
+    description: Add 'get location' of config files
+  - version: 1.0.0-beta.3
+    description: Update commit format
+  - version: 1.0.0-beta.2
+    description: Add 'Status' features
+  - version: 1.0.0-beta.1
+    description: Completed 'Commit' features
+  - version: 0.0.1-beta.1
+    description: Completed 'Commit' as TEXT feature
+  - version: 0.0.1-alpha.7
+    description: Completed 'pull' feature
+  - version: 0.0.1-alpha.6
+    description: Completed push feature and improve usability
+  - version: 0.0.1-alpha.5
+    description: Add 'Push-Set' command and improve help code
+  - version: 0.0.1-alpha.4
+    description: Add 'Push' command
+  - version: 0.0.1-alpha.3
+    description: Add 'Destroy' and helper flags/commands
+  - version: 0.0.1-alpha.2
+    description: Add 'Init' and 'Add' commands
+  - version: 0.0.1-alpha.1
+    description: Start project

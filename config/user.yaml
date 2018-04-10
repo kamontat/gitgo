@@ -1,14 +1,14 @@
 config:
-    commit:
-        type: text # text | emoji
-        emoji: string # string | emoji
-        key:
-            require: true # true | false 
-        title:
-            require: true # true | false 
-            auto: false # true | false
-            size: 50 # maximum charecter size
-        message:
-            require: true # true | false 
-        showsize: 8 # list when show the 'commit list'
-    editor: '' # vim | nano | other cli..
+  commit:
+    type: text # text | emoji
+    emoji: string # string | emoji
+    key:
+      require: true # true | false 
+    title:
+      require: true # true | false 
+      auto: false # true | false
+      size: 50 # maximum charecter size
+    message:
+      require: true # true | false 
+    showsize: 8 # list when show the 'commit list'
+  editor: '' # vim | nano | other cli..
