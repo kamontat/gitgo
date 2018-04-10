@@ -31,7 +31,7 @@ func PushGit() cli.Command {
 				return cli.NewExitError("Never set git remote!", 4)
 			}
 
-			err := client.GitPush(flag.IsForce(), flag.GetRepository(), c.Args().Tail())
+			err := client.GitPush(flag.IsForce(), flag.GetRepository(), c.Args())
 			if err != nil {
 				return cli.NewExitError(err, 4)
 			}
