@@ -22,6 +22,7 @@ func PushGit() cli.Command {
 		},
 		Subcommands: []cli.Command{
 			AddSetPush(),
+			AddDeployment(),
 		},
 		Action: func(c *cli.Context) error {
 			if client.GitIsNotInit() {
