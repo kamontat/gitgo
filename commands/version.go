@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// AddVersion add cli command of show version
 func AddVersion(appConfig models.AppConfig) cli.Command {
 	return cli.Command{
 		Name:    "version",
@@ -22,6 +23,7 @@ func AddVersion(appConfig models.AppConfig) cli.Command {
 	}
 }
 
+// AddListVersion add cli command of show every versions
 func AddListVersion(appConfig models.AppConfig) cli.Command {
 	return cli.Command{
 		Name:    "list-version",

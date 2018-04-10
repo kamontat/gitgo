@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
+// AddConfigLocation add cli command for getting location of config file
 func AddConfigLocation() cli.Command {
 	return cli.Command{
 		Name:    "location",

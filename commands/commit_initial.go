@@ -14,6 +14,10 @@ func AddCommitInital(emoji bool) cli.Command {
 		Usage:     "Create default initial commit",
 		UsageText: "gitgo commit|cm|c init|i",
 		Action: func(c *cli.Context) error {
+			if client.GitIsNotInit() {
+				return cli.NewExitError("Never initial!", 4)
+			}
+
 			return client.BypassInitialCommit(emoji, "init")
 		},
 	}

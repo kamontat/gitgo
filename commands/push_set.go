@@ -10,10 +10,10 @@ import (
 // AddSetPush will generate cli command of 'git remote add' and 'git push -u'
 func AddSetPush() cli.Command {
 	return cli.Command{
-		Name:      "set",
-		Aliases:   []string{"s"},
-		Usage:     "set push server and remote, and push code",
-		UsageText: "gitgo push|p set|s [--force|-f] [--repo|-r <repo>] [--branch|-b <branch>] <link>",
+		Name:      "initial",
+		Aliases:   []string{"init", "i", "set", "s"},
+		Usage:     "initial/set push server and remote, and push code",
+		UsageText: "gitgo push|p init|i|set|s [--force|-f] [--repo|-r <repo>] [--branch|-b <branch>] <link>",
 		Flags: []cli.Flag{
 			flag.ForceFlag("setup and push code"),
 			flag.CustomRepoFlag(),

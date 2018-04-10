@@ -6,6 +6,8 @@ author:
     email: kamontat.c@hotmail.com
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
+  - version: 1.2.0
+    description: Update push algorithm and validator in commit
   - version: 1.1.6
     description: Fix 'push' command
   - version: 1.1.5
