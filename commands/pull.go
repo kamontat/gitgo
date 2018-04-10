@@ -18,6 +18,7 @@ func PullGit() cli.Command {
 		UsageText: "gitgo pull|P [--force|-f] [--repo|-r <repo>] [<branch>]",
 		Flags: []cli.Flag{
 			flag.ForceFlag("pull server code"),
+			flag.CustomRepoFlag(),
 		},
 		Action: func(c *cli.Context) error {
 			if client.GitIsNotInit() {
@@ -26,7 +27,7 @@ func PullGit() cli.Command {
 			if client.GitDontHaveRemote() {
 				return cli.NewExitError("Never set git remote!", 4)
 			}
-			err := client.GitPull(flag.IsForce(), flag.GetRepository(), c.Args().Tail())
+			err := client.GitPull(flag.IsForce(), flag.GetRepository(), c.Args())
 			if err != nil {
 				return cli.NewExitError(err, 4)
 			}
