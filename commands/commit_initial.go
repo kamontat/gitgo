@@ -18,7 +18,7 @@ func AddCommitInital(emoji bool) cli.Command {
 				return cli.NewExitError("Never initial!", 4)
 			}
 
-			return client.BypassInitialCommit(emoji, "init")
+			return client.BypassCommit(emoji, "init")
 		},
 	}
 }

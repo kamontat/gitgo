@@ -130,14 +130,18 @@ func promptMessage() (m string, err error) {
 	return
 }
 
-// BypassInitialCommit will bypass all check, and commit as initial
-func BypassInitialCommit(emoji bool, key string) error {
+// BypassCommit will bypass all check, and commit as initial
+func BypassCommit(emoji bool, key string, args ...string) error {
 	if key == "init" {
 		if emoji {
 			return _gitCommit(true, "🎉", emoji, "Initial commit")
-		} else {
-			return _gitCommit(true, "init", emoji, "Initial commit")
 		}
+		return _gitCommit(true, "init", emoji, "Initial commit")
+	} else if key == "release" {
+		if emoji {
+			return _gitCommit(true, "📌", emoji, "Release new version "+args[0])
+		}
+		return _gitCommit(true, "release", emoji, "Release new version "+args[0])
 	}
 	return errors.New("wrong key, this exception shouldn't be throwed")
 }
