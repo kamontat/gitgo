@@ -161,10 +161,16 @@ Git commit with default format and custom syntax. Next plan this will able to cu
 
 - `gitgo commit` - commit with [config](#configuration) `type` and this will prompt information to user, for generating commit message
 - `gitgo commit emoji|moji|e` - commit message with `emoji type`
-- `gitgo commit emoji|moji|e initial|init|i` - initial commit message with `emoji type`
 - `gitgo commit text|t` - commit message with `text type`
+
+Create commit with special actions
+
+- `gitgo commit initial|init|i` - generate initial commit with default message and commit [config](#configuration) `type`
+- `gitgo commit release|r` - generate release commit with default message, including auto generate git tag
+- `gitgo commit emoji|moji|e initial|init|i` - initial commit message with `emoji type`
+- `gitgo commit emoji|moji|e release|r` - create release commit message with `emoji type`
 - `gitgo commit text|t initial|init|i` - initial commit message with `text type`
-- `gitgo commit initial|init|i` - generate initial commit with default message and [config](#configuration) `type`
+- `gitgo commit text|t release|r` - create release commit message with `text type`
 
 | Options               | Description                                          |
 |-----------------------|------------------------------------------------------|
