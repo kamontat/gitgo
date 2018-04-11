@@ -39,6 +39,9 @@ func AddCommitRelease(emoji bool) cli.Command {
 				return cli.NewExitError("Never initial!", 4)
 			}
 			tag := c.Args().First()
+			if tag == "" {
+				return cli.NewExitError("input tag MUST be exist!", 5)
+			}
 			err = client.BypassCommit(emoji, "release", tag)
 			if flag.IsAuto() {
 				return client.SetTag(tag)
