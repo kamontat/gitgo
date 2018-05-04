@@ -5,8 +5,8 @@ import (
 
 	"github.com/kamontat/gitgo/client"
 	flag "github.com/kamontat/gitgo/flags"
+	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 )
 
@@ -26,13 +26,14 @@ func DestroyGit() cli.Command {
 				if flag.IsForce() {
 					client.GitDelete()
 				} else {
-					prompt := promptui.Prompt{
-						Label:     "Delete git",
-						IsVimMode: true,
-						IsConfirm: true,
+					result := false
+					prompt := &survey.Confirm{
+						Message: "Do you sure?",
+						Help:    "git directory will be deleted by 'rm -r' command",
 					}
-					result, err := prompt.Run()
-					if err == nil && result == "y" {
+					survey.AskOne(prompt, &result, nil)
+
+					if result {
 						client.GitDelete()
 					} else {
 						fmt.Println("Cancel delete git!")

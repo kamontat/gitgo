@@ -5,19 +5,20 @@ import (
 
 	"github.com/kamontat/gitgo/client"
 	flag "github.com/kamontat/gitgo/flags"
-	"github.com/manifoldco/promptui"
+	survey "gopkg.in/AlecAivazis/survey.v1"
 
 	"github.com/urfave/cli"
 )
 
 func promptTag(tag string) error {
-	prompt := promptui.Prompt{
-		Label:     "Auto create tag name: " + tag,
-		IsVimMode: true,
-		IsConfirm: true,
+	result := false
+	prompt := &survey.Confirm{
+		Message: "Auto create tag name: " + tag,
+		Help:    "this will auto create git tag for you",
 	}
-	result, err := prompt.Run()
-	if err == nil && result == "y" {
+	survey.AskOne(prompt, &result, nil)
+
+	if result {
 		return client.SetTag(tag)
 	}
 	fmt.Println("Not create new tag")
