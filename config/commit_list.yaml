@@ -40,3 +40,10 @@
       icon: "\U0001F4E0"
       name: fax
   title: Log
+- name: Release
+  key:
+    text: release
+    emoji:
+      icon: "\U0001F393"
+      name: mortar_board
+  title: Release new version
