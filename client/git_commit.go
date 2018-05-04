@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/urfave/cli"
+
 	"github.com/kamontat/gitgo/models"
 
 	"github.com/manifoldco/promptui"
-	"github.com/urfave/cli"
 )
 
 func _gitCommit(withAdd bool, key string, emoji bool, title string, msg ...string) error {
@@ -146,126 +147,236 @@ func BypassCommit(emoji bool, key string, args ...string) error {
 	return errors.New("wrong key, this exception shouldn't be throwed")
 }
 
-func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, message ...string) (err error) {
-	keyExist := _isExist(key)
-	titleExist := _isExist(title)
-	messageExist := _isNotEmpty(message)
+// -----------------------------------------------------------------------------------------------------
 
-	skipKey := !models.GetUserConfig().Config.Commit.Key.Require
-	skipTitle := !models.GetUserConfig().Config.Commit.Title.Require
-	skipMessage := !models.GetUserConfig().Config.Commit.Message.Require
+func setKeyType(withEmoji bool, commitDB models.CommitDB) string {
+	if withEmoji {
+		if models.GetUserConfig().Config.Commit.Emoji == "string" ||
+			models.GetUserConfig().Config.Commit.Emoji == "str" ||
+			models.GetUserConfig().Config.Commit.Emoji == "text" ||
+			models.GetUserConfig().Config.Commit.Emoji == "s" ||
+			models.GetUserConfig().Config.Commit.Emoji == "t" {
+			return fmt.Sprintf(":%s:", commitDB.Key.Emoji.Name)
+		}
+		return commitDB.Key.Emoji.Icon
+	}
+	return commitDB.Key.Text
+}
 
+func updateKey(withEmoji bool, k string) (key string, title string, err error) {
+	keyExist := _isExist(k)
+	// TODO: prompt key from user
+	if keyExist {
+		key = k
+	}
+
+	var commitDB models.CommitDB
+	commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
+	if err != nil {
+		return
+	}
+	key = setKeyType(withEmoji, commitDB)
+
+	fmt.Println(key)
+
+	return
+}
+
+func updateTitle(t string) (title string, err error) {
+	titleExist := _isExist(t)
+	if titleExist {
+		title = t
+		return
+	}
+	return
+}
+
+func updateMessage(msg ...string) (message []string, err error) {
+	messageExist := _isNotEmpty(msg)
+	if messageExist {
+		message = msg
+		return
+	}
+	return
+}
+
+func validateConfiguration() error {
+	// key and title cannot set not required together
 	if !models.GetUserConfig().Config.Commit.Key.Require &&
 		!models.GetUserConfig().Config.Commit.Title.Require {
 		return cli.NewExitError("either 'KEY' or 'TITLE' must be required", 9)
 	}
-
-	// KEY
-	if keyExist && !skipKey { // exist and required
-		var commitDB models.CommitDB
-		// convert string key -> commit db
-		commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
-		if err != nil {
-			return
-		}
-		if emoji {
-			key = commitDB.Key.Emoji.Icon
-		} else {
-			key = commitDB.Key.Text
-		}
-
-		// update title, if auto is true, no title exist from option
-		if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
-			if emoji {
-				title = commitDB.Title
-			} else {
-				title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
-				if err != nil {
-					return
-				}
-			}
-		}
-	} else if !skipKey {
-		var t string
-		// prompt key and title
-		if emoji {
-			key, t, err = promptEmojiKey()
-		} else {
-			key, t, err = promptTextKey()
-		}
-		if err != nil {
-			return
-		}
-		// only title auto have been set and no title before
-		if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
-			title = t
-		}
-	}
-
-	// Update skip only not skipped
-	if !skipKey {
-		keyExist = _isExist(key)
-	}
-	if !skipTitle {
-		titleExist = _isExist(title)
-	}
-
-	// log
-	fmt.Printf(
-		"Key=\"%s\" (%t), Title=\"%s\" (%t)\n",
-		key,
-		keyExist,
-		title,
-		titleExist,
-	)
-
-	// TITLE
-	if !titleExist && !skipTitle {
-		if emoji {
-			var commitDB models.CommitDB
-			commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
-			if err != nil {
-				return
-			}
-			if models.GetUserConfig().Config.Commit.Title.Auto {
-				title = commitDB.Title
-			} else {
-				title, err = promptTitle()
-				if err != nil {
-					return
-				}
-			}
-		} else {
-			if models.GetUserConfig().Config.Commit.Title.Auto {
-				title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
-				if err != nil {
-					return
-				}
-			} else {
-				title, err = promptTitle()
-				if err != nil {
-					return
-				}
-			}
-		}
-		titleExist = _isExist(title)
-	}
-
-	// MESSAGE
-	if !messageExist && !skipMessage {
-		var m string
-		m, err = promptMessage()
-		if err != nil {
-			return
-		}
-		if m != "" {
-			message = []string{m}
-			messageExist = _isNotEmpty(message)
-		}
-	}
-
-	_gitCommit(withAdd, key, emoji, title, message...)
 	return nil
+}
+
+func validateCommitMessage(key string, title string, msg ...string) error {
+	str := ""
+	if !_isExist(key) {
+		str += "Key "
+	}
+	if !_isExist(title) {
+		str += "Title "
+	}
+	if !_isNotEmpty(msg) {
+		str += "Message "
+	}
+
+	if _isExist(str) {
+		return cli.NewExitError(str+" is/are not exist!", 1)
+	}
+	return nil
+}
+
+func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, message ...string) (err error) {
+	skipKey := !models.GetUserConfig().Config.Commit.Key.Require
+	skipTitle := !models.GetUserConfig().Config.Commit.Title.Require
+	skipMessage := !models.GetUserConfig().Config.Commit.Message.Require
+
+	var newKey, newTitle string
+	var newMessage []string
+
+	err = validateConfiguration()
+	if err != nil {
+		return err
+	}
+
+	// key management
+	if !skipKey {
+		newKey, newTitle, err = updateKey(emoji, key)
+		if err != nil {
+			return err
+		}
+	}
+
+	// title management
+	if !skipTitle && newTitle == "" {
+		newTitle, err = updateTitle(title)
+		if err != nil {
+			return err
+		}
+	}
+
+	// message management
+	if !skipMessage {
+		newMessage, err = updateMessage(message...)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = validateCommitMessage(newKey, newTitle, newMessage...)
+	if err != nil {
+		return err
+	}
+
+	return _gitCommit(withAdd, key, emoji, title, message...)
+
+	// // KEY
+	// if keyExist && !skipKey { // exist and required
+	// 	var commitDB models.CommitDB
+	// 	// convert string key -> commit db
+	// 	commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	if emoji {
+	// 		key = commitDB.Key.Emoji.Icon
+	// 	} else {
+	// 		key = commitDB.Key.Text
+	// 	}
+
+	// 	// update title, if auto is true, no title exist from option
+	// 	if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
+	// 		if emoji {
+	// 			title = commitDB.Title
+	// 		} else {
+	// 			title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
+	// 			if err != nil {
+	// 				return
+	// 			}
+	// 		}
+	// 	}
+	// } else if !skipKey {
+	// 	var t string
+	// 	// prompt key and title
+	// 	if emoji {
+	// 		key, t, err = promptEmojiKey()
+	// 	} else {
+	// 		key, t, err = promptTextKey()
+	// 	}
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	// only title auto have been set and no title before
+	// 	if models.GetUserConfig().Config.Commit.Title.Auto && !titleExist {
+	// 		title = t
+	// 	}
+	// }
+
+	// // Update skip only not skipped
+	// if !skipKey {
+	// 	keyExist = _isExist(key)
+	// }
+	// if !skipTitle {
+	// 	titleExist = _isExist(title)
+	// }
+
+	// // log
+	// fmt.Printf(
+	// 	"Key=\"%s\" (%t), Title=\"%s\" (%t)\n",
+	// 	key,
+	// 	keyExist,
+	// 	title,
+	// 	titleExist,
+	// )
+
+	// // TITLE
+	// if !titleExist && !skipTitle {
+	// 	if emoji {
+	// 		var commitDB models.CommitDB
+	// 		commitDB, err = models.GetCommitDBConfig().GetCommitDBByName(key)
+	// 		if err != nil {
+	// 			return
+	// 		}
+	// 		if models.GetUserConfig().Config.Commit.Title.Auto {
+	// 			title = commitDB.Title
+	// 		} else {
+	// 			title, err = promptTitle()
+	// 			if err != nil {
+	// 				return
+	// 			}
+	// 		}
+	// 	} else {
+	// 		if models.GetUserConfig().Config.Commit.Title.Auto {
+	// 			title, err = models.GetCommitDBConfig().SearchTitleByTextKey(key)
+	// 			if err != nil {
+	// 				return
+	// 			}
+	// 		} else {
+	// 			title, err = promptTitle()
+	// 			if err != nil {
+	// 				return
+	// 			}
+	// 		}
+	// 	}
+	// 	titleExist = _isExist(title)
+	// }
+
+	// // MESSAGE
+	// if !messageExist && !skipMessage {
+	// 	var m string
+	// 	m, err = promptMessage()
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	if m != "" {
+	// 		message = []string{m}
+	// 		messageExist = _isNotEmpty(message)
+	// 	}
+	// }
+
+	// _gitCommit(withAdd, key, emoji, title, message...)
+	// return nil
 }
 
 // MakeGitCommitWithText create git commit by text format

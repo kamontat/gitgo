@@ -140,6 +140,11 @@ func (db CommitConfig) GetCommitDBByEmojiIcon(key string) (result CommitDB, err 
 
 // GetCommitDBByName get commit db struct by commit name
 func (db CommitConfig) GetCommitDBByName(key string) (result CommitDB, err error) {
+	if key == "" {
+		err = errors.New("Input key is empty")
+		return
+	}
+
 	results := filter(db.DB, func(input CommitDB) bool {
 		return strings.Contains(strings.ToLower(input.Name), key)
 		// return strings.ToLower(input.Name) == strings.ToLower(key)
