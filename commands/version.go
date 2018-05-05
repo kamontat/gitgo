@@ -1,6 +1,8 @@
 package command
 
 import (
+	"fmt"
+
 	flag "github.com/kamontat/gitgo/flags"
 	"github.com/kamontat/gitgo/models"
 
@@ -14,10 +16,14 @@ func AddVersion(appConfig models.AppConfig) cli.Command {
 		Aliases: []string{"v"},
 		Usage:   "show version, same as --version",
 		Flags: []cli.Flag{
-			flag.FullFlag(),
+			flag.AllFlag(),
 		},
 		Action: func(c *cli.Context) error {
-			appConfig.LatestVersion().ChooseToPrintVersion(flag.IsFull())
+			if flag.IsAll() {
+				fmt.Println(appConfig.GetVersionLong(0))
+			} else {
+				fmt.Println(appConfig.GetVersionShort(0))
+			}
 			return nil
 		},
 	}
@@ -30,10 +36,14 @@ func AddListVersion(appConfig models.AppConfig) cli.Command {
 		Aliases: []string{"L"},
 		Usage:   "list every version, same as --list-version",
 		Flags: []cli.Flag{
-			flag.FullFlag(),
+			flag.AllFlag(),
 		},
 		Action: func(c *cli.Context) error {
-			appConfig.ChooseToPrintEveryVersions(flag.IsFull())
+			if flag.IsAll() {
+				appConfig.PrintAllVersionLong()
+			} else {
+				appConfig.PrintAllVersionShort()
+			}
 			return nil
 		},
 	}

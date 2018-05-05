@@ -11,4 +11,4 @@ config:
     message:
       require: true # true | false 
     showsize: 8 # list when show the 'commit list'
-  editor: '' # vim | nano | other cli..
+  editor: vim # $EDITOR | vim | nano | other cli..

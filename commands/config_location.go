@@ -18,12 +18,18 @@ func AddConfigLocation() cli.Command {
 			flag.AllFlag(),
 		},
 		Action: func(c *cli.Context) error {
+			dev := models.GetAppLocation().Dev
+			prod := models.GetAppLocation().Prod
 			if flag.IsAll() {
-				fmt.Printf("App configuration:  %s\n", models.GetAppLocation().AppLocation)
-				fmt.Printf("User configuration: %s\n", models.GetAppLocation().UserLocation)
-				fmt.Printf("Commit database:    %s\n", models.GetAppLocation().CommitDBLocation)
+				fmt.Printf("(Dev)  App    configuration:  %s\n", dev.App)
+				fmt.Printf("(Prod) App    configuration:  %s\n", prod.App)
+				fmt.Printf("(Dev)  User   configuration:  %s\n", dev.User)
+				fmt.Printf("(Prod) User   configuration:  %s\n", prod.User)
+				fmt.Printf("(Dev)  Commit configuration:  %s\n", dev.CommitList)
+				fmt.Printf("(Prod) Commit configuration:  %s\n", prod.CommitList)
 			} else {
-				fmt.Printf("User configuration: %s\n", models.GetAppLocation().UserLocation)
+				fmt.Printf("(Dev)  User configuration:  %s\n", dev.User)
+				fmt.Printf("(Prod) User configuration:  %s\n", prod.User)
 			}
 			return nil
 		},

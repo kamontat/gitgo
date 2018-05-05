@@ -86,8 +86,8 @@ func CommitGit() cli.Command {
 		Subcommands: []cli.Command{
 			commitAsText(),
 			commitAsEmoji(),
-			AddCommitInital(models.GetUserConfig().IsEmojiType()),
-			AddCommitRelease(models.GetUserConfig().IsEmojiType()),
+			AddCommitInital(models.GetUserConfig().IsTextCommit()),
+			AddCommitRelease(models.GetUserConfig().IsEmojiCommit()),
 		},
 		Action: func(c *cli.Context) error {
 			if client.GitIsNotInit() {

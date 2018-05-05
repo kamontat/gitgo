@@ -1,10 +1,10 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -15,162 +15,38 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func filter(vs []CommitDB, f func(CommitDB) bool) []CommitDB {
-	vsf := make([]CommitDB, 0)
-	for _, v := range vs {
-		if f(v) {
-			vsf = append(vsf, v)
-		}
-	}
-	return vsf
-}
+// ##########################################
+// ## Object Representation                ##
+// ##########################################
 
-// Config every program config value
-type Config struct {
-	Location     LocationConfig
-	AppConfig    AppConfig
-	UserConfig   UserConfig
-	CommitConfig CommitConfig
+// Location is the location of config files
+type Location struct {
+	Dir        string
+	App        string
+	User       string
+	CommitList string
 }
 
 // LocationConfig location of every settings of the application
 type LocationConfig struct {
-	DevConfigLocation  string
-	ProdConfigLocation string
-	AppLocation        string
-	UserLocation       string
-	CommitDBLocation   string
+	Dev  Location
+	Prod Location
 }
 
-// AppConfig application config, from 'app.yaml'
+// AppConfig will represent application config file (app.yaml)
 type AppConfig struct {
 	Name        string
 	Description string
-	Versions    []VersionConfig
+	Versions    []Version
 	Since       string
 	Authors     []cli.Author
 	License     string
 }
 
-// LatestVersion get latest version of application config
-func (appConfig AppConfig) LatestVersion() VersionConfig {
-	return appConfig.Versions[0]
-}
-
-// VersionConfig version config, contains version number, and description
-type VersionConfig struct {
-	Version     string
+// Version is object represent version in app config (app.yaml)
+type Version struct {
+	Tag         string
 	Description string
-}
-
-// ChooseToPrintEveryVersions choose format to print every version that exist in app config
-func (appConfig AppConfig) ChooseToPrintEveryVersions(full bool) {
-	for _, v := range appConfig.Versions {
-		v.ChooseToPrintVersion(full)
-	}
-}
-
-// PrintEveryVersions print every version that exist in app config
-func (appConfig AppConfig) PrintEveryVersions() {
-	for _, v := range appConfig.Versions {
-		v.PrintVersion()
-	}
-}
-
-// PrintFullEveryVersions print every version (in full format) that exist in app config
-func (appConfig AppConfig) PrintFullEveryVersions() {
-	for _, v := range appConfig.Versions {
-		v.PrintFullVersion()
-	}
-}
-
-// PrintVersion print version in application format
-func (v VersionConfig) PrintVersion() {
-	name := GetAppConfig().Name
-	fmt.Printf("%s version %s\n", name, v.Version)
-}
-
-// ChooseToPrintVersion choose to print version in application format
-func (v VersionConfig) ChooseToPrintVersion(full bool) {
-	if full {
-		v.PrintFullVersion()
-	} else {
-		v.PrintVersion()
-	}
-}
-
-// PrintFullVersion print version in full application format
-func (v VersionConfig) PrintFullVersion() {
-	name := GetAppConfig().Name
-	fmt.Printf("%s version %s: %s\n", name, v.Version, v.Description)
-}
-
-// CommitConfig usually this struct will be the commit list database
-type CommitConfig struct {
-	DB []CommitDB
-}
-
-// CommitDB commit struct in yaml files
-type CommitDB struct {
-	Name string
-	Key  struct {
-		Text  string
-		Emoji struct {
-			Icon string
-			Name string
-		}
-	}
-	Title string
-}
-
-// GetCommitDBByEmojiIcon get commit db struct by icon
-func (db CommitConfig) GetCommitDBByEmojiIcon(key string) (result CommitDB, err error) {
-	results := filter(db.DB, func(input CommitDB) bool {
-		// return strings.Contains(input.Key.Emoji.Icon, key)
-		return strings.ToLower(input.Key.Emoji.Icon) == strings.ToLower(key)
-	})
-
-	if len(results) == 0 {
-		err = errors.New(key + " key not exist!, (get by emoji icon)")
-		return
-	}
-	result = results[0]
-	return
-}
-
-// GetCommitDBByName get commit db struct by commit name
-func (db CommitConfig) GetCommitDBByName(key string) (result CommitDB, err error) {
-	if key == "" {
-		err = errors.New("Input key is empty")
-		return
-	}
-
-	results := filter(db.DB, func(input CommitDB) bool {
-		return strings.Contains(strings.ToLower(input.Name), key)
-		// return strings.ToLower(input.Name) == strings.ToLower(key)
-	})
-
-	if len(results) == 0 {
-		err = errors.New(key + " key not exist!, (get by commit name)")
-		return
-	}
-	result = results[0]
-	return
-}
-
-// SearchTitleByTextKey get commit title by key text
-func (db CommitConfig) SearchTitleByTextKey(key string) (res string, err error) {
-	results := filter(db.DB, func(input CommitDB) bool {
-		return strings.Contains(input.Key.Text, key)
-		// return input.Key.Text == key
-	})
-
-	if len(results) == 0 {
-		err = errors.New(key + " key not exist!, (get by text)")
-		return
-	}
-	res = results[0].Title
-	return
 }
 
 // UserConfig user struct from 'user.yaml'
@@ -188,22 +64,204 @@ type UserConfig struct {
 	}
 }
 
-// IsEmojiType check is user choose emoji commit
-func (user UserConfig) IsEmojiType() bool {
-	return user.Config.Commit.Type == "emoji" ||
-		user.Config.Commit.Type == "moji" ||
-		user.Config.Commit.Type == "e"
+// InputType of commit input
+type InputType struct {
+	Require bool
+	Auto    bool
+	Size    int
 }
 
-// IsTextType check is user choose text commit
-func (user UserConfig) IsTextType() bool {
-	return user.Config.Commit.Type == "text" ||
-		user.Config.Commit.Type == "t"
+// Commit is representation of commit structure of commit list file (commit_list.yaml)
+type Commit struct {
+	Name string
+	Key  struct {
+		Text  string
+		Emoji struct {
+			Icon string
+			Name string
+		}
+	}
+	Title string
 }
 
-// Save save new setting to config file
-func (user UserConfig) Save(value reflect.Value) (err error) {
-	location := GetAppLocation().UserLocation
+// ConfigurationFile is the config in application
+type ConfigurationFile struct {
+	Location   LocationConfig
+	App        AppConfig
+	User       UserConfig
+	CommitList []Commit
+}
+
+// ##########################################
+// ## Raw method                           ##
+// ##########################################
+
+func _getDevConfigLocation() (str string, err error) {
+	goPath := os.Getenv("GOPATH")
+	if goPath == "" {
+		return "", cli.NewExitError("$GOPATH must be set", 2)
+	}
+	return fmt.Sprintf("%s/src/github.com/kamontat/gitgo/config", goPath), nil
+}
+
+func _getProdConfigLocation() (str string, err error) {
+	home := os.Getenv("HOME")
+	if home == "" {
+		return "", cli.NewExitError("$HOME must be set", 2)
+	}
+	return fmt.Sprintf("%s/.config/github.com/kamontat/gitgo/config", home), nil
+}
+
+func _appendPath(location string, filename string) (result string, err error) {
+	// set default location as dev location
+	if location == "" {
+		return "", cli.NewExitError("input location not exist", 99)
+	}
+	// get append path
+	result = filepath.Clean(location + "/" + filename)
+	return
+}
+
+func _setupLocation(home string) (location Location, err error) {
+	var appfile = "app.yaml"
+	var userfile = "user.yaml"
+	var commitlistfile = "commit_list.yaml"
+
+	var a, u, c string
+
+	a, err = _appendPath(home, appfile)
+	if err != nil {
+		return
+	}
+
+	u, err = _appendPath(home, userfile)
+	if err != nil {
+		return
+	}
+
+	c, err = _appendPath(home, commitlistfile)
+	if err != nil {
+		return
+	}
+
+	return Location{
+		Dir:        home,
+		App:        a,
+		User:       u,
+		CommitList: c,
+	}, nil
+}
+
+// ##########################################
+// ## Helper Method                        ##
+// ##########################################
+
+// ------------------------------------------
+// || Setup Configuration                  ||
+// ------------------------------------------
+
+func setupLocationConfig() (location LocationConfig, err error) {
+	// set dev location
+	lo, err := _getDevConfigLocation()
+	if err != nil {
+		return
+	}
+
+	devLoc, err := _setupLocation(filepath.Clean(lo))
+	if err != nil {
+		return
+	}
+
+	// set prod location
+	lo, err = _getProdConfigLocation()
+	if err != nil {
+		return
+	}
+
+	prodLoc, err := _setupLocation(filepath.Clean(lo))
+	if err != nil {
+		return
+	}
+
+	location = LocationConfig{
+		Dev:  devLoc,
+		Prod: prodLoc,
+	}
+	return
+}
+
+func setupAppConfig(location string) (app AppConfig, err error) {
+	// fmt.Println("setup app config")
+	file, err := ioutil.ReadFile(location)
+	if err != nil {
+		return
+	}
+
+	yaml.Unmarshal(file, &app)
+	return
+}
+
+func setupUserConfig(location string) (user UserConfig, err error) {
+	file, err := ioutil.ReadFile(location)
+	if err != nil {
+		return
+	}
+
+	yaml.Unmarshal(file, &user)
+	return
+}
+
+func setupCommitConfig(location string) (commit []Commit, err error) {
+	file, err := ioutil.ReadFile(location)
+	if err != nil {
+		return
+	}
+
+	yaml.Unmarshal(file, &commit)
+	return
+}
+
+func setupConfigFile() (config ConfigurationFile, err error) {
+	location, err := setupLocationConfig()
+	if err != nil {
+		return
+	}
+
+	err = installGitgo(location)
+	if err != nil {
+		return
+	}
+
+	app, err := setupAppConfig(location.Prod.App)
+	if err != nil {
+		return
+	}
+
+	user, err := setupUserConfig(location.Prod.User)
+	if err != nil {
+		return
+	}
+
+	commit, err := setupCommitConfig(location.Prod.CommitList)
+	if err != nil {
+		return
+	}
+
+	return ConfigurationFile{
+		Location:   location,
+		App:        app,
+		User:       user,
+		CommitList: commit,
+	}, nil
+}
+
+// ------------------------------------------
+// || User Configuration                   ||
+// ------------------------------------------
+
+// save will save input to config file (user.yaml)
+func (user UserConfig) save(value reflect.Value) (err error) {
+	location := GetAppLocation().Prod.User
 	var out []byte
 	out, err = yaml.Marshal(user)
 	if err != nil {
@@ -217,13 +275,13 @@ func (user UserConfig) Save(value reflect.Value) (err error) {
 	return ioutil.WriteFile(location, out, os.ModePerm)
 }
 
-// GetConfigReflectByKey get reflect Kind, Value from keys of yaml file.
+// GetReflectByKey get reflect Kind, Value from keys of yaml file.
 //
 // Format: separate by '.'
 //
 // Example: config
 //          user.commit.type
-func (user UserConfig) GetConfigReflectByKey(keys string) (kind reflect.Kind, val reflect.Value) {
+func (user UserConfig) getReflectByKey(keys string) (kind reflect.Kind, val reflect.Value) {
 	var key string
 	var arr []string
 	var valueOf reflect.Value
@@ -251,9 +309,8 @@ func (user UserConfig) GetConfigReflectByKey(keys string) (kind reflect.Kind, va
 	return
 }
 
-// SetValue set user config by key and value inside yaml file
-func (user UserConfig) SetValue(key string, value string) (err error) {
-	reflectKind, reflectValue := user.GetConfigReflectByKey(key)
+func (user UserConfig) setValue(key string, value string) (err error) {
+	reflectKind, reflectValue := user.getReflectByKey(key)
 
 	if reflectValue.IsValid() {
 		if reflectValue.CanSet() {
@@ -283,168 +340,233 @@ func (user UserConfig) SetValue(key string, value string) (err error) {
 		return errors.New("Invalid value")
 	}
 
-	return user.Save(reflectValue)
+	return user.save(reflectValue)
 }
 
-// InputType input type for key, title, and message of commit message
-type InputType struct {
-	Require bool
-	Auto    bool
-	Size    int
+func (user UserConfig) getValue(key string) (result string, err error) {
+	var returnable string
+	var exist bool
+	kind, v := user.getReflectByKey(key)
+
+	if kind == reflect.String {
+		returnable = v.String()
+		exist = true
+	} else if kind == reflect.Int {
+		r := v.Int()
+		returnable = fmt.Sprintf("%v", r)
+		exist = true
+	} else if kind == reflect.Bool {
+		r := v.Bool()
+		returnable = fmt.Sprintf("%v", r)
+		exist = true
+	}
+
+	if !exist && kind == reflect.Struct {
+		var res []byte
+		res, err = json.MarshalIndent(v.Interface(), "", "  ")
+		if err != nil {
+			return
+		}
+
+		returnable = string(res)
+		exist = true
+	}
+
+	if !exist {
+		err = cli.NewExitError("Config value not exist", 5)
+		return
+	}
+
+	return fmt.Sprintf("%s: %s\n", key, returnable), nil
 }
 
-func _setupPath(location string, filename string) string {
-	if location == "" && os.Getenv("GOPATH") == "" {
-		cli.HandleExitCoder(cli.NewExitError("user location or $GOPATH must be set", 2))
-	}
-	if location == "" {
-		return os.Getenv("GOPATH") + "/src/github.com/kamontat/gitgo/config/" + filename
-	}
-	return location + "/" + filename
+// ------------------------------------------
+// || Version                              ||
+// ------------------------------------------
+
+// SSPrint will return shortest version output format
+func (v Version) SSPrint() string {
+	return fmt.Sprintf("version %s", v.Tag)
 }
 
-func setupAppConfig(location string) (appConfig AppConfig) {
-	// fmt.Println("setup app config")
-	file, e := ioutil.ReadFile(location)
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
+// LSPrint will return fully version output format
+func (v Version) LSPrint() string {
+	return fmt.Sprintf("version %s: %s", v.Tag, v.Description)
+}
+
+// ------------------------------------------
+// || Top Configuration                    ||
+// ------------------------------------------
+
+func (config ConfigurationFile) _filterCommit(filter func(Commit) bool) []Commit {
+	vsf := make([]Commit, 0)
+	for _, v := range config.CommitList {
+		if filter(v) {
+			vsf = append(vsf, v)
+		}
+	}
+	return vsf
+}
+
+func (config ConfigurationFile) receiveOneCommit(key string, filterFunc func(Commit) bool) (commit Commit, err error) {
+	if key == "" {
+		err = errors.New("Input key is empty")
+		return
 	}
 
-	yaml.Unmarshal(file, &appConfig)
+	results := config._filterCommit(filterFunc)
+
+	if len(results) == 0 {
+		err = errors.New(key + " key not exist!, (get by 'Commit.Name')")
+		return
+	}
+	commit = results[0]
 	return
 }
 
-func setupUserConfig(location string) (userConfig UserConfig) {
-	file, e := ioutil.ReadFile(location)
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
-	}
+// ------------------------------------------
+// || Gitgo Private helper command         ||
+// ------------------------------------------
 
-	yaml.Unmarshal(file, &userConfig)
-	return
-}
-
-func setupCommitDBConfig(location string) (commitConfig CommitConfig) {
-	var db []CommitDB
-	file, e := ioutil.ReadFile(location)
-	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
-	}
-
-	yaml.Unmarshal(file, &db)
-	return CommitConfig{
-		DB: db,
-	}
-}
-
-func setupLocationConfig(dev bool) (location LocationConfig, err error) {
-	home := os.Getenv("HOME")
-	if home == "" {
-		err = cli.NewExitError("$HOME must be set", 2)
-	}
-	var defaultLocation string
-	appfile := "app.yaml"
-	userfile := "user.yaml"
-	commitdbfile := "commit_list.yaml"
-
-	if !dev {
-		defaultLocation = home + "/.config/github.com/kamontat/gitgo/config"
-	}
-
-	location = LocationConfig{
-		DevConfigLocation:  _setupPath("", ""),
-		ProdConfigLocation: _setupPath(defaultLocation, ""),
-		AppLocation:        _setupPath(defaultLocation, appfile),
-		UserLocation:       _setupPath(defaultLocation, userfile),
-		CommitDBLocation:   _setupPath(defaultLocation, commitdbfile),
-	}
-
-	if _, err = os.Stat(location.AppLocation); os.IsNotExist(err) {
-		return
-		// cli.HandleExitCoder(cli.NewExitError("App config not exist, Add to "+location.AppLocation, 2))
-	}
-	if _, err = os.Stat(location.CommitDBLocation); os.IsNotExist(err) {
-		return
-		// cli.HandleExitCoder(cli.NewExitError("Commit database not exist, Add to "+location.CommitDBLocation, 2))
-	}
-	if _, err = os.Stat(location.UserLocation); os.IsNotExist(err) {
-		return
-		// cli.HandleExitCoder(cli.NewExitError("User config not exist, Add to "+location.UserLocation, 2))
-	}
-
-	return
-}
-
-// InstallGitgo will exec install gitgo command
 func installGitgo(location LocationConfig) (err error) {
-	devLocation := filepath.Clean(location.DevConfigLocation)
-	prodLocation := filepath.Clean(location.ProdConfigLocation)
-	// already created
+	devLocation := location.Dev.Dir
+	prodLocation := location.Prod.Dir
+	_, err = os.Stat(devLocation)
+	if err != nil {
+		return cli.NewExitError("gitgo config not found", 4)
+	}
+	// already install
 	_, err = os.Stat(prodLocation)
 	if err == nil {
 		return
 	}
-	_, err = os.Stat(devLocation)
+	// create production folder
+	err = os.MkdirAll(prodLocation, os.ModePerm)
 	if err != nil {
 		return
-		// return cli.NewExitError(devLocation+" cannot be found", 8)
 	}
-	parent := filepath.Clean(prodLocation + "..")
-	_, err = os.Stat(parent)
-	if os.IsNotExist(err) {
-		err = os.MkdirAll(parent, os.ModePerm)
-		if err != nil {
-			return
-		}
-	}
+	// link files
 	err = os.Symlink(devLocation, prodLocation)
 	return
 }
 
-func setupConfig(dev bool) Config {
-	location, err := setupLocationConfig(dev)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	err = installGitgo(location)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return Config{
-		Location:     location,
-		AppConfig:    setupAppConfig(location.AppLocation),
-		UserConfig:   setupUserConfig(location.UserLocation),
-		CommitConfig: setupCommitDBConfig(location.CommitDBLocation),
-	}
-}
-
-var configFile Config
-var setupError error
+// ##########################################
+// ## Public Method                        ##
+// ##########################################
 
 // Setup setup configuration, must called at the top of main method
-func Setup(dev bool) {
-	configFile = setupConfig(dev)
+func Setup() (err error) {
+	configFile, err = setupConfigFile()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetConfigHelper will get config helper method
+func GetConfigHelper() ConfigurationFile {
+	return configFile
 }
 
 // GetAppConfig get application config
 func GetAppConfig() AppConfig {
-	return configFile.AppConfig
+	return configFile.App
 }
 
 // GetUserConfig get user config
 func GetUserConfig() UserConfig {
-	return configFile.UserConfig
+	return configFile.User
 }
 
-// GetCommitDBConfig get commit database
-func GetCommitDBConfig() CommitConfig {
-	return configFile.CommitConfig
+// GetCommitListConfig get list of commit
+func GetCommitListConfig() []Commit {
+	return configFile.CommitList
 }
 
-// GetAppLocation get location of configuration files
+// GetAppLocation will return location config struct
 func GetAppLocation() LocationConfig {
 	return configFile.Location
 }
+
+// CommitAsStringArray will convert []Commit to []string
+func (config ConfigurationFile) CommitAsStringArray() []string {
+	var arr []string
+	for _, c := range config.CommitList {
+		arr = append(arr, c.Name)
+	}
+	return arr
+}
+
+// GetCommitByName will filter by 'Commit.Name', ignore-case
+func (config ConfigurationFile) GetCommitByName(key string) (result Commit, err error) {
+	return config.receiveOneCommit(key, func(input Commit) bool {
+		return strings.Contains(strings.ToLower(input.Name), strings.ToLower(key))
+	})
+}
+
+// GetCommitByTitle will filter by 'Commit.Title', ignore-case
+func (config ConfigurationFile) GetCommitByTitle(title string) (result Commit, err error) {
+	return config.receiveOneCommit(title, func(input Commit) bool {
+		return strings.Contains(strings.ToLower(input.Title), strings.ToLower(title))
+	})
+}
+
+// LatestVersion will return latest application version
+func (app AppConfig) LatestVersion() Version {
+	return app.Versions[0]
+}
+
+// GetVersionShort is getting version as short format
+// index 0 is latest version
+func (app AppConfig) GetVersionShort(index int) string {
+	return fmt.Sprintf("%s %s", app.Name, app.Versions[index].SSPrint())
+}
+
+// PrintAllVersionShort will print short format of every version
+func (app AppConfig) PrintAllVersionShort() {
+	for i := range app.Versions {
+		fmt.Println(app.GetVersionShort(i))
+	}
+}
+
+// GetVersionLong is getting version as long format
+// index 0 is latest version
+func (app AppConfig) GetVersionLong(index int) string {
+	return fmt.Sprintf("%s %s", app.Name, app.Versions[index].LSPrint())
+}
+
+// PrintAllVersionLong will print long format of every version
+func (app AppConfig) PrintAllVersionLong() {
+	for i := range app.Versions {
+		fmt.Println(app.GetVersionLong(i))
+	}
+}
+
+// IsEmojiCommit check is user choose 'emoji' commit
+func (user UserConfig) IsEmojiCommit() bool {
+	return user.Config.Commit.Type == "emoji" ||
+		user.Config.Commit.Type == "moji" ||
+		user.Config.Commit.Type == "e"
+}
+
+// IsTextCommit check is user choose 'text' commit
+func (user UserConfig) IsTextCommit() bool {
+	return user.Config.Commit.Type == "text" ||
+		user.Config.Commit.Type == "t"
+}
+
+// SetValue set user configuration value to config file (user.yaml)
+func (user UserConfig) SetValue(key string, value string) error {
+	return user.setValue(key, value)
+}
+
+// GetValue get user configuration value from config file (user.yaml)
+func (user UserConfig) GetValue(key string) (string, error) {
+	return user.getValue(key)
+}
+
+// ##########################################
+// ## Application logic                    ##
+// ##########################################
+
+var configFile ConfigurationFile

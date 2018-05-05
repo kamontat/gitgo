@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sort"
@@ -13,14 +14,18 @@ import (
 )
 
 func main() {
-	models.Setup(false)
+	err := models.Setup()
+	if err != nil {
+		return
+	}
+
 	appConfig := models.GetAppConfig()
 
 	app := cli.NewApp()
 	app.Name = appConfig.Name
 	app.HelpName = appConfig.Name
 	app.Usage = appConfig.Description
-	app.Version = appConfig.LatestVersion().Version
+	app.Version = appConfig.LatestVersion().Tag
 	app.Authors = appConfig.Authors
 	app.Copyright = appConfig.License
 
@@ -38,17 +43,25 @@ func main() {
 	}
 
 	app.Flags = []cli.Flag{
-		flag.FullFlag(),
+		flag.AllFlag(),
 		flag.ListVersionFlag(),
 	}
 
 	cli.VersionPrinter = func(c *cli.Context) {
-		appConfig.LatestVersion().ChooseToPrintVersion(flag.IsFull())
+		if flag.IsAll() {
+			fmt.Println(appConfig.GetVersionLong(0))
+		} else {
+			fmt.Println(appConfig.GetVersionShort(0))
+		}
 	}
 
 	app.Action = func(c *cli.Context) error {
 		if flag.NeedToListVersion() {
-			appConfig.ChooseToPrintEveryVersions(flag.IsFull())
+			if flag.IsAll() {
+				appConfig.PrintAllVersionLong()
+			} else {
+				appConfig.PrintAllVersionShort()
+			}
 		} else {
 			cli.ShowAppHelp(c)
 		}
@@ -56,7 +69,7 @@ func main() {
 	}
 
 	sort.Sort(cli.FlagsByName(app.Flags))
-	// sort.Sort(cli.CommandsByName(app.Commands))
+	sort.Sort(cli.CommandsByName(app.Commands))
 
 	runError := app.Run(os.Args)
 	if runError != nil {

@@ -21,24 +21,21 @@ func DestroyGit() cli.Command {
 		Flags: []cli.Flag{
 			flag.ForceFlag("delete git without prompt"),
 		},
-		Action: func(c *cli.Context) error {
+		Action: func(c *cli.Context) (err error) {
 			if client.GitIsInit() {
 				if flag.IsForce() {
-					client.GitDelete()
-				} else {
-					result := false
-					prompt := &survey.Confirm{
-						Message: "Do you sure?",
-						Help:    "git directory will be deleted by 'rm -r' command",
-					}
-					survey.AskOne(prompt, &result, nil)
-
-					if result {
-						client.GitDelete()
-					} else {
-						fmt.Println("Cancel delete git!")
-					}
+					return client.GitDelete()
 				}
+				result := false
+				prompt := &survey.Confirm{
+					Message: "Do you sure?",
+					Help:    "git directory will be deleted by 'rm -r' command",
+				}
+				survey.AskOne(prompt, &result, nil)
+				if result {
+					return client.GitDelete()
+				}
+				fmt.Println("Cancel delete git!")
 			} else {
 				return cli.NewExitError("Never initial!", 4)
 			}
