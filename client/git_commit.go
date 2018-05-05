@@ -174,7 +174,7 @@ func makeGitCommitWith(emoji bool, withAdd bool, key string, title string, messa
 		return err
 	}
 
-	return _gitCommit(withAdd, key, emoji, title, message...)
+	return _gitCommit(withAdd, newKey, emoji, newTitle, newMessage...)
 }
 
 // ##########################################
