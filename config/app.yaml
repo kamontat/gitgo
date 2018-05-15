@@ -6,6 +6,8 @@ author:
     email: kamontat.c@hotmail.com
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
+  - tag: 1.4.0-beta.3
+    description: Fix commit initial emoji error
   - tag: 1.4.0-beta.2
     description: Fix commit message lost
   - tag: 1.4.0-beta.1
