@@ -54,3 +54,10 @@
       icon: "\U0001F4F1"
       name: mortar_board
   title: Update dependency
+- name: Refactor
+  key:
+    text: refactor
+    emoji:
+      icon: "\U000026FD"
+      name: fuelpump
+  title: Refactor code

@@ -495,7 +495,7 @@ func GetAppLocation() LocationConfig {
 func (config ConfigurationFile) CommitAsStringArray() []string {
 	var arr []string
 	for _, c := range config.CommitList {
-		arr = append(arr, c.Name)
+		arr = append(arr, fmt.Sprintf("[%s] %s", c.Key.Emoji.Icon, c.Name))
 	}
 	return arr
 }
@@ -503,14 +503,7 @@ func (config ConfigurationFile) CommitAsStringArray() []string {
 // GetCommitByName will filter by 'Commit.Name', ignore-case
 func (config ConfigurationFile) GetCommitByName(key string) (result Commit, err error) {
 	return config.receiveOneCommit(key, func(input Commit) bool {
-		return strings.Contains(strings.ToLower(input.Name), strings.ToLower(key))
-	})
-}
-
-// GetCommitByTitle will filter by 'Commit.Title', ignore-case
-func (config ConfigurationFile) GetCommitByTitle(title string) (result Commit, err error) {
-	return config.receiveOneCommit(title, func(input Commit) bool {
-		return strings.Contains(strings.ToLower(input.Title), strings.ToLower(title))
+		return strings.Contains(strings.ToLower(fmt.Sprintf("[%s] %s", input.Key.Emoji.Icon, input.Name)), strings.ToLower(key))
 	})
 }
 

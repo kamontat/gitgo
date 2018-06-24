@@ -6,6 +6,8 @@ author:
     email: kamontat.c@hotmail.com
 license: © 2018 Kamontat Chantrachirathumrong
 versions:
+  - tag: 1.4.1
+    description: Improve list of commit key, and add more commit list
   - tag: 1.4.0
     description: Add more commit list, and public release version
   - tag: 1.4.0-beta.4
