@@ -19,6 +19,13 @@
       icon: "\U0001F4CB"
       name: clipboard
   title: Write some document
+- name: Refactor
+  key:
+    text: refactor
+    emoji:
+      icon: "\U000026FD"
+      name: fuelpump
+  title: Refactor code
 - name: Configuration
   key:
     text: configuration
@@ -26,6 +33,13 @@
       icon: "\U0001F527"
       name: wrench
   title: Update config
+- name: Dependency
+  key:
+    text: dependency
+    emoji:
+      icon: "\U0001F4F1"
+      name: mortar_board
+  title: Update dependency
 - name: Fix
   key:
     text: bug
@@ -47,17 +61,3 @@
       icon: "\U0001F393"
       name: mortar_board
   title: Release new version
-- name: Dependency
-  key:
-    text: dependency
-    emoji:
-      icon: "\U0001F4F1"
-      name: mortar_board
-  title: Update dependency
-- name: Refactor
-  key:
-    text: refactor
-    emoji:
-      icon: "\U000026FD"
-      name: fuelpump
-  title: Refactor code
