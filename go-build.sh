@@ -31,7 +31,7 @@ _build() {
 	[[ "$os" == "windows" ]] && ext=".exe"
 	shift 2
 	for arch in "$@"; do
-		printf "Currently build: %-8s - %s\\n" "$os" "$arch"
+		printf 'Currently build: %-8s - %s\n' "$os" "$arch"
 		local filename="${name}.${os}.${arch}${ext}"
 		env GOOS="$os" GOARCH="$arch" go build -o "$filename"
 	done
