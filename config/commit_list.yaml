@@ -5,34 +5,34 @@
       icon: ✨
       name: sparkles
   title: Add new features
+- name: Improvement
+  key:
+    text: improvement
+    emoji:
+      icon: "\U0001F4C8"
+      name: chart_with_upwards_trend
+  title: Improvement
+- name: Document
+  key:
+    text: document
+    emoji:
+      icon: "\U0001F4CB"
+      name: clipboard
+  title: Write some document
 - name: Configuration
   key:
-    text: config
+    text: configuration
     emoji:
       icon: "\U0001F527"
       name: wrench
   title: Update config
 - name: Fix
   key:
-    text: fix
+    text: bug
     emoji:
       icon: "\U0001F48A"
       name: pill
   title: Fix something
-- name: Document
-  key:
-    text: doc
-    emoji:
-      icon: "\U0001F4CB"
-      name: clipboard
-  title: Write some document
-- name: Improvement
-  key:
-    text: improve
-    emoji:
-      icon: "\U0001F4C8"
-      name: chart_with_upwards_trend
-  title: Improvement
 - name: Logging
   key:
     text: log
@@ -47,3 +47,10 @@
       icon: "\U0001F393"
       name: mortar_board
   title: Release new version
+- name: Dependency
+  key:
+    text: dependency
+    emoji:
+      icon: "\U0001F4F1"
+      name: mortar_board
+  title: Update dependency
