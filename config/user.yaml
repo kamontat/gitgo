@@ -9,6 +9,6 @@ config:
       auto: false # true | false
       size: 50 # maximum charecter size
     message:
-      require: true # true | false 
+      require: false # true | false 
     showsize: 8 # list when show the 'commit list'
   editor: vim # $EDITOR | vim | nano | other cli..
