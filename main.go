@@ -16,7 +16,7 @@ import (
 func main() {
 	err := models.Setup()
 	if err != nil {
-		return
+		log.Fatalln(err)
 	}
 
 	appConfig := models.GetAppConfig()

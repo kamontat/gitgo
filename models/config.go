@@ -440,13 +440,16 @@ func installGitgo(location LocationConfig) (err error) {
 	if err == nil {
 		return
 	}
+	// copy config directory
+	err = CopyDir(devLocation, prodLocation)
+
 	// create production folder
-	err = os.MkdirAll(prodLocation, os.ModePerm)
-	if err != nil {
-		return
-	}
+	// err = os.MkdirAll(prodLocation, os.ModePerm)
+	// if err != nil {
+	// 	return
+	// }
 	// link files
-	err = os.Symlink(devLocation, prodLocation)
+	// err = os.Symlink(devLocation, prodLocation)
 	return
 }
 
