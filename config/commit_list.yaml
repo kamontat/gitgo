@@ -61,3 +61,15 @@
       icon: "\U0001F393"
       name: mortar_board
   title: Release new version
+- name: Testing
+  key:
+    text: test
+    emoji:
+      icon: "\U0001F477"
+      name: construction_worker
+- name: Database
+  key:
+    text: test
+    emoji:
+      icon: ""
+      name: ""
