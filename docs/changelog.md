@@ -2,6 +2,9 @@
 n.n.n / 2018-08-16
 ==================
 
+  * [fix] Fix list config in local file should be empty
+  * [fix] Fix config initial error when no local files
+  * [doc       : Documenting source code / user manual.] Update document
   * [config] Update default config files
   * [config] Update default config files
   * [doc] Update documents
