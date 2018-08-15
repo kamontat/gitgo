@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/kamontat/go-error-manager"
 
@@ -41,6 +42,11 @@ type CommitMessage struct {
 	Key     string
 	Title   string
 	Message string
+}
+
+func (c *CommitMessage) GetKey() string {
+	s := strings.Split(c.Key, ":")[0]
+	return strings.TrimSpace(s)
 }
 
 func (c *Commit) getQuestion() []*survey.Question {
@@ -133,7 +139,7 @@ func (c *Commit) Commit(hasMessage bool) {
 	// perform the questions
 	manager.StartNewManageError().E1P(survey.Ask(qs, &answers)).Throw().ShowMessage(nil).Exit()
 
-	om.Log().ToDebug("commit key", answers.Key)
+	om.Log().ToDebug("commit key", answers.GetKey())
 	om.Log().ToDebug("commit title", answers.Title)
 	om.Log().ToDebug("commit message", answers.Message)
 
@@ -143,9 +149,9 @@ func (c *Commit) Commit(hasMessage bool) {
 func (c *Commit) CustomCommit(answers CommitMessage) {
 	var commitMessage string
 	if answers.Message == "" {
-		commitMessage = fmt.Sprintf("[%s] %s", answers.Key, answers.Title)
+		commitMessage = fmt.Sprintf("[%s] %s", answers.GetKey(), answers.Title)
 	} else {
-		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.Key, answers.Title, answers.Message)
+		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
 	}
 
 	om.Log().ToVerbose("commit full", commitMessage)

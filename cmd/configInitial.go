@@ -66,7 +66,7 @@ list:
 		emptyListYaml := `version: 2
 list:
   - key: empty
-  - value: Update this commit header
+    value: Update this commit header
 `
 
 		if initialForce {
