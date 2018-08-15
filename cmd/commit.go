@@ -23,17 +23,19 @@ package cmd
 import (
 	"strings"
 
+	"github.com/spf13/viper"
+
 	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
 // commitCmd represents the commit command
 var commitCmd = &cobra.Command{
-	Use:   "commit",
-	Short: "commit [init|release] [-a <files>|--add <files>] [-A|--all]",
-	Long:  ``,
+	Use:     "commit",
+	Aliases: []string{"c"},
+	Short:   "commit [-a <files>|--add <files>] [-A|--all]",
+	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		// errManager := manager.StartManageError()
 		om.Log().ToInfo("commit", "start...")
 
 		if all {
@@ -46,7 +48,13 @@ var commitCmd = &cobra.Command{
 			}
 		}
 
-		repo.GetCommit().Commit()
+		hasMessage := viper.GetBool("commit.message")
+		if hasMessage {
+			om.Log().ToVerbose("commit", "with message")
+		} else {
+			om.Log().ToVerbose("commit", "without message")
+		}
+		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(hasMessage)
 	},
 }
 
@@ -56,10 +64,6 @@ var all bool
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
 	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add")
 	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
 }
