@@ -57,8 +57,10 @@ list:
     value: Fixing a bug.
   - key: refactor
     value: Refactoring code.
-  - key: files
-    value: updating file(s) or folder(s).
+  - key: file
+    value: Updating file(s) or folder(s).
+  - key: doc
+    value: Documenting source code / user manual.
 `
 
 		if initialForce {
