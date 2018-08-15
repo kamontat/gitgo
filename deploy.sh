@@ -36,9 +36,6 @@ printf "press <enter> to next"
 # shellcheck disable=SC2034
 read -r ans
 
-./build.sh
-./docs.sh
-
 git status
 printf "Git status; press <enter> to next"
 read -r ans
@@ -52,6 +49,12 @@ printf "create tag %s; press <enter> to next" "$tag"
 read -r ans
 
 git tag "$tag"
+
+./build.sh
+./docs.sh
+
+git add -A
+git commit -m "[doc] Update documents (docs)"
 
 git push &&
 	git push --tag
