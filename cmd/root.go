@@ -73,11 +73,13 @@ func initLogger() {
 	om.SetupLogger(&om.Setting{
 		Color: true,
 		Level: om.LLevelInfo,
+		To:    &om.OutputTo{Stdout: true, File: true, FileName: "/tmp/gitgo/log.log"},
 	}, nil)
 
 	om.SetupPrinter(&om.Setting{
 		Color: true,
 		Level: om.LLevelInfo,
+		To:    &om.OutputTo{Stdout: true, File: true, FileName: "/tmp/gitgo/print.log"},
 	}, nil)
 }
 
