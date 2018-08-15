@@ -33,7 +33,7 @@ import (
 var commitCmd = &cobra.Command{
 	Use:     "commit",
 	Aliases: []string{"c"},
-	Short:   "commit [-a <files>|--add <files>] [-A|--all]",
+	Short:   "Git commit with format string",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log().ToInfo("commit", "start...")

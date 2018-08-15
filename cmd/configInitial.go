@@ -36,18 +36,18 @@ var initialForce bool
 var configInitialCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"i", "initial"},
-	Short:   "A brief description of your command",
+	Short:   "Create and initial gitgo configuration files",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log().ToInfo("config", "initial start...")
 
-		yaml := `version: 1
+		yaml := `version: 2
 log: false
 commit:
   message: false
 `
 
-		listYaml := `version: 1
+		listYaml := `version: 2
 list:
   - key: feature
     value: Introducing new features.
