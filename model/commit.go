@@ -45,8 +45,12 @@ type CommitMessage struct {
 }
 
 func (c *CommitMessage) GetKey() string {
-	s := strings.Split(c.Key, ":")[0]
-	return strings.TrimSpace(s)
+	arr := strings.Split(c.Key, ":")
+	if len(arr) < 1 {
+		s := arr[0]
+		return strings.TrimSpace(s)
+	}
+	return ""
 }
 
 func (c *Commit) getQuestion() []*survey.Question {
