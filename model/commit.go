@@ -46,7 +46,7 @@ type CommitMessage struct {
 
 func (c *CommitMessage) GetKey() string {
 	arr := strings.Split(c.Key, ":")
-	if len(arr) < 1 {
+	if len(arr) > 0 {
 		s := arr[0]
 		return strings.TrimSpace(s)
 	}
