@@ -38,7 +38,7 @@ var configOpenCmd = &cobra.Command{
 	Short:   "open config in your default editor",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("config", "open start...")
+		om.Log().ToLog("config", "open start...")
 
 		if inLocal {
 			if parent {

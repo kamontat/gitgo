@@ -1,4 +1,4 @@
 version: 2
-log: false
+log: true
 commit:
   message: false

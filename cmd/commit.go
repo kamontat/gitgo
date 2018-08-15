@@ -36,7 +36,7 @@ var commitCmd = &cobra.Command{
 	Short:   "Git commit with format string",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("commit", "start...")
+		om.Log().ToLog("commit", "start...")
 
 		if all {
 			exception := repo.AddAll()

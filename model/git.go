@@ -2,6 +2,7 @@ package model
 
 import (
 	"io"
+	"os"
 	"os/exec"
 
 	"github.com/kamontat/go-error-manager"
@@ -13,7 +14,10 @@ type GitCommand struct {
 	err io.Writer
 }
 
-var gc = &GitCommand{}
+var gc = &GitCommand{
+	out: os.Stdout,
+	err: os.Stderr,
+}
 
 // Git will return singleton GitCommand
 func Git() *GitCommand {

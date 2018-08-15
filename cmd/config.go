@@ -40,7 +40,7 @@ var configCmd = &cobra.Command{
 	Short:   "Gitgo configuration",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("config", "start...")
+		om.Log().ToLog("config", "start...")
 
 		open.Run(viper.ConfigFileUsed())
 	},

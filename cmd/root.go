@@ -58,7 +58,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initLogger, setOutput, initGlobalList, initLocalList, initConfig, initRepository)
+	cobra.OnInitialize(initLogger, initConfig, setOutput, initGlobalList, initLocalList, initRepository)
 
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "D", false, "add debug output")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "V", false, "add verbose output")
@@ -93,13 +93,13 @@ func setOutput() {
 func initGlobalList() {
 	om.Log().ToVerbose("init", "global list")
 
-	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
+	home, err := manager.ResetError().E2P(homedir.Dir()).GetResult()
 	err.ShowMessage(nil).Exit()
 
 	globalList = viper.New()
 	globalList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
 
-	if !manager.StartNewManageError().E1P(globalList.ReadInConfig()).HaveError() {
+	if !manager.ResetError().E1P(globalList.ReadInConfig()).HaveError() {
 		om.Log().ToDebug("Global list", globalList.ConfigFileUsed())
 		configVersionChecker(globalList)
 	}
@@ -108,13 +108,13 @@ func initGlobalList() {
 func initLocalList() {
 	om.Log().ToVerbose("init", "local list")
 
-	home, err := manager.StartNewManageError().E2P(filepath.Abs(".")).GetResult()
+	home, err := manager.ResetError().E2P(filepath.Abs(".")).GetResult()
 	err.ShowMessage(nil).Exit()
 
 	localList = viper.New()
 	localList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
 
-	if !manager.GetManageError().E1P(localList.ReadInConfig()).HaveError() {
+	if !manager.ResetError().E1P(localList.ReadInConfig()).HaveError() {
 		om.Log().ToDebug("Local list", localList.ConfigFileUsed())
 		configVersionChecker(localList)
 	}
@@ -124,7 +124,7 @@ func initLocalList() {
 func initConfig() {
 	om.Log().ToVerbose("init", "config")
 	// Find home directory.
-	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
+	home, err := manager.ResetError().E2P(homedir.Dir()).GetResult()
 	err.ShowMessage(nil).Exit()
 
 	// Search config in home directory with name ".xyz" (without extension).
@@ -138,11 +138,11 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		if !viper.GetBool("log") {
+		om.Log().ToDebug("Config file", viper.ConfigFileUsed())
+		if viper.Get("log") != nil && !viper.GetBool("log") {
 			om.Log().Setting().SetMaximumLevel(om.LLevelNone)
 		}
 
-		om.Log().ToDebug("Config file", viper.ConfigFileUsed())
 		configVersionChecker(nil)
 	}
 }
@@ -166,7 +166,7 @@ func configVersionChecker(vp *viper.Viper) bool {
 	m, _ := regexp.MatchString(cv, v)
 	if !m {
 		manager.
-			GetManageError().
+			ResetError().
 			AddNewErrorMessage(`config version not matches ( ` + v + ` !== ` + cv + ` )`).
 			Throw().
 			ShowMessage(nil).

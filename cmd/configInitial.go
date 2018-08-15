@@ -39,10 +39,10 @@ var configInitialCmd = &cobra.Command{
 	Short:   "Create and initial gitgo configuration files",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("config", "initial start...")
+		om.Log().ToLog("config", "initial start...")
 
 		yaml := `version: 2
-log: false
+log: true
 commit:
   message: false
 `
@@ -67,28 +67,45 @@ list:
 			om.Log().ToVerbose("config", "initial with force")
 		}
 
-		configFile := getFileFromPath("config.yaml")
+		init := false
 
-		if initialForce || isFileExist(configFile) {
-			writeTo(configFile, yaml)
+		if inLocal {
+			path := getLocalConfigPath("config.yaml")
+			file := getFileFromPath(path)
+			writeTo(file, yaml)
+
+			path = getLocalConfigPath("list.yaml")
+			file = getFileFromPath(path)
+			writeTo(file, listYaml)
+
+			init = true
 		}
 
-		listFile := getFileFromPath("list.yaml")
-		if initialForce || isFileExist(listFile) {
-			writeTo(listFile, listYaml)
+		if inGlobal {
+			path := getGlobalConfigPath("config.yaml")
+			file := getFileFromPath(path)
+			writeTo(file, yaml)
+
+			path = getGlobalConfigPath("list.yaml")
+			file = getFileFromPath(path)
+			writeTo(file, listYaml)
+
+			init = true
+		}
+
+		if !init {
+			path := getGlobalConfigPath("config.yaml")
+			file := getFileFromPath(path)
+			writeTo(file, yaml)
+
+			path = getGlobalConfigPath("list.yaml")
+			file = getFileFromPath(path)
+			writeTo(file, listYaml)
 		}
 	},
 }
 
-func getConfigPath(filename string) string {
-	if inLocal {
-		path := filepath.
-			Join(manager.ResetError().E2P(filepath.Abs(".")).GetResultOnly().(string),
-				".gitgo",
-				filename,
-			)
-		return path
-	}
+func getGlobalConfigPath(filename string) string {
 	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
 	err.ShowMessage(nil).Exit()
 
@@ -97,9 +114,21 @@ func getConfigPath(filename string) string {
 	return path
 }
 
-func getFileFromPath(filename string) *os.File {
+func getLocalConfigPath(filename string) string {
+	path := filepath.
+		Join(manager.ResetError().E2P(filepath.Abs(".")).GetResultOnly().(string),
+			".gitgo",
+			filename,
+		)
+	os.MkdirAll(filepath.Dir(path), os.ModePerm)
+	return path
+}
+
+func getFileFromPath(path string) *os.File {
+	om.Log().ToDebug("config", "start initial path ")
+
 	result, err := manager.ResetError().
-		E2P(os.OpenFile(getConfigPath(filename), os.O_CREATE|os.O_WRONLY, os.ModePerm)).GetResult()
+		E2P(os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)).GetResult()
 	err.ShowMessage(nil).Exit()
 
 	file, ok := result.(*os.File)
@@ -116,9 +145,14 @@ func isFileExist(file *os.File) bool {
 }
 
 func writeTo(file *os.File, str string) {
-	om.Log().ToDebug("config", "start initial file at "+file.Name())
-	_, e := file.WriteString(str)
-	manager.ResetError().AddNewError(e).Throw().ShowMessage(nil).ExitWithCode(155)
+	if initialForce || !isFileExist(file) {
+
+		_, e := file.WriteString(str)
+		manager.ResetError().AddNewError(e).Throw().ShowMessage(nil).ExitWithCode(155)
+		om.Log().ToInfo("config", "Done @"+file.Name())
+	} else {
+		om.Log().ToWarn("config", "Exist @"+file.Name())
+	}
 }
 
 func init() {
