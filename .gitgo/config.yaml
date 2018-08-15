@@ -1,5 +1,4 @@
 version: 1
 log: true
 commit:
-  type: text
-  message: true
+  message: false
