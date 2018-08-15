@@ -9,24 +9,11 @@
 # set -n #EVALUATE - Check syntax of the script but don't execute.
 
 #/ -----------------------------------
-#/ Description:  ...
-#/ How to:       ...
-#/               ...
-#/ Option:       --help | -h | -? | help | h | ?
-#/                   > show this message
-#/               --version | -v | version | v
-#/                   > show command version
+#/ Description:  generate build of gitgo command to several OS
 #/ -----------------------------------
 #/ Create by:    Kamontat Chantrachirathunrong <kamontat.c@hotmail.com>
 #/ Since:        16/08/2018
 #/ -----------------------------------
-#/ Error code    1      -- error
-#/ -----------------------------------
-#/ Known bug:    ...
-#/ -----------------------------------
-#// Version:      0.0.1   -- description
-#//               0.0.2b1 -- beta-format
-#//               0.0.2a1 -- alpha-format
 
 export APPNAME="gitgo"
 
