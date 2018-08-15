@@ -37,7 +37,7 @@ var (
 var configCmd = &cobra.Command{
 	Use:     "config",
 	Aliases: []string{"C", "configuration"},
-	Short:   "config [initial|set|get|open]",
+	Short:   "config [initial|open]",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log().ToInfo("config", "start...")

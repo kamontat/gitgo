@@ -46,6 +46,7 @@ log: false
 commit:
   message: false
 `
+
 		listYaml := `version: 1
 list:
   - key: feature
