@@ -39,7 +39,14 @@ read -r ans
 ./build.sh
 ./docs.sh
 
+git status
+printf "Git status; press <enter> to next"
+read -r ans
+
 tag="v$(gitgo --version | sed -e 's/gitgo version //g')"
+git add -A
+git commit -m "[release] Version $tag"
+
 printf "create tag %s; press <enter> to next" "$tag"
 # shellcheck disable=SC2034
 read -r ans
