@@ -1,14 +1,4 @@
 version: 2
 list:
-  - key: feature
-    value: Introducing new features.
-  - key: improve
-    value: Improving user experience / usability / performance.
-  - key: fix
-    value: Fixing a bug.
-  - key: refactor
-    value: Refactoring code.
-  - key: file
-    value: Updating file(s) or folder(s).
-  - key: doc
-    value: Documenting source code / user manual.
+  - key: empty
+  - value: Update this commit header

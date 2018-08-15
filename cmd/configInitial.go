@@ -63,6 +63,12 @@ list:
     value: Documenting source code / user manual.
 `
 
+		emptyListYaml := `version: 2
+list:
+  - key: empty
+  - value: Update this commit header
+`
+
 		if initialForce {
 			om.Log().ToVerbose("config", "initial with force")
 		}
@@ -76,7 +82,7 @@ list:
 
 			path = getLocalConfigPath("list.yaml")
 			file = getFileFromPath(path)
-			writeTo(file, listYaml)
+			writeTo(file, emptyListYaml)
 
 			init = true
 		}
@@ -110,7 +116,7 @@ func getGlobalConfigPath(filename string) string {
 	err.ShowMessage(nil).Exit()
 
 	path := filepath.Join(home.(string), ".gitgo", filename)
-	os.Mkdir(filepath.Dir(path), os.ModePerm)
+	os.MkdirAll(filepath.Dir(path), os.ModePerm)
 	return path
 }
 
