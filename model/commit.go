@@ -149,5 +149,5 @@ func (c *Commit) CustomCommit(answers CommitMessage) {
 	}
 
 	om.Log().ToVerbose("commit full", commitMessage)
-	// Git().Exec("commit", "-m", commitMessage)
+	Git().Exec("commit", "-m", commitMessage)
 }
