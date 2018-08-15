@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/kamontat/gitgo/model"
@@ -33,6 +34,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var globalList *viper.Viper
+var localList *viper.Viper
 
 var repo *model.Repo
 var debug bool
@@ -59,70 +63,10 @@ func Execute() {
 }
 
 func init() {
-	initLogger()
-	initRepository()
-	cobra.OnInitialize(initConfig, setOutput)
+	cobra.OnInitialize(initLogger, setOutput, initGlobalList, initLocalList, initConfig, initRepository)
 
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "D", false, "add debug output")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "V", false, "add verbose output")
-}
-
-func setOutput() {
-	if debug {
-		om.Log().Setting().SetMaximumLevel(om.LLevelDebug)
-		om.Log().ToDebug("set", "debug mode")
-	}
-	if verbose {
-		om.Log().Setting().SetMaximumLevel(om.LLevelVerbose)
-		om.Log().ToVerbose("set", "verbose mode")
-	}
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	// Find home directory.
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	// Search config in home directory with name ".xyz" (without extension).
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("config")
-	viper.AddConfigPath(home + "/.gitgo")
-
-	viper.AddConfigPath("./.gitgo")
-	viper.AddConfigPath(".gitgo")
-
-	viper.SetEnvPrefix("GG")
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		if !viper.GetBool("log") {
-			om.Log().Setting().SetMaximumLevel(om.LLevelNone)
-		}
-
-		om.Log().ToInfo("Config file", viper.ConfigFileUsed())
-
-		v := rootCmd.Version
-		cv := viper.GetString("version")
-		m, _ := regexp.MatchString(cv, v)
-		if !m {
-			manager.
-				GetManageError().
-				AddNewErrorMessage(`config version not matches ( ` + v + ` !== ` + cv + ` )`).
-				Throw().
-				ShowMessage(nil).
-				Exit()
-		}
-	}
-}
-
-func initRepository() {
-	repo = model.NewRepo()
-	repo.Setup()
 }
 
 func initLogger() {
@@ -135,4 +79,103 @@ func initLogger() {
 		Color: true,
 		Level: om.LLevelInfo,
 	}, nil)
+}
+
+func setOutput() {
+	if debug {
+		om.Log().Setting().SetMaximumLevel(om.LLevelDebug)
+		om.Log().ToDebug("set", "debug mode")
+	}
+
+	if verbose {
+		om.Log().Setting().SetMaximumLevel(om.LLevelVerbose)
+		om.Log().ToVerbose("set", "verbose mode")
+	}
+}
+
+func initGlobalList() {
+	om.Log().ToVerbose("init", "global list")
+
+	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
+	err.ShowMessage(nil).Exit()
+
+	globalList = viper.New()
+	globalList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
+
+	if !manager.StartNewManageError().E1P(globalList.ReadInConfig()).HaveError() {
+		om.Log().ToDebug("Global list", globalList.ConfigFileUsed())
+		configVersionChecker(globalList)
+	}
+}
+
+func initLocalList() {
+	om.Log().ToVerbose("init", "local list")
+
+	home, err := manager.StartNewManageError().E2P(filepath.Abs(".")).GetResult()
+	err.ShowMessage(nil).Exit()
+
+	localList = viper.New()
+	localList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
+
+	if !manager.GetManageError().E1P(localList.ReadInConfig()).HaveError() {
+		om.Log().ToDebug("Local list", localList.ConfigFileUsed())
+		configVersionChecker(localList)
+	}
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	om.Log().ToVerbose("init", "config")
+	// Find home directory.
+	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
+	err.ShowMessage(nil).Exit()
+
+	// Search config in home directory with name ".xyz" (without extension).
+	viper.SetConfigType("yaml")
+	viper.SetConfigName("config")
+	viper.AddConfigPath("./.gitgo")
+	viper.AddConfigPath(home.(string) + "/.gitgo")
+
+	viper.SetEnvPrefix("GG")
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		if !viper.GetBool("log") {
+			om.Log().Setting().SetMaximumLevel(om.LLevelNone)
+		}
+
+		om.Log().ToDebug("Config file", viper.ConfigFileUsed())
+		configVersionChecker(nil)
+	}
+}
+
+func initRepository() {
+	om.Log().ToVerbose("init", "repository")
+	repo = model.NewRepo()
+	repo.Setup()
+}
+
+func configVersionChecker(vp *viper.Viper) bool {
+	var v string
+	var cv string
+
+	v = rootCmd.Version
+	if vp == nil {
+		cv = viper.GetString("version")
+	} else {
+		cv = vp.GetString("version")
+	}
+	m, _ := regexp.MatchString(cv, v)
+	if !m {
+		manager.
+			GetManageError().
+			AddNewErrorMessage(`config version not matches ( ` + v + ` !== ` + cv + ` )`).
+			Throw().
+			ShowMessage(nil).
+			Exit()
+
+		return false
+	}
+	return true
 }
