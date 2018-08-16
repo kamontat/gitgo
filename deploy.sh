@@ -58,3 +58,10 @@ git commit -m "[doc] Update documents (docs)"
 
 git push &&
 	git push --tag
+
+printf "create pull-request; press <enter> to next"
+# shellcheck disable=SC2034
+read -r ans
+
+command -v "hub" &>/dev/null &&
+	hub pull-request -m "create pull request to release latest version $tag" -b master
