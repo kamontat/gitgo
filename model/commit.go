@@ -1,3 +1,5 @@
+// Package model provides the model of repository and commit.
+// As long as another model that will be use in gitgo command.
 package model
 
 import (

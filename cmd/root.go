@@ -42,7 +42,7 @@ var repo *model.Repo
 var debug bool
 var verbose bool
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:     "gitgo",
 	Short:   "gitgo command by Kamontat Chantrachurathumrong",
@@ -50,6 +50,7 @@ var rootCmd = &cobra.Command{
 	Long:    ``,
 }
 
+// Execute is execute method that call by cobra cli.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
