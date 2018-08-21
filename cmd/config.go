@@ -51,8 +51,4 @@ func init() {
 
 	configCmd.PersistentFlags().BoolVarP(&inLocal, "local", "l", false, "initial configuration file in local")
 	configCmd.PersistentFlags().BoolVarP(&inGlobal, "global", "g", false, "initial configuration file in global")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

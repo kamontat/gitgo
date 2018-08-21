@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -94,58 +95,68 @@ func setOutput() {
 func initGlobalList() {
 	om.Log().ToVerbose("init", "global list")
 
-	home, err := manager.ResetError().E2P(homedir.Dir()).GetResult()
-	err.ShowMessage(nil).Exit()
+	manager.StartResultManager().Exec02(homedir.Dir).IfError(func(t *manager.Throwable) {
+		t.ShowMessage().ExitWithCode(3)
+	}).IfResult(func(home string) {
+		globalList = viper.New()
+		globalList.SetConfigFile(home + "/.gitgo/list.yaml")
 
-	globalList = viper.New()
-	globalList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
+		if !manager.NewE().Add(globalList.ReadInConfig()).HaveError() {
+			om.Log().ToDebug("Global list", globalList.ConfigFileUsed())
 
-	if !manager.ResetError().E1P(globalList.ReadInConfig()).HaveError() {
-		om.Log().ToDebug("Global list", globalList.ConfigFileUsed())
-		configVersionChecker(globalList)
-	}
+			configVersionChecker(globalList)
+		}
+	})
 }
 
 func initLocalList() {
 	om.Log().ToVerbose("init", "local list")
 
-	home, err := manager.ResetError().E2P(filepath.Abs(".")).GetResult()
-	err.ShowMessage(nil).Exit()
+	manager.StartResultManager().Exec12(filepath.Abs, ".").IfError(func(t *manager.Throwable) {
+		t.ShowMessage().ExitWithCode(4)
+	}).IfResult(func(home string) {
+		localList = viper.New()
+		localList.SetConfigFile(home + "/.gitgo/list.yaml")
 
-	localList = viper.New()
-	localList.SetConfigFile(home.(string) + "/.gitgo/list.yaml")
+		if !manager.NewE().Add(localList.ReadInConfig()).HaveError() {
+			om.Log().ToDebug("Local list", localList.ConfigFileUsed())
 
-	if !manager.ResetError().E1P(localList.ReadInConfig()).HaveError() {
-		om.Log().ToDebug("Local list", localList.ConfigFileUsed())
-		configVersionChecker(localList)
-	}
+			configVersionChecker(localList)
+		}
+	})
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	om.Log().ToVerbose("init", "config")
-	// Find home directory.
-	home, err := manager.ResetError().E2P(homedir.Dir()).GetResult()
-	err.ShowMessage(nil).Exit()
 
-	// Search config in home directory with name ".xyz" (without extension).
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("config")
-	viper.AddConfigPath("./.gitgo")
-	viper.AddConfigPath(home.(string) + "/.gitgo")
+	manager.StartResultManager().Exec02(homedir.Dir).IfError(func(t *manager.Throwable) {
+		t.ShowMessage().ExitWithCode(2)
+	}).IfResult(func(home string) {
+		// Search config in home directory with name ".xyz" (without extension).
+		viper.SetConfigType("yaml")
+		viper.SetConfigName("config")
+		viper.AddConfigPath("./.gitgo")
+		viper.AddConfigPath(home + "/.gitgo")
 
-	viper.SetEnvPrefix("GG")
-	viper.AutomaticEnv() // read in environment variables that match
+		viper.SetEnvPrefix("GG")
+		viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		om.Log().ToDebug("Config file", viper.ConfigFileUsed())
-		if viper.Get("log") != nil && !viper.GetBool("log") {
-			om.Log().Setting().SetMaximumLevel(om.LLevelNone)
+		if !manager.NewE().Add(viper.ReadInConfig()).HaveError() {
+			om.Log().ToDebug("Config file", viper.ConfigFileUsed())
+
+			manager.Wrap(viper.Get("log")).UnwrapNext(func(i interface{}) interface{} {
+				return viper.GetBool("log")
+			}).Unwrap(func(log interface{}) {
+				if !log.(bool) {
+					om.Log().ToVerbose("log setting", "none of output will be print")
+					om.Log().Setting().SetMaximumLevel(om.LLevelNone)
+				}
+			})
+
+			configVersionChecker(nil)
 		}
-
-		configVersionChecker(nil)
-	}
+	})
 }
 
 func initRepository() {
@@ -164,16 +175,14 @@ func configVersionChecker(vp *viper.Viper) bool {
 	} else {
 		cv = vp.GetString("version")
 	}
-	m, _ := regexp.MatchString(cv, v)
+	m, e := regexp.MatchString(cv, v)
+	var ee error
 	if !m {
-		manager.
-			ResetError().
-			AddNewErrorMessage(`config version not matches ( ` + v + ` !== ` + cv + ` )`).
-			Throw().
-			ShowMessage(nil).
-			Exit()
-
-		return false
+		ee = errors.New(`config version not matches ( ` + v + ` !== ` + cv + ` )`)
 	}
+
+	manager.NewE().AddNewError(e).AddNewError(ee).Throw().
+		ShowMessage().ExitWithCode(10)
+
 	return true
 }

@@ -21,8 +21,11 @@
 package cmd
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
+
+	"github.com/kamontat/gitgo/model"
 
 	manager "github.com/kamontat/go-error-manager"
 	"github.com/kamontat/go-log-manager"
@@ -40,125 +43,119 @@ var configInitialCmd = &cobra.Command{
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log().ToLog("config", "initial start...")
-
-		yaml := `version: 2
-log: true
-commit:
-  message: false
-`
-
-		listYaml := `version: 2
-list:
-  - key: feature
-    value: Introducing new features.
-  - key: improve
-    value: Improving user experience / usability / performance.
-  - key: fix
-    value: Fixing a bug.
-  - key: refactor
-    value: Refactoring code.
-  - key: file
-    value: Updating file(s) or folder(s).
-  - key: doc
-    value: Documenting source code / user manual.
-`
-
-		emptyListYaml := `version: 2
-list:
-  - key: empty
-    value: Update this commit header
-`
+		yaml := model.GeneratorYAML()
 
 		if initialForce {
 			om.Log().ToVerbose("config", "initial with force")
 		}
 
 		init := false
+		var file *manager.ResultWrapper
 
 		if inLocal {
-			path := getLocalConfigPath("config.yaml")
-			file := getFileFromPath(path)
-			writeTo(file, yaml)
+			file = getFile(getLPath("config.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.GDefaultConfig())
+			}).Catch(func() error {
+				return errors.New("Cannot save config.yaml in local")
+			}, throw)
 
-			path = getLocalConfigPath("list.yaml")
-			file = getFileFromPath(path)
-			writeTo(file, emptyListYaml)
+			file = getFile(getLPath("list.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.LEmptyList())
+			}).Catch(func() error {
+				return errors.New("Cannot save list.yaml in local")
+			}, throw)
 
 			init = true
 		}
 
 		if inGlobal {
-			path := getGlobalConfigPath("config.yaml")
-			file := getFileFromPath(path)
-			writeTo(file, yaml)
+			file = getFile(getGPath("config.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.GDefaultConfig())
+			}).Catch(func() error {
+				return errors.New("Cannot save config.yaml in global")
+			}, throw)
 
-			path = getGlobalConfigPath("list.yaml")
-			file = getFileFromPath(path)
-			writeTo(file, listYaml)
+			file = getFile(getGPath("list.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.GDefaultList())
+			}).Catch(func() error {
+				return errors.New("Cannot save list.yaml in global")
+			}, throw)
 
 			init = true
 		}
 
 		if !init {
-			path := getGlobalConfigPath("config.yaml")
-			file := getFileFromPath(path)
-			writeTo(file, yaml)
+			file = getFile(getGPath("config.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.GDefaultConfig())
+			}).Catch(func() error {
+				return errors.New("Cannot save config.yaml in global")
+			}, throw)
 
-			path = getGlobalConfigPath("list.yaml")
-			file = getFileFromPath(path)
-			writeTo(file, listYaml)
+			file = getFile(getGPath("list.yaml"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.GDefaultList())
+			}).Catch(func() error {
+				return errors.New("Cannot save list.yaml in global")
+			}, throw)
 		}
 	},
 }
 
-func getGlobalConfigPath(filename string) string {
-	home, err := manager.GetManageError().E2P(homedir.Dir()).GetResult()
-	err.ShowMessage(nil).Exit()
-
-	path := filepath.Join(home.(string), ".gitgo", filename)
-	os.MkdirAll(filepath.Dir(path), os.ModePerm)
-	return path
+func getGPath(filename string) *manager.ResultWrapper {
+	return manager.StartResultManager().Exec02(homedir.Dir).IfResultThen(func(home string) interface{} {
+		path := filepath.Join(home, ".gitgo", filename)
+		os.MkdirAll(filepath.Dir(path), os.ModePerm)
+		return path
+	})
 }
 
-func getLocalConfigPath(filename string) string {
-	path := filepath.
-		Join(manager.ResetError().E2P(filepath.Abs(".")).GetResultOnly().(string),
-			".gitgo",
-			filename,
-		)
-	os.MkdirAll(filepath.Dir(path), os.ModePerm)
-	return path
+func getLPath(filename string) *manager.ResultWrapper {
+	return manager.StartResultManager().Exec12(filepath.Abs, ".").IfResultThen(func(home string) interface{} {
+		path := filepath.Join(home, ".gitgo", filename)
+		os.MkdirAll(filepath.Dir(path), os.ModePerm)
+		return path
+	})
 }
 
-func getFileFromPath(path string) *os.File {
-	om.Log().ToDebug("config", "start initial path ")
+func getFile(path *manager.ResultWrapper) *manager.ResultWrapper {
+	return path.UnwrapNext(func(i interface{}) interface{} {
+		om.Log().ToDebug("config", "start initial path ")
 
-	result, err := manager.ResetError().
-		E2P(os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)).GetResult()
-	err.ShowMessage(nil).Exit()
-
-	file, ok := result.(*os.File)
-	if !ok {
-		manager.ResetError().AddNewErrorMessage("result file not exist!").Throw().ShowMessage(nil).Exit()
-	}
-	return file
+		f, _ := os.OpenFile(i.(string), os.O_CREATE|os.O_WRONLY, os.ModePerm)
+		return f
+	})
 }
 
-func isFileExist(file *os.File) bool {
+func isFileExist(file *os.File) *manager.ErrManager {
 	i, e := file.Stat()
-	manager.ResetError().AddNewError(e).Throw().ShowMessage(nil).Exit()
-	return i.Size() > 0
+	m := manager.NewE().Add(e)
+	if i.Size() <= 0 {
+		m.AddMessage("File size is 0 (file empty)")
+	}
+	return m
 }
 
 func writeTo(file *os.File, str string) {
-	if initialForce || !isFileExist(file) {
+	e := isFileExist(file)
+	if initialForce || !e.HaveError() {
+		_, err := file.WriteString(str)
 
-		_, e := file.WriteString(str)
-		manager.ResetError().AddNewError(e).Throw().ShowMessage(nil).ExitWithCode(155)
+		e.Add(err)
+		e.Throw().ShowMessage().ExitWithCode(11)
+
 		om.Log().ToInfo("config", "Done @"+file.Name())
 	} else {
 		om.Log().ToWarn("config", "Exist @"+file.Name())
 	}
+}
+
+func throw(throw *manager.Throwable) {
+	throw.ShowMessage().ExitWithCode(len(throw.ListErrors()))
 }
 
 func init() {

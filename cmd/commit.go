@@ -41,11 +41,11 @@ var commitCmd = &cobra.Command{
 
 		if all {
 			exception := repo.AddAll()
-			exception.Throw().ShowMessage(nil).ExitWithCode(10)
+			exception.Throw().ShowMessage()
 		} else {
 			if len(add) > 0 {
 				om.Log().ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
-				repo.Add(add)
+				repo.Add(add).ShowMessage()
 			}
 		}
 
@@ -65,6 +65,6 @@ var all bool
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add")
+	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add [multiple use]")
 	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
 }

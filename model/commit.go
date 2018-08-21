@@ -38,20 +38,18 @@ type Commit struct {
 }
 
 // ListHeaderOptions return the list of string of commit that create by Format() method in CommitHeader.
-func (c *Commit) ListHeaderOptions() (list []string) {
+func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
+	var list []string
 	for _, commits := range c.list {
 		list = append(list, commits.Format())
 	}
 	om.Log().ToVerbose("commit list", list)
-	if len(list) < 1 {
-		manager.
-			StartNewManageError().
-			AddNewErrorMessage("You must have at least 1 list.yaml files").
-			Throw().
-			ShowMessage(nil).
-			Exit()
+	wrap := manager.Wrap(nil)
+	if len(list) > 0 {
+		wrap = manager.Wrap(list)
 	}
-	return
+
+	return wrap
 }
 
 // CommitMessage is the commit message for save in commit.
@@ -72,39 +70,41 @@ func (c *CommitMessage) GetKey() string {
 	return c.Key
 }
 
-func (c *Commit) getQuestion() []*survey.Question {
-	return []*survey.Question{
-		{
-			Name: "key",
-			Prompt: &survey.Select{
-				Message:  "Select commit header",
-				Options:  c.ListHeaderOptions(),
-				Help:     "Header will represent 'one word' key of the commit",
-				PageSize: 5,
-				VimMode:  true,
+func (c *Commit) getQuestion() *manager.ResultWrapper {
+	return c.ListHeaderOptions().UnwrapNext(func(i interface{}) interface{} {
+		return []*survey.Question{
+			{
+				Name: "key",
+				Prompt: &survey.Select{
+					Message:  "Select commit header",
+					Options:  i.([]string),
+					Help:     "Header will represent 'one word' key of the commit",
+					PageSize: 5,
+					VimMode:  true,
+				},
+				Validate: survey.Required,
+			}, {
+				Name: "title",
+				Prompt: &survey.Input{
+					Message: "Enter commit title",
+					Help:    "Title will represent one short sentence of the commit",
+				},
+				Validate: func(val interface{}) error {
+					err := survey.Required(val)
+					if err == nil {
+						err = survey.MaxLength(50)(val)
+					}
+					return err
+				},
+			}, {
+				Name: "message",
+				Prompt: &survey.Editor{
+					Message: "Enter commit message",
+					Help:    "Message will represent everything that commit have done",
+				},
 			},
-			Validate: survey.Required,
-		}, {
-			Name: "title",
-			Prompt: &survey.Input{
-				Message: "Enter commit title",
-				Help:    "Title will represent one short sentence of the commit",
-			},
-			Validate: func(val interface{}) error {
-				err := survey.Required(val)
-				if err == nil {
-					err = survey.MaxLength(50)(val)
-				}
-				return err
-			},
-		}, {
-			Name: "message",
-			Prompt: &survey.Editor{
-				Message: "Enter commit message",
-				Help:    "Message will represent everything that commit have done",
-			},
-		},
-	}
+		}
+	})
 }
 
 // LoadList will initial new list of Header.
@@ -154,23 +154,35 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 // Commit is action for ask the message from user and call CustomCommit.
 func (c *Commit) Commit(hasMessage bool) {
 	// the questions to ask
-	var qs = c.getQuestion()
-	if !hasMessage {
-		qs = qs[:len(qs)-1]
-	}
+	var result = c.getQuestion()
 
-	om.Log().ToDebug("question list", strconv.Itoa(len(qs)))
+	result.Unwrap(func(i interface{}) {
+		qs := i.([]*survey.Question)
 
-	answers := CommitMessage{}
+		if !hasMessage {
+			qs = qs[:len(qs)-1]
+		}
 
-	// perform the questions
-	manager.StartNewManageError().E1P(survey.Ask(qs, &answers)).Throw().ShowMessage(nil).Exit()
+		om.Log().ToDebug("question list", strconv.Itoa(len(qs)))
 
-	om.Log().ToDebug("commit key", answers.GetKey())
-	om.Log().ToDebug("commit title", answers.Title)
-	om.Log().ToDebug("commit message", answers.Message)
+		answers := CommitMessage{}
+		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
 
-	c.CustomCommit(answers)
+			om.Log().ToDebug("commit key", answers.GetKey())
+			om.Log().ToDebug("commit title", answers.Title)
+			om.Log().ToDebug("commit message", answers.Message)
+
+			c.CustomCommit(answers)
+
+		}).IfError(func(t *manager.Throwable) {
+			t.GetCustomMessage(func(errs []error) string {
+				for i, e := range errs {
+					om.Log().ToError(strconv.Itoa(i)+")", e.Error())
+				}
+				return ""
+			})
+		})
+	})
 }
 
 // CustomCommit will run git commit -m "<message>" with the default format.
