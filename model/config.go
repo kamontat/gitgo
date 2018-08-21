@@ -1,11 +1,14 @@
 package model
 
+// YAML is object of config yaml
 type YAML struct{}
 
+// GeneratorYAML will return YAML Object
 func GeneratorYAML() *YAML {
 	return &YAML{}
 }
 
+// GDefaultConfig is global default config.yaml
 func (y *YAML) GDefaultConfig() string {
 	return `version: 2
 log: true
@@ -14,6 +17,7 @@ commit:
 `
 }
 
+// GDefaultList is global default list.yaml
 func (y *YAML) GDefaultList() string {
 	return `version: 2
 list:
@@ -32,6 +36,7 @@ list:
 `
 }
 
+// LEmptyList is empty list.yaml
 func (y *YAML) LEmptyList() string {
 	return `version: 2
 list:

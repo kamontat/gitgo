@@ -5,7 +5,6 @@ package model
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/kamontat/go-error-manager"
 
@@ -15,26 +14,15 @@ import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 )
 
-// CommitHeader is struct of Key and Value, using in list.yaml.
-type CommitHeader struct {
-	Key   string
-	Value string
-}
-
-// Format will return format of string.
-func (c *CommitHeader) Format() string {
-	return fmt.Sprintf("%-10s: %s", c.Key, c.Value)
-}
-
-// String will return string that show what is it.
-func (c *CommitHeader) String() string {
-	return fmt.Sprintf("commit key=%s, value=%s", c.Key, c.Value)
-}
-
 // Commit is Commit object of deal with commit things.
 type Commit struct {
-	repo *Repo
-	list []CommitHeader
+	throwable *manager.Throwable
+	list      []CommitHeader
+}
+
+// CanCommit mean this commit contain no errors
+func (c *Commit) CanCommit() bool {
+	return !c.throwable.CanBeThrow()
 }
 
 // ListHeaderOptions return the list of string of commit that create by Format() method in CommitHeader.
@@ -44,30 +32,12 @@ func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
 		list = append(list, commits.Format())
 	}
 	om.Log().ToVerbose("commit list", list)
-	wrap := manager.Wrap(nil)
+	wrap := manager.WrapNil()
 	if len(list) > 0 {
 		wrap = manager.Wrap(list)
 	}
 
 	return wrap
-}
-
-// CommitMessage is the commit message for save in commit.
-type CommitMessage struct {
-	Key     string
-	Title   string
-	Message string
-}
-
-// GetKey will try to format the key to right way.
-// Otherwise, return normal Key
-func (c *CommitMessage) GetKey() string {
-	arr := strings.Split(c.Key, ":")
-	if len(arr) > 0 {
-		s := arr[0]
-		return strings.TrimSpace(s)
-	}
-	return c.Key
 }
 
 func (c *Commit) getQuestion() *manager.ResultWrapper {

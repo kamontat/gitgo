@@ -7,5 +7,5 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - run: go test -cover -coverprofile=coverage.txt -covermode=atomic
+      - run: go test ./... -cover -coverprofile=coverage.txt -covermode=atomic
       - run: 'bash <(curl -s https://codecov.io/bash)'

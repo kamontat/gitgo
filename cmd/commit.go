@@ -40,8 +40,8 @@ var commitCmd = &cobra.Command{
 		om.Log().ToLog("commit", "start...")
 
 		if all {
-			exception := repo.AddAll()
-			exception.Throw().ShowMessage()
+			throw := repo.AddAll()
+			throw.ShowMessage()
 		} else {
 			if len(add) > 0 {
 				om.Log().ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")

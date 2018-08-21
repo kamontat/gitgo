@@ -4,11 +4,14 @@ import (
 	"path/filepath"
 
 	"github.com/kamontat/go-error-manager"
+	"github.com/kamontat/go-log-manager"
+
 	git "gopkg.in/src-d/go-git.v4"
 )
 
 // Repo is git repository object for gitgo.
 type Repo struct {
+	isSetup    bool
 	path       string
 	repo       *git.Repository
 	gitCommand *GitCommand
@@ -26,27 +29,40 @@ func CustomRepo(path string) *Repo {
 	management := manager.StartResultManager()
 
 	return &Repo{
+		isSetup:    false,
 		path:       management.Execute1ParametersB(filepath.Abs, path).GetResult(),
 		gitCommand: Git(),
 		Manager:    management,
+		repo:       nil,
 	}
 }
 
 // Setup will load git repository to memory.
 // If any error occurred, exit with code 5.
 func (r *Repo) Setup() {
+	if r.isSetup {
+		return
+	}
+
+	om.Log().ToVerbose("Repository", "initial path "+r.path)
 	result, err := git.PlainOpen(r.path)
 	r.Manager.Save("", err)
 
 	r.Manager.IfNoError(func() {
+		r.isSetup = true
 		r.repo = result
 	})
 }
 
 // GetGitRepository will return git.Repository of this Repo
 func (r *Repo) GetGitRepository() *manager.ResultWrapper {
+	r.Setup()
+
 	return r.Manager.IfNoErrorThen(func() interface{} {
-		return r.repo
+		if r.isSetup {
+			return r.repo
+		}
+		return nil
 	})
 }
 
@@ -93,13 +109,21 @@ func (r *Repo) Add(filepath []string) *manager.Throwable {
 }
 
 // AddAll will run git add -A command in cli.
-func (r *Repo) AddAll() *manager.ErrManager {
-	return r.gitCommand.Exec("add", "-A")
+func (r *Repo) AddAll() *manager.Throwable {
+	r.Setup()
+	t := r.gitCommand.Exec("add", "-A").Throw()
+	for _, e := range t.ListErrors() {
+		r.Manager.Save("", e)
+	}
+
+	return r.Manager.Throw()
 }
 
 // GetCommit will return Commit object.
 func (r *Repo) GetCommit() *Commit {
+	r.Setup()
+
 	return &Commit{
-		repo: r,
+		throwable: r.Manager.Throw(),
 	}
 }
