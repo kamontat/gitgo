@@ -47,7 +47,7 @@ var verbose bool
 var rootCmd = &cobra.Command{
 	Use:     "gitgo",
 	Short:   "gitgo command by Kamontat Chantrachurathumrong",
-	Version: "2.0.1",
+	Version: "2.0.2",
 	Long:    ``,
 }
 
