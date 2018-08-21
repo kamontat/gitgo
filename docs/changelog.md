@@ -1,7 +1,27 @@
 
-n.n.n / 2018-08-16
+n.n.n / 2018-08-21
 ==================
 
+
+
+v2.0.2 / 2018-08-21
+===================
+
+  * [improve] Update version variable
+  * [refactor] Clean code and Add test, Setup CI
+  * [feature] Update to support error and log library
+  * [doc] Update documents
+  * [script] Update deploy script
+  * [doc] Update error message and godoc
+  * [fix] Fix condition
+  * [] Fix header is too long
+  * [fix] Fix list error by wrong config format
+  * [algo] Change logic of deploy
+
+v2.0.1 / 2018-08-16
+===================
+
+  * [release] Version v2.0.1
   * [release] Version 2.0.1
   * [fix] Fix list config in local file should be empty
   * [fix] Fix config initial error when no local files
