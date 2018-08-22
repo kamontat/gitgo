@@ -67,33 +67,29 @@ func init() {
 }
 
 func initLogger() {
-	om.SetupLogger(&om.Setting{
-		Color: true,
-		Level: om.LLevelInfo,
-		To:    &om.OutputTo{Stdout: true, File: true, FileName: "/tmp/gitgo/log.log"},
-	}, nil)
+	om.ConstrantExitOnError = false
+	om.ConstrantAppName = "gitgo"
 
-	om.SetupPrinter(&om.Setting{
+	om.SetupNewLogger(&om.Setting{
 		Color: true,
 		Level: om.LLevelInfo,
-		To:    &om.OutputTo{Stdout: true, File: true, FileName: "/tmp/gitgo/print.log"},
-	}, nil)
+	})
 }
 
 func setOutput() {
 	if debug {
-		om.Log().Setting().SetMaximumLevel(om.LLevelDebug)
-		om.Log().ToDebug("set", "debug mode")
+		om.Log.Setting().SetMaximumLevel(om.LLevelDebug)
+		om.Log.ToDebug("set", "debug mode")
 	}
 
 	if verbose {
-		om.Log().Setting().SetMaximumLevel(om.LLevelVerbose)
-		om.Log().ToVerbose("set", "verbose mode")
+		om.Log.Setting().SetMaximumLevel(om.LLevelVerbose)
+		om.Log.ToVerbose("set", "verbose mode")
 	}
 }
 
 func initGlobalList() {
-	om.Log().ToVerbose("init", "global list")
+	om.Log.ToVerbose("init", "global list")
 
 	manager.StartResultManager().Exec02(homedir.Dir).IfError(func(t *manager.Throwable) {
 		t.ShowMessage().ExitWithCode(3)
@@ -102,7 +98,7 @@ func initGlobalList() {
 		globalList.SetConfigFile(home + "/.gitgo/list.yaml")
 
 		if !manager.NewE().Add(globalList.ReadInConfig()).HaveError() {
-			om.Log().ToDebug("Global list", globalList.ConfigFileUsed())
+			om.Log.ToDebug("Global list", globalList.ConfigFileUsed())
 
 			configVersionChecker(globalList)
 		}
@@ -110,7 +106,7 @@ func initGlobalList() {
 }
 
 func initLocalList() {
-	om.Log().ToVerbose("init", "local list")
+	om.Log.ToVerbose("init", "local list")
 
 	manager.StartResultManager().Exec12(filepath.Abs, ".").IfError(func(t *manager.Throwable) {
 		t.ShowMessage().ExitWithCode(4)
@@ -119,7 +115,7 @@ func initLocalList() {
 		localList.SetConfigFile(home + "/.gitgo/list.yaml")
 
 		if !manager.NewE().Add(localList.ReadInConfig()).HaveError() {
-			om.Log().ToDebug("Local list", localList.ConfigFileUsed())
+			om.Log.ToDebug("Local list", localList.ConfigFileUsed())
 
 			configVersionChecker(localList)
 		}
@@ -128,7 +124,7 @@ func initLocalList() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	om.Log().ToVerbose("init", "config")
+	om.Log.ToVerbose("init", "config")
 
 	manager.StartResultManager().Exec02(homedir.Dir).IfError(func(t *manager.Throwable) {
 		t.ShowMessage().ExitWithCode(2)
@@ -143,14 +139,14 @@ func initConfig() {
 		viper.AutomaticEnv() // read in environment variables that match
 
 		if !manager.NewE().Add(viper.ReadInConfig()).HaveError() {
-			om.Log().ToDebug("Config file", viper.ConfigFileUsed())
+			om.Log.ToDebug("Config file", viper.ConfigFileUsed())
 
 			manager.Wrap(viper.Get("log")).UnwrapNext(func(i interface{}) interface{} {
 				return viper.GetBool("log")
 			}).Unwrap(func(log interface{}) {
 				if !log.(bool) {
-					om.Log().ToVerbose("log setting", "none of output will be print")
-					om.Log().Setting().SetMaximumLevel(om.LLevelNone)
+					om.Log.ToVerbose("log setting", "none of output will be print")
+					om.Log.Setting().SetMaximumLevel(om.LLevelNone)
 				}
 			})
 
@@ -160,7 +156,7 @@ func initConfig() {
 }
 
 func initRepository() {
-	om.Log().ToVerbose("init", "repository")
+	om.Log.ToVerbose("init", "repository")
 	repo = model.NewRepo()
 	repo.Setup()
 }

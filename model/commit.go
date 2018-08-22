@@ -31,7 +31,7 @@ func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
 	for _, commits := range c.list {
 		list = append(list, commits.Format())
 	}
-	om.Log().ToVerbose("commit list", list)
+	om.Log.ToVerbose("commit list", list)
 	wrap := manager.WrapNil()
 	if len(list) > 0 {
 		wrap = manager.Wrap(list)
@@ -80,21 +80,21 @@ func (c *Commit) getQuestion() *manager.ResultWrapper {
 // LoadList will initial new list of Header.
 func (c *Commit) LoadList(vp *viper.Viper) *Commit {
 	if vp == nil {
-		om.Log().ToDebug("commit list", "viper is nil, cannot load list")
+		om.Log.ToDebug("commit list", "viper is nil, cannot load list")
 		return c
 	}
 
 	// reset list
 	c.list = []CommitHeader{}
 
-	om.Log().ToDebug("commit list", "load commit list from "+vp.ConfigFileUsed())
+	om.Log.ToDebug("commit list", "load commit list from "+vp.ConfigFileUsed())
 	return c.MergeList(vp)
 }
 
 // MergeList will merge current list to the new ones.
 func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 	if vp == nil {
-		om.Log().ToVerbose("commit list", "viper is nil, cannot merge list")
+		om.Log.ToVerbose("commit list", "viper is nil, cannot merge list")
 		return c
 	}
 	if c.list == nil {
@@ -105,7 +105,7 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 		return c
 	}
 
-	om.Log().ToVerbose("commit list", "merge commit list from "+vp.ConfigFileUsed())
+	om.Log.ToVerbose("commit list", "merge commit list from "+vp.ConfigFileUsed())
 	for i, element := range vp.Get("list").([]interface{}) {
 		cm := element.(map[interface{}]interface{})
 
@@ -114,7 +114,7 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 			Value: cm["value"].(string),
 		}
 
-		om.Log().ToVerbose("header "+strconv.Itoa(i), commitHeader.String())
+		om.Log.ToVerbose("header "+strconv.Itoa(i), commitHeader.String())
 		c.list = append(c.list, commitHeader)
 	}
 
@@ -133,21 +133,21 @@ func (c *Commit) Commit(hasMessage bool) {
 			qs = qs[:len(qs)-1]
 		}
 
-		om.Log().ToDebug("question list", strconv.Itoa(len(qs)))
+		om.Log.ToDebug("question list", strconv.Itoa(len(qs)))
 
 		answers := CommitMessage{}
 		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
 
-			om.Log().ToDebug("commit key", answers.GetKey())
-			om.Log().ToDebug("commit title", answers.Title)
-			om.Log().ToDebug("commit message", answers.Message)
+			om.Log.ToDebug("commit key", answers.GetKey())
+			om.Log.ToDebug("commit title", answers.Title)
+			om.Log.ToDebug("commit message", answers.Message)
 
 			c.CustomCommit(answers)
 
 		}).IfError(func(t *manager.Throwable) {
 			t.GetCustomMessage(func(errs []error) string {
 				for i, e := range errs {
-					om.Log().ToError(strconv.Itoa(i)+")", e.Error())
+					om.Log.ToError(strconv.Itoa(i)+")", e.Error())
 				}
 				return ""
 			})
@@ -164,6 +164,6 @@ func (c *Commit) CustomCommit(answers CommitMessage) {
 		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
 	}
 
-	om.Log().ToVerbose("commit full", commitMessage)
+	om.Log.ToVerbose("commit full", commitMessage)
 	Git().Exec("commit", "-m", commitMessage)
 }

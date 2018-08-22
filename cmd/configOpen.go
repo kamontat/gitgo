@@ -38,26 +38,26 @@ var configOpenCmd = &cobra.Command{
 	Short:   "open config in your default editor",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToLog("config", "open start...")
+		om.Log.ToLog("config", "open start...")
 
 		if inLocal {
 			if parent {
-				om.Log().ToVerbose("config", "On local parent")
+				om.Log.ToVerbose("config", "On local parent")
 				open.Run(path.Dir(localList.ConfigFileUsed()))
 			} else {
-				om.Log().ToVerbose("config", "On local list")
+				om.Log.ToVerbose("config", "On local list")
 				open.Run(localList.ConfigFileUsed())
 			}
 		} else if inGlobal {
 			if parent {
-				om.Log().ToVerbose("config", "on global parent")
+				om.Log.ToVerbose("config", "on global parent")
 				open.Run(path.Dir(globalList.ConfigFileUsed()))
 			} else {
-				om.Log().ToVerbose("config", "on global list")
+				om.Log.ToVerbose("config", "on global list")
 				open.Run(globalList.ConfigFileUsed())
 			}
 		} else {
-			om.Log().ToVerbose("config", "on using config")
+			om.Log.ToVerbose("config", "on using config")
 			open.Run(viper.ConfigFileUsed())
 		}
 	},

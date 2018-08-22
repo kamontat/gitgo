@@ -37,23 +37,23 @@ var commitCmd = &cobra.Command{
 	Short:   "Git commit with format string",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToLog("commit", "start...")
+		om.Log.ToLog("commit", "start...")
 
 		if all {
 			throw := repo.AddAll()
 			throw.ShowMessage()
 		} else {
 			if len(add) > 0 {
-				om.Log().ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
+				om.Log.ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
 				repo.Add(add).ShowMessage()
 			}
 		}
 
 		hasMessage := viper.GetBool("commit.message")
 		if hasMessage {
-			om.Log().ToVerbose("commit", "with message")
+			om.Log.ToVerbose("commit", "with message")
 		} else {
-			om.Log().ToVerbose("commit", "without message")
+			om.Log.ToVerbose("commit", "without message")
 		}
 		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(hasMessage)
 	},

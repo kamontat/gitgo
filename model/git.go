@@ -46,21 +46,21 @@ func (g *GitCommand) Exec(args ...string) *manager.ErrManager {
 	cmd := exec.Command("git", args...)
 
 	if g.out != nil {
-		om.Log().ToVerbose("setting", "custom command output")
+		om.Log.ToVerbose("setting", "custom command output")
 		cmd.Stdout = g.out
 	} else {
 		cmd.Stdout = os.Stdout
 	}
 
 	if g.err != nil {
-		om.Log().ToVerbose("setting", "custom command error")
+		om.Log.ToVerbose("setting", "custom command error")
 		cmd.Stderr = g.err
 	} else {
 		cmd.Stderr = os.Stderr
 	}
 
 	if g.in != nil {
-		om.Log().ToVerbose("setting", "custom command input")
+		om.Log.ToVerbose("setting", "custom command input")
 		cmd.Stdin = g.in
 	} else {
 		cmd.Stdin = os.Stdin

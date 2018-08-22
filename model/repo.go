@@ -44,7 +44,7 @@ func (r *Repo) Setup() {
 		return
 	}
 
-	om.Log().ToVerbose("Repository", "initial path "+r.path)
+	om.Log.ToVerbose("Repository", "initial path "+r.path)
 	result, err := git.PlainOpen(r.path)
 	r.Manager.Save("", err)
 

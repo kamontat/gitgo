@@ -42,11 +42,11 @@ var configInitialCmd = &cobra.Command{
 	Short:   "Create and initial gitgo configuration files",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToLog("config", "initial start...")
+		om.Log.ToLog("config", "initial start...")
 		yaml := model.GeneratorYAML()
 
 		if initialForce {
-			om.Log().ToVerbose("config", "initial with force")
+			om.Log.ToVerbose("config", "initial with force")
 		}
 
 		init := false
@@ -124,7 +124,7 @@ func getLPath(filename string) *manager.ResultWrapper {
 
 func getFile(path *manager.ResultWrapper) *manager.ResultWrapper {
 	return path.UnwrapNext(func(i interface{}) interface{} {
-		om.Log().ToDebug("config", "start initial path ")
+		om.Log.ToDebug("config", "start initial path ")
 
 		f, _ := os.OpenFile(i.(string), os.O_CREATE|os.O_WRONLY, os.ModePerm)
 		return f
@@ -148,9 +148,9 @@ func writeTo(file *os.File, str string) {
 		e.Add(err)
 		e.Throw().ShowMessage().ExitWithCode(11)
 
-		om.Log().ToInfo("config", "Done @"+file.Name())
+		om.Log.ToInfo("config", "Done @"+file.Name())
 	} else {
-		om.Log().ToWarn("config", "Exist @"+file.Name())
+		om.Log.ToWarn("config", "Exist @"+file.Name())
 	}
 }
 
