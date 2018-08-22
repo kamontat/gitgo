@@ -84,6 +84,8 @@ build() {
 	env GOOS="$os" GOARCH="$arch" go build -o "$filename" &>/dev/null
 }
 
+process go "Go Run" "build" "install"
+
 process build "MacOS" "darwin,386" "darwin,amd64"
 
 process build "Window" "windows,386" "windows,amd64"
