@@ -33,6 +33,10 @@ list:
     value: Updating file(s) or folder(s).
   - key: doc
     value: Documenting source code / user manual.
+  - key: init
+    value: Start project or Initial commit.
+  - key: release
+    value: Release stable version or tags.
 `
 }
 
