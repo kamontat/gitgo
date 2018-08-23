@@ -11,7 +11,7 @@ import (
 )
 
 func TestGitCommand(t *testing.T) {
-	om.SetupLogger(&om.Setting{Color: false, Level: om.LLevelVerbose, To: &om.OutputTo{Stdout: true, File: false}}, nil)
+	om.SetupNewLogger(&om.Setting{Color: false, Level: om.LLevelVerbose, To: &om.OutputTo{Stdout: true, File: false}})
 	om.Log.Setting().SetMaximumLevel(om.LLevelNone)
 
 	Convey("Given GitCommand", t, func() {
