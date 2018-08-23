@@ -6,6 +6,8 @@ jobs:
     working_directory: /go/src/github.com/kamontat/go-error-manager
     steps:
       - checkout
+      - run: go get github.com/kamontat/go-error-manager
+      - run: go get github.com/kamontat/go-log-manager
       - run: go get -v -t -d ./...
       - run: go test ./... -cover -coverprofile=coverage.txt -covermode=atomic
       - run: 'bash <(curl -s https://codecov.io/bash)'
