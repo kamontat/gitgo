@@ -1,8 +1,16 @@
 
-n.n.n / 2018-08-21
+n.n.n / 2018-08-23
 ==================
 
-
+  * [merge] GH version to local version
+  * [fix] Fix wrong path
+  * [config] Update go version
+  * [config] Update circle ci error
+  * [fix] Fix during to lib changes
+  * [improve] Add 2 more list init, release
+  * [improve] Add go build to build script
+  * [lib] Update library changes
+  * [doc] Update documents (docs)
 
 v2.0.2 / 2018-08-21
 ===================
