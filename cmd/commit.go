@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// Package cmd is the default package of commands provide by cobra cli.
 package cmd
 
 import (
@@ -36,23 +37,23 @@ var commitCmd = &cobra.Command{
 	Short:   "Git commit with format string",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("commit", "start...")
+		om.Log.ToLog("commit", "start...")
 
 		if all {
-			exception := repo.AddAll()
-			exception.Throw().ShowMessage(nil).ExitWithCode(10)
+			throw := repo.AddAll()
+			throw.ShowMessage()
 		} else {
 			if len(add) > 0 {
-				om.Log().ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
-				repo.Add(add)
+				om.Log.ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
+				repo.Add(add).ShowMessage()
 			}
 		}
 
 		hasMessage := viper.GetBool("commit.message")
 		if hasMessage {
-			om.Log().ToVerbose("commit", "with message")
+			om.Log.ToVerbose("commit", "with message")
 		} else {
-			om.Log().ToVerbose("commit", "without message")
+			om.Log.ToVerbose("commit", "without message")
 		}
 		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(hasMessage)
 	},
@@ -64,6 +65,6 @@ var all bool
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add")
+	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add [multiple use]")
 	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
 }

@@ -2,13 +2,16 @@ package model
 
 import (
 	"io"
+	"os"
 	"os/exec"
 
 	"github.com/kamontat/go-error-manager"
+	"github.com/kamontat/go-log-manager"
 )
 
 // GitCommand is git-cli command with custom stdout and custom stderr
 type GitCommand struct {
+	in  io.Reader
 	out io.Writer
 	err io.Writer
 }
@@ -32,16 +35,37 @@ func (g *GitCommand) SetOutWriter(out io.Writer) *GitCommand {
 	return g
 }
 
+// SetReader will set reader
+func (g *GitCommand) SetReader(in io.Reader) *GitCommand {
+	g.in = in
+	return g
+}
+
 // Exec will run git cli in command line
 func (g *GitCommand) Exec(args ...string) *manager.ErrManager {
 	cmd := exec.Command("git", args...)
+
 	if g.out != nil {
+		om.Log.ToVerbose("setting", "custom command output")
 		cmd.Stdout = g.out
-	}
-	if g.err != nil {
-		cmd.Stderr = g.err
+	} else {
+		cmd.Stdout = os.Stdout
 	}
 
-	e := cmd.Start()
-	return manager.StartNewManageError().AddNewError(e)
+	if g.err != nil {
+		om.Log.ToVerbose("setting", "custom command error")
+		cmd.Stderr = g.err
+	} else {
+		cmd.Stderr = os.Stderr
+	}
+
+	if g.in != nil {
+		om.Log.ToVerbose("setting", "custom command input")
+		cmd.Stdin = g.in
+	} else {
+		cmd.Stdin = os.Stdin
+	}
+
+	e := cmd.Run()
+	return manager.NewE().Add(e)
 }

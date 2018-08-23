@@ -40,7 +40,7 @@ var configCmd = &cobra.Command{
 	Short:   "Gitgo configuration",
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log().ToInfo("config", "start...")
+		om.Log.ToLog("config", "start...")
 
 		open.Run(viper.ConfigFileUsed())
 	},
@@ -51,8 +51,4 @@ func init() {
 
 	configCmd.PersistentFlags().BoolVarP(&inLocal, "local", "l", false, "initial configuration file in local")
 	configCmd.PersistentFlags().BoolVarP(&inGlobal, "global", "g", false, "initial configuration file in global")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

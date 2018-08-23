@@ -1,3 +1,5 @@
+// Package model provides the model of repository and commit.
+// As long as another model that will be use in gitgo command.
 package model
 
 import (
@@ -12,88 +14,87 @@ import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 )
 
-type CommitHeader struct {
-	Key   string
-	Value string
-}
-
-func (c *CommitHeader) Format() string {
-	return fmt.Sprintf("%-10s: %s", c.Key, c.Value)
-}
-
-func (c *CommitHeader) String() string {
-	return fmt.Sprintf("commit key=%s, value=%s", c.Key, c.Value)
-}
-
+// Commit is Commit object of deal with commit things.
 type Commit struct {
-	repo *Repo
-	list []CommitHeader
+	throwable *manager.Throwable
+	list      []CommitHeader
 }
 
-func (c *Commit) ListHeaderOptions() (list []string) {
+// CanCommit mean this commit contain no errors
+func (c *Commit) CanCommit() bool {
+	return !c.throwable.CanBeThrow()
+}
+
+// ListHeaderOptions return the list of string of commit that create by Format() method in CommitHeader.
+func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
+	var list []string
 	for _, commits := range c.list {
 		list = append(list, commits.Format())
 	}
-	return
-}
-
-type CommitMessage struct {
-	Key     string
-	Title   string
-	Message string
-}
-
-func (c *Commit) getQuestion() []*survey.Question {
-	return []*survey.Question{
-		{
-			Name: "key",
-			Prompt: &survey.Select{
-				Message:  "Select commit header",
-				Options:  c.ListHeaderOptions(),
-				Help:     "Header will represent 'one word' key of the commit",
-				PageSize: 5,
-				VimMode:  true,
-			},
-			Validate: survey.Required,
-		}, {
-			Name: "title",
-			Prompt: &survey.Input{
-				Message: "Enter commit title",
-				Help:    "Title will represent one short sentence of the commit",
-			},
-			Validate: func(val interface{}) error {
-				err := survey.Required(val)
-				if err == nil {
-					err = survey.MaxLength(50)(val)
-				}
-				return err
-			},
-		}, {
-			Name: "message",
-			Prompt: &survey.Editor{
-				Message: "Enter commit message",
-				Help:    "Message will represent everything that commit have done",
-			},
-		},
+	om.Log.ToVerbose("commit list", list)
+	wrap := manager.WrapNil()
+	if len(list) > 0 {
+		wrap = manager.Wrap(list)
 	}
+
+	return wrap
 }
 
+func (c *Commit) getQuestion() *manager.ResultWrapper {
+	return c.ListHeaderOptions().UnwrapNext(func(i interface{}) interface{} {
+		return []*survey.Question{
+			{
+				Name: "key",
+				Prompt: &survey.Select{
+					Message:  "Select commit header",
+					Options:  i.([]string),
+					Help:     "Header will represent 'one word' key of the commit",
+					PageSize: 5,
+					VimMode:  true,
+				},
+				Validate: survey.Required,
+			}, {
+				Name: "title",
+				Prompt: &survey.Input{
+					Message: "Enter commit title",
+					Help:    "Title will represent one short sentence of the commit",
+				},
+				Validate: func(val interface{}) error {
+					err := survey.Required(val)
+					if err == nil {
+						err = survey.MaxLength(50)(val)
+					}
+					return err
+				},
+			}, {
+				Name: "message",
+				Prompt: &survey.Editor{
+					Message: "Enter commit message",
+					Help:    "Message will represent everything that commit have done",
+				},
+			},
+		}
+	})
+}
+
+// LoadList will initial new list of Header.
 func (c *Commit) LoadList(vp *viper.Viper) *Commit {
 	if vp == nil {
-		om.Log().ToDebug("commit list", "viper is nil, cannot load list")
+		om.Log.ToDebug("commit list", "viper is nil, cannot load list")
 		return c
 	}
 
 	// reset list
 	c.list = []CommitHeader{}
 
-	om.Log().ToDebug("commit list", "load commit list from "+vp.ConfigFileUsed())
+	om.Log.ToDebug("commit list", "load commit list from "+vp.ConfigFileUsed())
 	return c.MergeList(vp)
 }
 
+// MergeList will merge current list to the new ones.
 func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 	if vp == nil {
-		om.Log().ToVerbose("commit list", "viper is nil, cannot merge list")
+		om.Log.ToVerbose("commit list", "viper is nil, cannot merge list")
 		return c
 	}
 	if c.list == nil {
@@ -104,50 +105,65 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 		return c
 	}
 
-	om.Log().ToVerbose("commit list", "merge commit list from "+vp.ConfigFileUsed())
+	om.Log.ToVerbose("commit list", "merge commit list from "+vp.ConfigFileUsed())
 	for i, element := range vp.Get("list").([]interface{}) {
 		cm := element.(map[interface{}]interface{})
+
 		commitHeader := CommitHeader{
 			Key:   cm["key"].(string),
 			Value: cm["value"].(string),
 		}
 
-		om.Log().ToVerbose("header "+strconv.Itoa(i), commitHeader.String())
+		om.Log.ToVerbose("header "+strconv.Itoa(i), commitHeader.String())
 		c.list = append(c.list, commitHeader)
 	}
 
 	return c
 }
 
+// Commit is action for ask the message from user and call CustomCommit.
 func (c *Commit) Commit(hasMessage bool) {
 	// the questions to ask
-	var qs = c.getQuestion()
-	if !hasMessage {
-		qs = qs[:len(qs)-1]
-	}
+	var result = c.getQuestion()
 
-	om.Log().ToDebug("question list", strconv.Itoa(len(qs)))
+	result.Unwrap(func(i interface{}) {
+		qs := i.([]*survey.Question)
 
-	answers := CommitMessage{}
+		if !hasMessage {
+			qs = qs[:len(qs)-1]
+		}
 
-	// perform the questions
-	manager.StartNewManageError().E1P(survey.Ask(qs, &answers)).Throw().ShowMessage(nil).Exit()
+		om.Log.ToDebug("question list", strconv.Itoa(len(qs)))
 
-	om.Log().ToDebug("commit key", answers.Key)
-	om.Log().ToDebug("commit title", answers.Title)
-	om.Log().ToDebug("commit message", answers.Message)
+		answers := CommitMessage{}
+		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
 
-	c.CustomCommit(answers)
+			om.Log.ToDebug("commit key", answers.GetKey())
+			om.Log.ToDebug("commit title", answers.Title)
+			om.Log.ToDebug("commit message", answers.Message)
+
+			c.CustomCommit(answers)
+
+		}).IfError(func(t *manager.Throwable) {
+			t.GetCustomMessage(func(errs []error) string {
+				for i, e := range errs {
+					om.Log.ToError(strconv.Itoa(i)+")", e.Error())
+				}
+				return ""
+			})
+		})
+	})
 }
 
+// CustomCommit will run git commit -m "<message>" with the default format.
 func (c *Commit) CustomCommit(answers CommitMessage) {
 	var commitMessage string
 	if answers.Message == "" {
-		commitMessage = fmt.Sprintf("[%s] %s", answers.Key, answers.Title)
+		commitMessage = fmt.Sprintf("[%s] %s", answers.GetKey(), answers.Title)
 	} else {
-		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.Key, answers.Title, answers.Message)
+		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
 	}
 
-	om.Log().ToVerbose("commit full", commitMessage)
+	om.Log.ToVerbose("commit full", commitMessage)
 	Git().Exec("commit", "-m", commitMessage)
 }
