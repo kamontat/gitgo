@@ -131,22 +131,17 @@ func getFile(path *manager.ResultWrapper) *manager.ResultWrapper {
 	})
 }
 
-func isFileExist(file *os.File) *manager.ErrManager {
+func isFileExist(file *os.File) bool {
 	i, e := file.Stat()
-	m := manager.NewE().Add(e)
-	if i.Size() <= 0 {
-		m.AddMessage("File size is 0 (file empty)")
-	}
-	return m
+	return e == nil && i.Size() > 0
 }
 
 func writeTo(file *os.File, str string) {
-	e := isFileExist(file)
-	if initialForce || !e.HaveError() {
+	if initialForce || !isFileExist(file) {
 		_, err := file.WriteString(str)
-
-		e.Add(err)
-		e.Throw().ShowMessage().ExitWithCode(11)
+		manager.NewE().Add(err).
+			Throw().ShowMessage().
+			ExitWithCode(11)
 
 		om.Log.ToInfo("config", "Done @"+file.Name())
 	} else {
