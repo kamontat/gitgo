@@ -31,7 +31,7 @@ func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
 	for _, commits := range c.list {
 		list = append(list, commits.Format())
 	}
-	om.Log.ToVerbose("commit list", list)
+	om.Log.ToVerbose("commit keys size", len(list))
 	wrap := manager.WrapNil()
 	if len(list) > 0 {
 		wrap = manager.Wrap(list)
@@ -122,7 +122,7 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 }
 
 // Commit is action for ask the message from user and call CustomCommit.
-func (c *Commit) Commit(hasMessage bool) {
+func (c *Commit) Commit(add, hasMessage bool) {
 	// the questions to ask
 	var result = c.getQuestion()
 
@@ -142,7 +142,7 @@ func (c *Commit) Commit(hasMessage bool) {
 			om.Log.ToDebug("commit title", answers.Title)
 			om.Log.ToDebug("commit message", answers.Message)
 
-			c.CustomCommit(answers)
+			c.CustomCommit(add, answers)
 
 		}).IfError(func(t *manager.Throwable) {
 			t.GetCustomMessage(func(errs []error) string {
@@ -156,7 +156,7 @@ func (c *Commit) Commit(hasMessage bool) {
 }
 
 // CustomCommit will run git commit -m "<message>" with the default format.
-func (c *Commit) CustomCommit(answers CommitMessage) {
+func (c *Commit) CustomCommit(add bool, answers CommitMessage) {
 	var commitMessage string
 	if answers.Message == "" {
 		commitMessage = fmt.Sprintf("[%s] %s", answers.GetKey(), answers.Title)
@@ -165,5 +165,10 @@ func (c *Commit) CustomCommit(answers CommitMessage) {
 	}
 
 	om.Log.ToVerbose("commit full", commitMessage)
-	Git().Exec("commit", "-m", commitMessage)
+	if add {
+		om.Log.ToVerbose("commit", "with -a flag")
+		Git().Exec("commit", "-am", commitMessage).Throw().ShowMessage().Exit()
+	} else {
+		Git().Exec("commit", "-m", commitMessage).Throw().ShowMessage().Exit()
+	}
 }

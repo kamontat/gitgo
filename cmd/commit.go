@@ -40,12 +40,13 @@ var commitCmd = &cobra.Command{
 		om.Log.ToLog("commit", "start...")
 
 		if all {
+			om.Log.ToVerbose("git add", "git add all files by git add --all")
 			throw := repo.AddAll()
 			throw.ShowMessage()
 		} else {
-			if len(add) > 0 {
-				om.Log.ToDebug("commit", "add files ["+strings.Join(add, ", ")+"]")
-				repo.Add(add).ShowMessage()
+			if len(each) > 0 {
+				om.Log.ToDebug("git add", "add files ["+strings.Join(each, ", ")+"]")
+				repo.Add(each).ShowMessage()
 			}
 		}
 
@@ -55,16 +56,19 @@ var commitCmd = &cobra.Command{
 		} else {
 			om.Log.ToVerbose("commit", "without message")
 		}
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(hasMessage)
+
+		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage)
 	},
 }
 
-var add []string
+var each []string
+var add bool
 var all bool
 
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add [multiple use]")
+	commitCmd.PersistentFlags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
 	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
+	commitCmd.PersistentFlags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
 }
