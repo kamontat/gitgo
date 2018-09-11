@@ -1,7 +1,17 @@
 
-n.n.n / 2018-08-23
+n.n.n / 2018-09-12
 ==================
 
+
+
+v2.1.0 / 2018-09-12
+===================
+
+  * [doc] Update document and version
+  * [feature] Add commit with init key
+  * [improve] Improve git commit command
+  * [fix] Initial config error
+  * [doc] Update documents (docs)
   * [merge] GH version to local version
   * [fix] Fix wrong path
   * [config] Update go version
