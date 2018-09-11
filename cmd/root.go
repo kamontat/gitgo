@@ -48,7 +48,6 @@ var rootCmd = &cobra.Command{
 	Use:     "gitgo",
 	Short:   "gitgo command by Kamontat Chantrachurathumrong",
 	Version: "2.0.3",
-	Long:    ``,
 }
 
 // Execute is execute method that call by cobra cli.

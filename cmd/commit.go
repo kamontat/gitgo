@@ -35,7 +35,6 @@ var commitCmd = &cobra.Command{
 	Use:     "commit",
 	Aliases: []string{"c"},
 	Short:   "Git commit with format string",
-	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("commit", "start...")
 
@@ -68,7 +67,7 @@ var all bool
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	commitCmd.PersistentFlags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
-	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
-	commitCmd.PersistentFlags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
+	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
+	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
+	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
 }

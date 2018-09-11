@@ -38,7 +38,6 @@ var configCmd = &cobra.Command{
 	Use:     "config",
 	Aliases: []string{"C", "configuration"},
 	Short:   "Gitgo configuration",
-	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("config", "start...")
 

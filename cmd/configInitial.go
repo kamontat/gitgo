@@ -40,7 +40,6 @@ var configInitialCmd = &cobra.Command{
 	Use:     "init",
 	Aliases: []string{"i", "initial"},
 	Short:   "Create and initial gitgo configuration files",
-	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("config", "initial start...")
 		yaml := model.GeneratorYAML()
