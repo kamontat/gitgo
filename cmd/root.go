@@ -45,9 +45,21 @@ var verbose bool
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
-	Use:     "gitgo",
-	Short:   "gitgo command by Kamontat Chantrachurathumrong",
-	Version: "2.0.3",
+	Use:   "gitgo",
+	Short: "gitgo command by Kamontat Chantrachurathumrong",
+	Long: `Gitgo: git commit for organize user.
+  
+This command create by golang with cobra cli. 
+
+Motivation by gitmoji, 
+I used to like gitmoji but emoji isn't made for none developer.
+And the problem I got is I forget which emoji is represent what.
+And hard to generate changelog file. 
+So I think 'short key text' is the solution of situation.
+
+2.1.0 -> Add commit initial command
+  `,
+	Version: "2.1.0",
 }
 
 // Execute is execute method that call by cobra cli.
