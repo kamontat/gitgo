@@ -3,8 +3,6 @@
 package model
 
 import (
-	"fmt"
-
 	"github.com/kamontat/gitgo/exception"
 
 	"github.com/kamontat/go-error-manager"
@@ -89,12 +87,8 @@ func (c *Commit) Commit(add, hasMessage bool, key string) {
 
 // CustomCommit will run git commit -m "<message>" with the default format.
 func (c *Commit) CustomCommit(add bool, answers CommitMessage) {
-	var commitMessage string
-	if answers.Message == "" {
-		commitMessage = fmt.Sprintf("[%s] %s", answers.GetKey(), answers.Title)
-	} else {
-		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
-	}
+
+	var commitMessage = answers.GetMessage()
 
 	var t *manager.Throwable
 

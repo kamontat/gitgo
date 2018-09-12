@@ -36,15 +36,17 @@ commits:
   - key: fix
     value: Fixing a bug.
   - key: refactor
-    value: Refactoring code.
+    value: A code change that neither fixes a bug nor adds a feature.
   - key: file
-    value: Updating file(s) or folder(s).
+    value: Add or remove file(s) or folder(s).
   - key: doc
     value: Documenting source code / user manual.
-  - key: init
-    value: Start project or Initial commit.
+  - key: test
+    value: Adding missing tests or correcting existing tests.
   - key: release
     value: Release stable version or tags.
+  - key: BREAKING CHANGE
+    value: introduce break change code.
 branches:
   - key: enhance
     value: Introducing new features or project enhancement.

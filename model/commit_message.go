@@ -1,6 +1,9 @@
 package model
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // CommitMessage is the commit message for save in commit.
 type CommitMessage struct {
@@ -18,4 +21,11 @@ func (c *CommitMessage) GetKey() string {
 		return strings.TrimSpace(s)
 	}
 	return c.Key
+}
+
+func (c *CommitMessage) GetMessage() string {
+	if c.Message == "" {
+		return fmt.Sprintf("%s: %s", c.GetKey(), c.Title)
+	}
+	return fmt.Sprintf("%s: %s\n%s", c.GetKey(), c.Title, c.Message)
 }

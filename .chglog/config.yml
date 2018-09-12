@@ -1,0 +1,32 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/kamontat/gitgo
+options:
+  commits:
+    filters:
+      Type:
+        - feature
+        - fix
+        - improve
+        - refactor
+        - doc
+  commit_groups:
+    title_maps:
+      feature: Features
+      improve: Improving User Experience
+      refactor: Code Refactoring
+      fix: Fixes Bug
+      doc: Documentation
+  header:
+    pattern: "^(\\w*)\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Subject
+  issues: 
+    prefix: 
+      - "#"
+  notes:
+    keywords:
+      - BREAKING CHANGE

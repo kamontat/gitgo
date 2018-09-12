@@ -56,14 +56,19 @@ func (r *Repo) Setup() {
 	}
 }
 
-// GetGitRepository will return git.Repository of this Repo
-func (r *Repo) GetGitRepository() *manager.ResultWrapper {
+// GetRawGitRepository will return git.Repository of this Repo, can be nil
+func (r *Repo) GetRawGitRepository() *git.Repository {
 	r.Setup()
 
 	if r.isSetup {
-		return manager.Wrap(r.repo)
+		return r.repo
 	}
-	return manager.WrapNil()
+	return nil
+}
+
+// GetGitRepository will return git.Repository of this Repo
+func (r *Repo) GetGitRepository() *manager.ResultWrapper {
+	return manager.Wrap(r.GetRawGitRepository())
 }
 
 // GetRawWorktree is getter to get worktree, this method can return nil value
