@@ -57,6 +57,8 @@ read -r ans
 ./build.sh
 ./docs.sh
 
+gitgo cl --location ./docs/changelog.md
+
 git add -A
 git commit -m "[doc] Update documents (docs)"
 
