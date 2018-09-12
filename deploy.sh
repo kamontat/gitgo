@@ -32,12 +32,12 @@ go install
 
 gitgo --version
 
-printf "press <enter> to next"
+printf "Check version; press <enter> to next"
 # shellcheck disable=SC2034
 read -r ans
 
 git status
-printf "Git status; press <enter> to next"
+printf "Check status; press <enter> to next"
 read -r ans
 
 tag="v$(gitgo --version | sed -e 's/gitgo version //g')"
