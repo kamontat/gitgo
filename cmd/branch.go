@@ -18,58 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package cmd is the default package of commands provide by cobra cli.
 package cmd
 
 import (
-	"strings"
-
-	"github.com/spf13/viper"
-
-	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
-// commitCmd represents the commit command
-var commitCmd = &cobra.Command{
-	Use:     "commit",
-	Aliases: []string{"c"},
-	Short:   "Git commit with format string",
+// branchCmd represents the branch command
+var branchCmd = &cobra.Command{
+	Use:     "branch",
+	Aliases: []string{"b"},
+	Short:   "git branch management, get current branch",
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log.ToLog("commit", "start...")
+		om.Log.ToVerbose("Branch", "start...")
 
-		if all {
-			om.Log.ToVerbose("git add", "git add all files by git add --all")
-			t := repo.AddAll()
-			e.Show(t)
-		} else {
-			if len(each) > 0 {
-				om.Log.ToDebug("git add", "add files ["+strings.Join(each, ", ")+"]")
-				t := repo.Add(each)
-				e.Show(t)
-			}
-		}
-
-		hasMessage := viper.GetBool("commit.message")
-		if hasMessage {
-			om.Log.ToVerbose("commit", "with message")
-		} else {
-			om.Log.ToVerbose("commit", "without message")
-		}
-
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage)
+		om.Log.ToInfo("current branch", repo.GetBranch().CurrentBranch().Short())
 	},
 }
 
-var each []string
-var add bool
-var all bool
-
 func init() {
-	rootCmd.AddCommand(commitCmd)
-
-	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
-	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
-	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
+	rootCmd.AddCommand(branchCmd)
 }

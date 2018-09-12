@@ -18,58 +18,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package cmd is the default package of commands provide by cobra cli.
 package cmd
 
 import (
-	"strings"
+	"fmt"
 
-	"github.com/spf13/viper"
-
-	e "github.com/kamontat/gitgo/exception"
+	"github.com/fatih/color"
 	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-// commitCmd represents the commit command
-var commitCmd = &cobra.Command{
-	Use:     "commit",
-	Aliases: []string{"c"},
-	Short:   "Git commit with format string",
+// branchListCmd represents the branchList command
+var branchListCmd = &cobra.Command{
+	Use:     "list",
+	Aliases: []string{"l"},
+	Short:   "List all branch in local",
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log.ToLog("commit", "start...")
+		om.Log.ToVerbose("Branch List", "start...")
 
-		if all {
-			om.Log.ToVerbose("git add", "git add all files by git add --all")
-			t := repo.AddAll()
-			e.Show(t)
-		} else {
-			if len(each) > 0 {
-				om.Log.ToDebug("git add", "add files ["+strings.Join(each, ", ")+"]")
-				t := repo.Add(each)
-				e.Show(t)
-			}
-		}
-
-		hasMessage := viper.GetBool("commit.message")
-		if hasMessage {
-			om.Log.ToVerbose("commit", "with message")
-		} else {
-			om.Log.ToVerbose("commit", "without message")
-		}
-
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage)
+		branch := repo.GetBranch()
+		branch.List(remotes, listFn)
 	},
 }
 
-var each []string
-var add bool
-var all bool
+var listFn = func(title string, i int, r *plumbing.Reference) {
+	var s string
+	if title != "branch" {
+		s = color.RedString(r.Name().Short())
+	} else if r.Name().Short() == repo.GetBranch().CurrentBranch().Short() {
+		s = color.GreenString(r.Name().Short())
+	} else {
+		s = r.Name().Short()
+	}
+
+	om.Log.ToInfo(fmt.Sprintf("%s: %d)", title, i+1), s)
+}
+
+var remotes bool
 
 func init() {
-	rootCmd.AddCommand(commitCmd)
+	branchCmd.AddCommand(branchListCmd)
 
-	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
-	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
-	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
+	branchListCmd.Flags().BoolVarP(&remotes, "all", "a", false, "List both local and remote branches [WIP]")
 }

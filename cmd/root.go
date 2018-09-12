@@ -57,9 +57,10 @@ And the problem I got is I forget which emoji is represent what.
 And hard to generate changelog file. 
 So I think 'short key text' is the solution of situation.
 
+2.2.0 -> Add branch command; new and list branch
 2.1.0 -> Add commit initial command
   `,
-	Version: "2.1.0",
+	Version: "2.2.0",
 }
 
 // Execute is execute method that call by cobra cli.

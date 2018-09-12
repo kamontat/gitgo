@@ -3,6 +3,8 @@ package model
 import (
 	"path/filepath"
 
+	"github.com/kamontat/gitgo/exception"
+
 	"github.com/kamontat/go-error-manager"
 	"github.com/kamontat/go-log-manager"
 
@@ -46,38 +48,40 @@ func (r *Repo) Setup() {
 
 	om.Log.ToVerbose("Repository", "initial path "+r.path)
 	result, err := git.PlainOpen(r.path)
-	r.Manager.Save("", err)
 
-	r.Manager.IfNoError(func() {
-		r.isSetup = true
+	e.ShowAndExit(e.ThrowE(e.InitialError, err))
+	if err == nil {
+		r.isSetup = result != nil
 		r.repo = result
-	})
+	}
 }
 
 // GetGitRepository will return git.Repository of this Repo
 func (r *Repo) GetGitRepository() *manager.ResultWrapper {
 	r.Setup()
 
-	return r.Manager.IfNoErrorThen(func() interface{} {
-		if r.isSetup {
-			return r.repo
+	if r.isSetup {
+		return manager.Wrap(r.repo)
+	}
+	return manager.WrapNil()
+}
+
+// GetRawWorktree is getter to get worktree, this method can return nil value
+func (r *Repo) GetRawWorktree() *git.Worktree {
+	if r.isSetup {
+		work, err := r.repo.Worktree()
+		e.ShowAndExit(e.ThrowE(e.InitialError, err))
+		if err == nil {
+			return work
 		}
 		return nil
-	})
+	}
+	return nil
 }
 
 // GetWorktree is getter method, which get git.Worktree from git.Repository.
-// It's will Exit with code 5 if any error occurred.
 func (r *Repo) GetWorktree() *manager.ResultWrapper {
-	resultWrapper := r.GetGitRepository()
-	return resultWrapper.UnwrapNext(func(i interface{}) interface{} {
-		worktree, err := i.(*git.Repository).Worktree()
-		r.Manager.Save("", err)
-		if r.Manager.NoError() {
-			return worktree
-		}
-		return nil
-	})
+	return manager.Wrap(r.GetRawWorktree())
 }
 
 // Status will return *git.Status.
@@ -117,6 +121,17 @@ func (r *Repo) AddAll() *manager.Throwable {
 	}
 
 	return r.Manager.Throw()
+}
+
+func (r *Repo) GetBranch() *Branch {
+	ref, err := r.repo.Head()
+	e.ShowAndExit(e.ThrowE(e.InitialError, err))
+
+	return &Branch{
+		Repository: r.repo,
+		Worktree:   r.GetRawWorktree(),
+		HEAD:       ref,
+	}
 }
 
 // GetCommit will return Commit object.

@@ -3,8 +3,11 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/kamontat/gitgo/exception"
 
 	"github.com/kamontat/go-error-manager"
 
@@ -20,13 +23,7 @@ type Commit struct {
 	list      []CommitHeader
 }
 
-// CanCommit mean this commit contain no errors
-func (c *Commit) CanCommit() bool {
-	return !c.throwable.CanBeThrow()
-}
-
-// ListHeaderOptions return the list of string of commit that create by Format() method in CommitHeader.
-func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
+func (c *Commit) listHeaderOptions() *manager.ResultWrapper {
 	var list []string
 	for _, commits := range c.list {
 		list = append(list, commits.Format())
@@ -40,8 +37,13 @@ func (c *Commit) ListHeaderOptions() *manager.ResultWrapper {
 	return wrap
 }
 
+// CanCommit mean this commit contain no errors
+func (c *Commit) CanCommit() bool {
+	return len(c.list) > 0
+}
+
 func (c *Commit) getQuestion() *manager.ResultWrapper {
-	return c.ListHeaderOptions().UnwrapNext(func(i interface{}) interface{} {
+	return c.listHeaderOptions().UnwrapNext(func(i interface{}) interface{} {
 		return []*survey.Question{
 			{
 				Name: "key",
@@ -94,20 +96,30 @@ func (c *Commit) LoadList(vp *viper.Viper) *Commit {
 // MergeList will merge current list to the new ones.
 func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 	if vp == nil {
-		om.Log.ToVerbose("commit list", "viper is nil, cannot merge list")
+		om.Log.ToWarn("Pre commit", "viper is nil, cannot merge commit list")
 		return c
 	}
-	if c.list == nil {
-		c.list = []CommitHeader{}
+	if vp.Get("list") == nil {
+		om.Log.ToWarn("Pre commit", "cannot get commit list")
+		return c
 	}
 
-	if vp.Get("list") == nil {
-		return c
+	if c.list == nil {
+		c.list = []CommitHeader{}
 	}
 
 	om.Log.ToVerbose("commit list", "merge commit list from "+vp.ConfigFileUsed())
 	for i, element := range vp.Get("list").([]interface{}) {
 		cm := element.(map[interface{}]interface{})
+
+		if _, ok := cm["key"]; !ok {
+			om.Log.ToError("Commit list", "List at "+vp.ConfigFileUsed()+" have invalid key format")
+			break
+		}
+
+		if _, ok := cm["value"]; !ok {
+			om.Log.ToError("Commit list", "List at "+vp.ConfigFileUsed()+"value of key="+cm["key"].(string)+" not exist.")
+		}
 
 		commitHeader := CommitHeader{
 			Key:   cm["key"].(string),
@@ -117,7 +129,6 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 		om.Log.ToVerbose("header "+strconv.Itoa(i), commitHeader.String())
 		c.list = append(c.list, commitHeader)
 	}
-
 	return c
 }
 
@@ -133,25 +144,22 @@ func (c *Commit) Commit(add, hasMessage bool) {
 			qs = qs[:len(qs)-1]
 		}
 
-		om.Log.ToDebug("question list", strconv.Itoa(len(qs)))
+		om.Log.ToDebug("question list", len(qs))
 
 		answers := CommitMessage{}
 		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
-
 			om.Log.ToDebug("commit key", answers.GetKey())
 			om.Log.ToDebug("commit title", answers.Title)
 			om.Log.ToDebug("commit message", answers.Message)
 
 			c.CustomCommit(add, answers)
-
 		}).IfError(func(t *manager.Throwable) {
-			t.GetCustomMessage(func(errs []error) string {
-				for i, e := range errs {
-					om.Log.ToError(strconv.Itoa(i)+")", e.Error())
-				}
-				return ""
-			})
+			e.ShowAndExit(e.Update(t, e.UserError))
 		})
+	}).Catch(func() error {
+		return errors.New("Cannot get list of key commit, maybe not exist")
+	}, func(t *manager.Throwable) {
+		e.ShowAndExit(e.Update(t, e.PreCommitError))
 	})
 }
 
@@ -164,11 +172,15 @@ func (c *Commit) CustomCommit(add bool, answers CommitMessage) {
 		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
 	}
 
-	om.Log.ToVerbose("commit full", commitMessage)
+	var t *manager.Throwable
+
+	om.Log.ToDebug("commit full", commitMessage)
 	if add {
 		om.Log.ToVerbose("commit", "with -a flag")
-		Git().Exec("commit", "-am", commitMessage).Throw().ShowMessage().Exit()
+		t = Git().Exec("commit", "-am", commitMessage).Throw()
 	} else {
-		Git().Exec("commit", "-m", commitMessage).Throw().ShowMessage().Exit()
+		t = Git().Exec("commit", "-m", commitMessage).Throw()
 	}
+
+	e.ShowAndExit(e.Update(t, e.CommitError))
 }
