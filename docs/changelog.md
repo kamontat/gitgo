@@ -4,6 +4,25 @@ n.n.n / 2018-09-12
 
 
 
+v2.2.1 / 2018-09-12
+===================
+
+  * [release] Version v2.2.1
+  * [doc] Update open config doc
+  * [improve] Improve branch setting and configuration
+  * [feature] Add selection for branch creator
+  * [feature] Improve branch new error
+  * [improve] Add custom key option
+  * [improve] Upgrade deploy files
+  * [release] Version v2.2.0
+
+v2.2.0 / 2018-09-12
+===================
+
+  * [feature] Add branch command;
+  * [fix] Fix commit init error
+  * [doc] Update documents (docs)
+
 v2.1.0 / 2018-09-12
 ===================
 

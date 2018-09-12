@@ -3,16 +3,16 @@
  project  : gitgo
  repo age : 4 weeks
  active   : 8 days
- commits  : 43
- files    : 27
+ commits  : 54
+ files    : 35
  authors  : 
-    43	Kamontat Chantrachirathumrong  100.0%
+    54	Kamontat Chantrachirathumrong  100.0%
 
 ## Lines report
 
- lines    :     2057
+ lines    :     2741
  authors  :
- 2041 Kamontat Chantrachirathumrong   99.2%
-   16 Not Committed Yet               0.8%
+ 2697 Kamontat Chantrachirathumrong   98.4%
+   44 Not Committed Yet               1.6%
 
 
