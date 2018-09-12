@@ -1,9 +1,19 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v2.3.0"></a>
+## [v2.3.0] - 2018-09-12
 ### Documentation
 - Update document README
 - Update documents (docs)
+
+### Features
+- Add main feature changelog
+
+### Fixes Bug
+- Initial error
+- Fix variable not use error
 
 ### Improving User Experience
 - Make commit format as conventional-changelog
@@ -148,7 +158,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.0...HEAD
+[v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/kamontat/gitgo/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/kamontat/gitgo/compare/v2.0.2...v2.1.0
