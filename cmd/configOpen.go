@@ -36,6 +36,13 @@ var configOpenCmd = &cobra.Command{
 	Use:     "open",
 	Aliases: []string{"o"},
 	Short:   "open config in your default editor",
+	Long: `
+Open configuration have some logic to open file,
+
+1. If no flag passed, program will open used config file.
+2. If '-l' passed, program will open local list file.
+3. If '-g' passed, program will open global list file.
+  `,
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("config", "open start...")
 
