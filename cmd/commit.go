@@ -58,7 +58,7 @@ var commitCmd = &cobra.Command{
 			om.Log.ToVerbose("commit", "without message")
 		}
 
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage)
+		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage, customKey)
 	},
 }
 
@@ -66,8 +66,12 @@ var each []string
 var add bool
 var all bool
 
+var customKey string
+
 func init() {
 	rootCmd.AddCommand(commitCmd)
+
+	commitCmd.Flags().StringVarP(&customKey, "key", "k", "", "Custom commit key [shouldn't use]")
 
 	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
 	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")

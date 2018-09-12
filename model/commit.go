@@ -133,12 +133,16 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 }
 
 // Commit is action for ask the message from user and call CustomCommit.
-func (c *Commit) Commit(add, hasMessage bool) {
+func (c *Commit) Commit(add, hasMessage bool, key string) {
 	// the questions to ask
 	var result = c.getQuestion()
 
 	result.Unwrap(func(i interface{}) {
 		qs := i.([]*survey.Question)
+
+		if key != "" {
+			qs = qs[1:]
+		}
 
 		if !hasMessage {
 			qs = qs[:len(qs)-1]
@@ -146,7 +150,9 @@ func (c *Commit) Commit(add, hasMessage bool) {
 
 		om.Log.ToDebug("question list", len(qs))
 
-		answers := CommitMessage{}
+		answers := CommitMessage{
+			Key: key,
+		}
 		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
 			om.Log.ToDebug("commit key", answers.GetKey())
 			om.Log.ToDebug("commit title", answers.Title)
