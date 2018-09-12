@@ -50,6 +50,10 @@ read -r ans
 
 git tag "$tag"
 
+printf "build project; press <enter> to next"
+# shellcheck disable=SC2034
+read -r ans
+
 ./build.sh
 ./docs.sh
 
