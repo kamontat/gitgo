@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/kamontat/gitgo/model"
 
 	"github.com/kamontat/go-log-manager"
@@ -42,33 +40,28 @@ var commitInitialCmd = &cobra.Command{
 		om.Log.ToVerbose("Status", "Getting commit object")
 		commit := repo.GetCommit()
 
-		if commit.CanCommit() {
-			om.Log.ToVerbose("Commit", "Start create commit")
+		om.Log.ToVerbose("Commit", "Start create commit")
 
-			if key == "" {
-				key = "init"
-			}
+		if key == "" {
+			key = "init"
+		}
 
-			if title == "" {
-				title = "Initial commit with files"
-			}
+		if title == "" {
+			title = "Initial commit with files"
+		}
 
-			message := `We create this commit for initial repostiory.
+		message := `We create this commit for initial repostiory.
       Commit 'gitgo' project [https://github.com/kamontat/gitgo].`
 
-			if !hasMessage {
-				message = ""
-			}
-
-			commit.CustomCommit(true, model.CommitMessage{
-				Key:     key,
-				Title:   title,
-				Message: message,
-			})
-		} else {
-			om.Log.ToError("Repository", "Cannot create commit")
-			os.Exit(1)
+		if !hasMessage {
+			message = ""
 		}
+
+		commit.CustomCommit(true, model.CommitMessage{
+			Key:     key,
+			Title:   title,
+			Message: message,
+		})
 	},
 }
 
@@ -79,7 +72,7 @@ var hasMessage bool
 func init() {
 	commitCmd.AddCommand(commitInitialCmd)
 
-	commitInitialCmd.Flags().StringVarP(&key, "key", "k", "init", "Custom commit key [default=init]")
-	commitInitialCmd.Flags().StringVarP(&title, "title", "t", "Initial commit with files", "Custom commit title [default=Initial commit with files]")
-	commitInitialCmd.Flags().BoolVarP(&hasMessage, "no-message", "N", false, "Force commit to not use message. [default=false]")
+	commitInitialCmd.Flags().StringVarP(&key, "key", "k", "init", "Custom commit key")
+	commitInitialCmd.Flags().StringVarP(&title, "title", "t", "Initial commit with files", "Custom commit title.")
+	commitInitialCmd.Flags().BoolVarP(&hasMessage, "no-message", "N", false, "Force commit to not use message.")
 }
