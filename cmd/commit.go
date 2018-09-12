@@ -58,7 +58,10 @@ var commitCmd = &cobra.Command{
 			om.Log.ToVerbose("commit", "without message")
 		}
 
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(all, hasMessage, customKey)
+		commit := repo.GetCommit()
+
+		commit.KeyList.Load(globalList).Merge(localList)
+		commit.Commit(all, hasMessage, customKey)
 	},
 }
 

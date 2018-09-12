@@ -2,8 +2,14 @@ package model
 
 import (
 	"errors"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/kamontat/gitgo/exception"
+	manager "github.com/kamontat/go-error-manager"
+	"github.com/kamontat/go-log-manager"
+	survey "gopkg.in/AlecAivazis/survey.v1"
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
@@ -13,6 +19,7 @@ type Branch struct {
 	Worktree   *git.Worktree
 	HEAD       *plumbing.Reference
 	Reference  *plumbing.Reference
+	KeyList    *List
 }
 
 func (b *Branch) check() {
@@ -29,8 +36,123 @@ func (b *Branch) check() {
 	}
 }
 
+func (b *Branch) getQuestion(requireIter, requireIssue, issueHashtag bool) []*survey.Question {
+	if !b.KeyList.IsContain() {
+		e.ShowAndExit(e.Throw(e.InitialError, "No key list for branch"))
+	}
+
+	var qs = []*survey.Question{
+		{
+			Name: "key",
+			Prompt: &survey.Select{
+				Message:  "Select branch header",
+				Options:  b.KeyList.MakeList(),
+				Help:     "Header will represent 'one word' of the action",
+				PageSize: 5,
+				VimMode:  true,
+			},
+			Validate: survey.Required,
+		},
+	}
+
+	qs = append(qs, &survey.Question{
+		Name: "title",
+		Prompt: &survey.Input{
+			Message: "Enter branch title",
+			Help:    "Title will represent 'one word' of the result of action",
+		},
+		Validate: survey.Required,
+	})
+
+	qs = append(qs, &survey.Question{
+		Name: "desc",
+		Prompt: &survey.Input{
+			Message: "Enter branch description",
+			Help:    "Title will represent 'one-two word' to descript branch",
+		},
+	})
+
+	if requireIter {
+		qs = append(qs, &survey.Question{
+			Name: "iter",
+			Prompt: &survey.Input{
+				Message: "Enter iteration 'number'",
+				Help:    "Iteration number is number represent each split, this will add to parent of branch name",
+			},
+			Validate: func(ans interface{}) error {
+				str, _ := ans.(string)
+				if ans == nil || str == "" {
+					return nil
+				}
+
+				_, err := strconv.Atoi(str)
+				return err
+			},
+		})
+	}
+
+	if requireIssue {
+		qs = append(qs, &survey.Question{
+			Name: "issue",
+			Prompt: &survey.Input{
+				Message: "Enter issue 'number'",
+				Help:    "Issue is issue number that this branch resolve or work on",
+			},
+			Validate: func(ans interface{}) error {
+				str, _ := ans.(string)
+				if ans == nil || str == "" {
+					return nil
+				}
+
+				_, err := strconv.Atoi(str)
+				if err == nil {
+					return nil
+				}
+
+				ok, err := regexp.MatchString("#[0-9]+", str)
+				if err != nil {
+					return err
+				}
+
+				if !ok {
+					return errors.New("your issue number is not matches our regex")
+				}
+				return nil
+			},
+			Transform: func(ans interface{}) interface{} {
+				if !issueHashtag {
+					return strings.Trim(ans.(string), "#")
+				}
+				return ans
+			},
+		})
+	}
+	return qs
+}
+
 func (b *Branch) CurrentBranch() plumbing.ReferenceName {
 	return b.HEAD.Name()
+}
+
+func (b *Branch) AskCreate(requireIter, requireIssue, issueHashtag bool) *Branch {
+	var qs = b.getQuestion(requireIter, requireIssue, issueHashtag)
+	om.Log.ToDebug("question list", len(qs))
+
+	name := BranchName{}
+	manager.StartResultManager().Save("", survey.Ask(qs, &name)).IfNoError(func() {
+		om.Log.ToVerbose("branch key", name.GetKey())
+		om.Log.ToVerbose("branch title", name.Title)
+		om.Log.ToVerbose("branch descript", name.Desc)
+		om.Log.ToVerbose("branch issue", name.Issue)
+
+		om.Log.ToDebug("Branch name", name.Name())
+
+		// b.Create(name.Name())
+	}).IfError(func(t *manager.Throwable) {
+		e.ShowAndExit(e.Update(t, e.UserError))
+	})
+
+	return b
 }
 
 func (b *Branch) Create(name string) *Branch {

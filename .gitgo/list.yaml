@@ -1,4 +1,7 @@
 version: 2
-list:
+commits:
   - key: empty
     value: Update this commit header
+branches:
+  - key: empty
+    value: Update this branch header

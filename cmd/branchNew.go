@@ -23,6 +23,7 @@ package cmd
 import (
 	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // branchNewCmd represents the branchNew command
@@ -30,14 +31,27 @@ var branchNewCmd = &cobra.Command{
 	Use:     "new",
 	Aliases: []string{"n", "c", "create", "s", "start", "i", "init", "initial"},
 	Short:   "create new branch and checkout",
-	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToVerbose("create Branch", "start...")
 
+		isRequireIteration := viper.GetBool("branch.iteration")
+		isRequireIssue := viper.GetBool("branch.issue.require")
+		allowIssueHashtag := viper.GetBool("branch.issue.hashtag")
+
 		branch := repo.GetBranch()
 
-		om.Log.ToVerbose("branch", "create branch name "+args[0])
-		branch.Create(args[0])
+		if name == "" {
+			branch.KeyList.Load(globalList).Merge(localList)
+			om.Log.ToVerbose("branch", "ask for branch name")
+			branch.AskCreate(
+				isRequireIteration,
+				isRequireIssue,
+				allowIssueHashtag,
+			)
+		} else {
+			om.Log.ToVerbose("branch", "create branch name "+name)
+			branch.Create(name)
+		}
 		if !disableCheckout {
 			om.Log.ToDebug("branch", "create and checkout")
 			branch.CheckoutD()

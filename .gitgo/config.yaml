@@ -2,3 +2,8 @@ version: 2
 log: true
 commit:
   message: false
+branch:
+  issue:
+    require: true
+    hashtag: false
+  iteration: true

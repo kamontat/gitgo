@@ -128,6 +128,7 @@ func (r *Repo) GetBranch() *Branch {
 	e.ShowAndExit(e.ThrowE(e.InitialError, err))
 
 	return &Branch{
+		KeyList:    (&List{}).Setup("branches"),
 		Repository: r.repo,
 		Worktree:   r.GetRawWorktree(),
 		HEAD:       ref,
@@ -139,6 +140,7 @@ func (r *Repo) GetCommit() *Commit {
 	r.Setup()
 
 	return &Commit{
+		KeyList:   (&List{}).Setup("commits"),
 		throwable: r.Manager.Throw(),
 	}
 }
