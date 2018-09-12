@@ -42,7 +42,7 @@ var changelogInitialCmd = &cobra.Command{
 		om.Log.ToLog("changelog", "initial start...")
 
 		gitgoStr := path.Dir(localList.ConfigFileUsed())
-		gitgo, err := os.Open(gitgoStr)
+		_, err := os.Open(gitgoStr)
 		if err != nil {
 			e.ShowAndExit(e.Throw(e.InitialError, "Cannot initial changelog before initial configuration files"))
 		}
