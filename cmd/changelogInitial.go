@@ -53,8 +53,8 @@ var changelogInitialCmd = &cobra.Command{
 
 		yaml := model.GeneratorYAML()
 
-		conf := Open(gitgoStr, "config.yml")
-		tmp := Open(gitgoStr, "CHANGELOG.tpl.md")
+		conf := openFile(gitgoStr, "config.yml")
+		tmp := openFile(gitgoStr, "CHANGELOG.tpl.md")
 
 		var style string
 		survey.AskOne(&survey.Select{
@@ -77,8 +77,13 @@ func getChgLogConfig(parent, file string) string {
 	return path.Join(parent, "chglog", file)
 }
 
-func Open(parent, file string) *os.File {
-	f, err := os.OpenFile(getChgLogConfig(parent, file), os.O_CREATE|os.O_WRONLY, os.ModePerm)
+func openFile(parent, file string) *os.File {
+	filepath := getChgLogConfig(parent, file)
+	d := path.Dir(filepath)
+	os.MkdirAll(d, os.ModePerm)
+
+	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+
 	e.ShowAndExit(e.ThrowE(e.InitialError, err))
 	return f
 }

@@ -21,9 +21,8 @@
 package cmd
 
 import (
-	"github.com/skratchdot/open-golang/open"
-
 	"github.com/kamontat/go-log-manager"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
