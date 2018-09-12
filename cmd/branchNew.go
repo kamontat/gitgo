@@ -46,9 +46,11 @@ var branchNewCmd = &cobra.Command{
 }
 
 var disableCheckout = false
+var name string
 
 func init() {
 	branchCmd.AddCommand(branchNewCmd)
 
 	branchNewCmd.Flags().BoolVarP(&disableCheckout, "no-checkout", "C", false, "not checkout to new branch")
+	branchNewCmd.Flags().StringVarP(&name, "name", "n", "", "custom branch name [shouldn't use]")
 }
