@@ -14,13 +14,14 @@ func (y *YAML) GDefaultConfig() string {
 log: true
 commit:
   message: false
-  format: "%<key>: %<title> \n %<message>"
 branch:
+  iteration:
+    require: true
+  description:
+    require: true
   issue:
     require: true
     hashtag: false
-  iteration: true
-  format: "%<issue>/%<action>/%<desc>/%<optional>"
 `
 }
 

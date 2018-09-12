@@ -34,7 +34,8 @@ var branchNewCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToVerbose("create Branch", "start...")
 
-		isRequireIteration := viper.GetBool("branch.iteration")
+		isRequireIteration := viper.GetBool("branch.iteration.require")
+		isRequireDesc := viper.GetBool("branch.description.require")
 		isRequireIssue := viper.GetBool("branch.issue.require")
 		allowIssueHashtag := viper.GetBool("branch.issue.hashtag")
 
@@ -44,6 +45,7 @@ var branchNewCmd = &cobra.Command{
 			branch.KeyList.Load(globalList).Merge(localList)
 			om.Log.ToVerbose("branch", "ask for branch name")
 			branch.AskCreate(
+				isRequireDesc,
 				isRequireIteration,
 				isRequireIssue,
 				allowIssueHashtag,

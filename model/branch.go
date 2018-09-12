@@ -36,41 +36,12 @@ func (b *Branch) check() {
 	}
 }
 
-func (b *Branch) getQuestion(requireIter, requireIssue, issueHashtag bool) []*survey.Question {
+func (b *Branch) getQuestion(requireDesc, requireIter, requireIssue, issueHashtag bool) []*survey.Question {
 	if !b.KeyList.IsContain() {
 		e.ShowAndExit(e.Throw(e.InitialError, "No key list for branch"))
 	}
 
-	var qs = []*survey.Question{
-		{
-			Name: "key",
-			Prompt: &survey.Select{
-				Message:  "Select branch header",
-				Options:  b.KeyList.MakeList(),
-				Help:     "Header will represent 'one word' of the action",
-				PageSize: 5,
-				VimMode:  true,
-			},
-			Validate: survey.Required,
-		},
-	}
-
-	qs = append(qs, &survey.Question{
-		Name: "title",
-		Prompt: &survey.Input{
-			Message: "Enter branch title",
-			Help:    "Title will represent 'one word' of the result of action",
-		},
-		Validate: survey.Required,
-	})
-
-	qs = append(qs, &survey.Question{
-		Name: "desc",
-		Prompt: &survey.Input{
-			Message: "Enter branch description",
-			Help:    "Title will represent 'one-two word' to descript branch",
-		},
-	})
+	var qs = []*survey.Question{}
 
 	if requireIter {
 		qs = append(qs, &survey.Question{
@@ -87,6 +58,37 @@ func (b *Branch) getQuestion(requireIter, requireIssue, issueHashtag bool) []*su
 
 				_, err := strconv.Atoi(str)
 				return err
+			},
+		})
+	}
+
+	qs = append(qs, &survey.Question{
+		Name: "key",
+		Prompt: &survey.Select{
+			Message:  "Select branch header",
+			Options:  b.KeyList.MakeList(),
+			Help:     "Header will represent 'one word' of the action",
+			PageSize: 5,
+			VimMode:  true,
+		},
+		Validate: survey.Required,
+	})
+
+	qs = append(qs, &survey.Question{
+		Name: "title",
+		Prompt: &survey.Input{
+			Message: "Enter branch title",
+			Help:    "Title will represent 'one word' of the result of action",
+		},
+		Validate: survey.Required,
+	})
+
+	if requireDesc {
+		qs = append(qs, &survey.Question{
+			Name: "desc",
+			Prompt: &survey.Input{
+				Message: "Enter branch description",
+				Help:    "Title will represent 'one-two word' to descript branch",
 			},
 		})
 	}
@@ -134,8 +136,8 @@ func (b *Branch) CurrentBranch() plumbing.ReferenceName {
 	return b.HEAD.Name()
 }
 
-func (b *Branch) AskCreate(requireIter, requireIssue, issueHashtag bool) *Branch {
-	var qs = b.getQuestion(requireIter, requireIssue, issueHashtag)
+func (b *Branch) AskCreate(requireDesc, requireIter, requireIssue, issueHashtag bool) *Branch {
+	var qs = b.getQuestion(requireDesc, requireIter, requireIssue, issueHashtag)
 	om.Log.ToDebug("question list", len(qs))
 
 	name := BranchName{}
