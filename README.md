@@ -9,6 +9,12 @@ git commit and branch creator for organize developer
 3. change file name to `gitgo` and move to bin folder
     1. MacOS bin folder: `/usr/local/bin/` or `/usr/bin`
 
+### Relative libraries
+
+You might need to create changelog. This libraries is made for you
+
+- Git generate changelog: https://github.com/git-chglog/git-chglog
+
 ## Format
 
 This project create to make every commit and branch name be same format for all developer and contributor. Which key hsa mark as **optional** mean you can turn it off by setting config files

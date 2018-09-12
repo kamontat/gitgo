@@ -25,7 +25,7 @@ func (c *CommitMessage) GetKey() string {
 
 func (c *CommitMessage) GetMessage() string {
 	if c.Message == "" {
-		return fmt.Sprintf("%s: %s", c.GetKey(), c.Title)
+		return fmt.Sprintf("[%s] %s", c.GetKey(), c.Title)
 	}
-	return fmt.Sprintf("%s: %s\n%s", c.GetKey(), c.Title, c.Message)
+	return fmt.Sprintf("[%s] %s\n%s", c.GetKey(), c.Title, c.Message)
 }

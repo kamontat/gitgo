@@ -1,190 +1,167 @@
+<a name="unreleased"></a>
+## [Unreleased]
 
-n.n.n / 2018-09-12
-==================
+### Documentation
+- Update document README
+- Update documents (docs)
+
+### Improving User Experience
+- Make commit format as conventional-changelog
 
 
+<a name="v2.2.1"></a>
+## [v2.2.1] - 2018-09-12
+### Documentation
+- Update open config doc
 
-v2.2.1 / 2018-09-12
-===================
+### Features
+- Add selection for branch creator
+- Improve branch new error
 
-  * [release] Version v2.2.1
-  * [doc] Update open config doc
-  * [improve] Improve branch setting and configuration
-  * [feature] Add selection for branch creator
-  * [feature] Improve branch new error
-  * [improve] Add custom key option
-  * [improve] Upgrade deploy files
-  * [release] Version v2.2.0
+### Improving User Experience
+- Improve branch setting and configuration
+- Add custom key option
+- Upgrade deploy files
 
-v2.2.0 / 2018-09-12
-===================
 
-  * [feature] Add branch command;
-  * [fix] Fix commit init error
-  * [doc] Update documents (docs)
+<a name="v2.2.0"></a>
+## [v2.2.0] - 2018-09-12
+### Documentation
+- Update documents (docs)
 
-v2.1.0 / 2018-09-12
-===================
+### Features
+- Add branch command;
 
-  * [doc] Update document and version
-  * [feature] Add commit with init key
-  * [improve] Improve git commit command
-  * [fix] Initial config error
-  * [doc] Update documents (docs)
-  * [merge] GH version to local version
-  * [fix] Fix wrong path
-  * [config] Update go version
-  * [config] Update circle ci error
-  * [fix] Fix during to lib changes
-  * [improve] Add 2 more list init, release
-  * [improve] Add go build to build script
-  * [lib] Update library changes
-  * [doc] Update documents (docs)
+### Fixes Bug
+- Fix commit init error
 
-v2.0.2 / 2018-08-21
-===================
 
-  * [improve] Update version variable
-  * [refactor] Clean code and Add test, Setup CI
-  * [feature] Update to support error and log library
-  * [doc] Update documents
-  * [script] Update deploy script
-  * [doc] Update error message and godoc
-  * [fix] Fix condition
-  * [] Fix header is too long
-  * [fix] Fix list error by wrong config format
-  * [algo] Change logic of deploy
+<a name="v2.1.0"></a>
+## [v2.1.0] - 2018-09-12
+### Documentation
+- Update document and version
+- Update documents (docs)
+- Update documents (docs)
 
-v2.0.1 / 2018-08-16
-===================
+### Features
+- Add commit with init key
 
-  * [release] Version v2.0.1
-  * [release] Version 2.0.1
-  * [fix] Fix list config in local file should be empty
-  * [fix] Fix config initial error when no local files
-  * [doc       : Documenting source code / user manual.] Update document
-  * [config] Update default config files
-  * [config] Update default config files
-  * [doc] Update documents
-  * [config] Update default config
+### Fixes Bug
+- Initial config error
+- Fix wrong path
+- Fix during to lib changes
 
-v2.0.0 / 2018-08-16
-===================
+### Improving User Experience
+- Improve git commit command
+- Add 2 more list init, release
+- Add go build to build script
 
-  * [release] Version 2.0.0
-  * [refactor] Clean code
-  * [feature] Add config open and initial
-  * [log] Update log file output
-  * [model] Enable commit code
-  * [refactor] Update root code
-  * [model] Update commit and completed
-  * [config] Update gitgo config file
-  * [feature] Add commit subcommand, but not key list yet.
-  * [init] Start project
 
-v1.4.1 / 2018-06-25
-===================
+<a name="v2.0.2"></a>
+## [v2.0.2] - 2018-08-21
+### Code Refactoring
+- Clean code and Add test, Setup CI
 
-  * [release]: Release version 1.4.1
-  * [config] Change default configuration
-  * [release]: Release version 1.4.0,
-  * [bug] Fix config file error while creating
-  * [release]: Release new version 1.4.0-beta.3
-  * [improve]: Add and Improve testing code,
-  * [release]: Release new version 1.4.0-beta.2
-  * [fix] Fix git message not found!
-  * []:
+### Documentation
+- Update documents
+- Update error message and godoc
 
-1.4.0-alpha.1 / 2018-05-05
-==========================
+### Features
+- Update to support error and log library
 
-  * [release]: Release 1.4.0-alpha.1, Add new emoji APIs
-  * [improve]: Improve git commit logic
-  * [improve]: Update prompt library, use survey instead
-  * [doc]: Update documents
+### Fixes Bug
+- Fix condition
+- Fix list error by wrong config format
 
-1.3.0-beta.1 / 2018-04-11
-=========================
+### Improving User Experience
+- Update version variable
 
-  * [release]: Release new version 1.3.0-beta.1
-  * [feature]: Implemented git commit release, Not test yet!
-  * [doc]: Remove unused USAGE file
-  * [improve]: Add script for build binary code
-  * [doc] CREATE LICENSE
-  * [doc] Update LICENSE in README file
-  * Merge branch 'master' of https://github.com/kamontat/gitgo
-  * [doc] Add README.md
-  * [fix]: Fix pull errors, Fix pull error when specify branch and add missing options
 
-1.3.0-alpha.1 / 2018-04-11
-==========================
+<a name="v2.0.1"></a>
+## [v2.0.1] - 2018-08-16
+### Documentation
+- Update documents
 
-  * [feature]: Add commit release and push deploy subcommands, Not implement yet!!!
-  * [improve]: Improve commit, push algorithm, Improve code, Add documents, Add validator to init commit
+### Fixes Bug
+- Fix list config in local file should be empty
+- Fix config initial error when no local files
 
-1.1.6 / 2018-04-10
-==================
 
-  * [doc]: Release v1.1.6, Fix errors
-  * [fix]: Fix push with branch, This push command ignore first input
-  * [fix]: Update commit initial commands, fix a bug
-  * [fix]: Fix wrong path in prod env, when import we should add prefix (github)
+<a name="v2.0.0"></a>
+## [v2.0.0] - 2018-08-16
+### Code Refactoring
+- Clean code
+- Update root code
 
-1.1.4 / 2018-04-10
-==================
+### Features
+- Add config open and initial
+- Add commit subcommand, but not key list yet.
 
-  * [fix]: Fix initial commit nothing appear
 
-1.1.3 / 2018-04-07
-==================
+<a name="v1.4.1"></a>
+## [v1.4.1] - 2018-06-25
+### Fixes Bug
+- Fix git message not found!
 
-  * [doc]: Update version in docs, To version 1.1.3
-  * [fix]: Fix commit got wrong format, and update documentation
-  * [docs]: Update documents of cli,
-  * [improve]: improve code and clean them~,
-  * [improve]: Clean and update code,
-  * [doc]: Update version number, 1.1.2,
-  * [improve]: Update commit format,
-  * [improve]: add helper docs in yaml user config,
-  * [improve]: colorize output of git status,
-  * [feature]: Add auto install config, and update documents,
-  * [fix]: Fix config error, get config not throw, if key not found
-  * [feature]: Add management about config file, set is NOT implement yet!
-  * [fix]: Fix title not prompt, Title don't prompt even user set non-auto title settings
-  * [improve]: improve default config file
-  * [improve]: Improvement, Update code
-  * [feature]: Add new features, Add open config by editor
-  * [feature]: Add new features, Add config location command
-  * [feature]: Add new features, Add auto initial commit
-  * [init]: Initial commit, commit!
 
-1.0.0-beta.2 / 2018-04-04
-=========================
+<a name="1.4.0-alpha.1"></a>
+## [1.4.0-alpha.1] - 2018-05-05
 
-  * [config]: Update config update version in config and fix type in commit
-  * [feature]: GitAdd new features add git status feature
-  * [📈]: Improvement update code on commit design
-  * [📈]: Improvement
-  * "[emoji-icon]: Update config Updated"
-  * "[log]: Log Remove logging"
-  * "[feature]: GitAdd new features Add commit by text command!"
-  * [database] setup database
-  * [docs] Update commands documents
-  * [feature] Add pull feature
+<a name="1.3.0-beta.1"></a>
+## [1.3.0-beta.1] - 2018-04-11
+### Documentation
+- CREATE LICENSE
+- Update LICENSE in README file
+- Add README.md
 
-0.0.1-alpha.6 / 2018-04-03
-==========================
 
-  * [feature] completed push feature, and improve usability code
+<a name="1.3.0-alpha.1"></a>
+## [1.3.0-alpha.1] - 2018-04-11
 
-0.0.1-alpha.5 / 2018-04-03
-==========================
+<a name="1.1.6"></a>
+## [1.1.6] - 2018-04-10
 
-  * [feature] Add set-push and improvement code
+<a name="1.1.4"></a>
+## [1.1.4] - 2018-04-10
 
-0.0.1-alpha.3 / 2018-04-02
-==========================
+<a name="1.1.3"></a>
+## [1.1.3] - 2018-04-07
 
-  * [config] Update version 0.0.1-alpha.3
-  * [config] Update gitignore
-  * [config] Start project
+<a name="1.0.0-beta.2"></a>
+## [1.0.0-beta.2] - 2018-04-04
+### Features
+- Add pull feature
+
+
+<a name="0.0.1-alpha.6"></a>
+## [0.0.1-alpha.6] - 2018-04-03
+### Features
+- completed push feature, and improve usability code
+
+
+<a name="0.0.1-alpha.5"></a>
+## [0.0.1-alpha.5] - 2018-04-03
+### Features
+- Add set-push and improvement code
+
+
+<a name="0.0.1-alpha.3"></a>
+## 0.0.1-alpha.3 - 2018-04-02
+
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.2.1...HEAD
+[v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
+[v2.2.0]: https://github.com/kamontat/gitgo/compare/v2.1.0...v2.2.0
+[v2.1.0]: https://github.com/kamontat/gitgo/compare/v2.0.2...v2.1.0
+[v2.0.2]: https://github.com/kamontat/gitgo/compare/v2.0.1...v2.0.2
+[v2.0.1]: https://github.com/kamontat/gitgo/compare/v2.0.0...v2.0.1
+[v2.0.0]: https://github.com/kamontat/gitgo/compare/v1.4.1...v2.0.0
+[v1.4.1]: https://github.com/kamontat/gitgo/compare/1.4.0-alpha.1...v1.4.1
+[1.4.0-alpha.1]: https://github.com/kamontat/gitgo/compare/1.3.0-beta.1...1.4.0-alpha.1
+[1.3.0-beta.1]: https://github.com/kamontat/gitgo/compare/1.3.0-alpha.1...1.3.0-beta.1
+[1.3.0-alpha.1]: https://github.com/kamontat/gitgo/compare/1.1.6...1.3.0-alpha.1
+[1.1.6]: https://github.com/kamontat/gitgo/compare/1.1.4...1.1.6
+[1.1.4]: https://github.com/kamontat/gitgo/compare/1.1.3...1.1.4
+[1.1.3]: https://github.com/kamontat/gitgo/compare/1.0.0-beta.2...1.1.3
+[1.0.0-beta.2]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.6...1.0.0-beta.2
+[0.0.1-alpha.6]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.5...0.0.1-alpha.6
+[0.0.1-alpha.5]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.3...0.0.1-alpha.5

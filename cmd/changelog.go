@@ -21,6 +21,13 @@
 package cmd
 
 import (
+	"os"
+	"os/exec"
+	"path"
+
+	"github.com/kamontat/gitgo/exception"
+
+	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
@@ -30,11 +37,30 @@ var changelogCmd = &cobra.Command{
 	Aliases: []string{"change", "clog", "cl"},
 	Short:   "Create changelog",
 	Run: func(cmd *cobra.Command, args []string) {
+		om.Log.ToLog("changelog", "create start...")
 
+		c := exec.Command("git-chglog", "--version")
+		c.Stdout = os.Stdout
+		err := c.Run()
+		e.ShowAndExit(e.ThrowE(e.ChangelogError, err))
+
+		gitgoFolder := path.Dir(localList.ConfigFileUsed())
+		config := path.Join(gitgoFolder, "chglog", "config.yml")
+		_, err = os.Open(config)
+		if err != nil {
+			e.ShowAndExit(e.Throw(e.ChangelogError, "Config file not exist in .gitgo folder"))
+		}
+
+		c = exec.Command("git-chglog", "--config", config, "-o", changelogName)
+		c.Stdout = os.Stdout
+		c.Stderr = os.Stderr
+
+		err = c.Run()
+		e.ShowAndExit(e.ThrowE(e.ChangelogError, err))
 	},
 }
 
-var changelogName = "CHANGELOG.md"
+var changelogName = "./CHANGELOG.md"
 
 func init() {
 	rootCmd.AddCommand(changelogCmd)
@@ -47,5 +73,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	changelogCmd.Flags().StringVarP(&changelogName, "name", "n", "CHANGELOG.md", "Output file name")
+	changelogCmd.Flags().StringVarP(&changelogName, "location", "l", "./CHANGELOG.md", "Output file location")
 }
