@@ -2,6 +2,18 @@
 ## [Unreleased]
 
 
+<a name="v2.3.1"></a>
+## [v2.3.1] - 2018-09-13
+### Documentation
+- Update documents (docs)
+
+### Fixes Bug
+- Fix progress to not done
+
+### Improving User Experience
+- Add more debug log and verbose log
+
+
 <a name="v2.3.0"></a>
 ## [v2.3.0] - 2018-09-12
 ### Documentation
@@ -158,7 +170,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.1...HEAD
+[v2.3.1]: https://github.com/kamontat/gitgo/compare/v2.3.0...v2.3.1
 [v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/kamontat/gitgo/compare/v2.1.0...v2.2.0
