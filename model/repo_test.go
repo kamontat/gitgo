@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/bouk/monkey"
+	"bou.ke/monkey"
 	"github.com/kamontat/go-error-manager"
 
 	e "github.com/kamontat/gitgo/exception"
