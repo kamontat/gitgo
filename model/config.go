@@ -80,10 +80,11 @@ options:
     filters:
       Type:
         - feature
-        - fix
         - improve
+        - fix
         - refactor
         - doc
+        - test
   commit_groups:
     title_maps:
       feature: Features
@@ -91,6 +92,7 @@ options:
       refactor: Code Refactoring
       fix: Fixes Bug
       doc: Documentation
+      test: Testing
   header:
     pattern: "^\\[(\\w*)\\]\\s(.*)$"
     pattern_maps:
