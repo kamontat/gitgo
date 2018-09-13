@@ -22,7 +22,9 @@ const (
 	// BranchError is error when branch management
 	BranchError ErrorType = 20
 	// ChangelogError is error when export changelog
-	ChangelogError ErrorType = 30
+	ChangelogError ErrorType = 40
+	// CheckoutErrror is error occurred when checkout code
+	CheckoutErrror ErrorType = 30
 	// UserError is error cause by user
 	UserError ErrorType = 50
 )

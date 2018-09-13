@@ -149,7 +149,7 @@ func (b *Branch) AskCreate(requireDesc, requireIter, requireIssue, issueHashtag 
 
 		om.Log.ToDebug("Branch name", name.Name())
 
-		// b.Create(name.Name())
+		b.Create(name.Name())
 	}).IfError(func(t *manager.Throwable) {
 		e.ShowAndExit(e.Update(t, e.UserError))
 	})
@@ -184,10 +184,11 @@ func (b *Branch) CheckoutD() {
 func (b *Branch) Checkout(ref *plumbing.Reference) {
 	b.check()
 
-	b.Worktree.Checkout(&git.CheckoutOptions{
+	err := b.Worktree.Checkout(&git.CheckoutOptions{
 		Branch: ref.Name(),
 		Create: false,
 	})
+	e.ShowAndExit(e.ThrowE(e.CheckoutErrror, err))
 }
 
 func (b *Branch) Exist(name string) bool {
