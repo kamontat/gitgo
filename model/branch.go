@@ -125,7 +125,9 @@ func (b *Branch) getQuestion(requireDesc, requireIter, requireIssue, issueHashta
 				if !issueHashtag {
 					return strings.Trim(ans.(string), "#")
 				}
-				return ans
+
+				result := strings.Trim(ans.(string), "#")
+				return "#" + result
 			},
 		})
 	}
