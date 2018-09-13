@@ -165,6 +165,7 @@ func (b *Branch) Create(name string) *Branch {
 	}
 
 	branchName := (plumbing.ReferenceName)("refs/heads/" + name)
+	om.Log.ToVerbose("branch", "name "+branchName)
 	b.Reference = plumbing.NewHashReference(branchName, b.HEAD.Hash())
 
 	err := b.Repository.Storer.SetReference(b.Reference)
@@ -175,8 +176,10 @@ func (b *Branch) Create(name string) *Branch {
 
 func (b *Branch) CheckoutD() {
 	if b.Reference == nil {
+		om.Log.ToDebug("checkout", "input branch not exist, checkout to head")
 		b.Checkout(b.HEAD)
 	} else {
+		om.Log.ToDebug("checkout", "checkout to "+b.Reference.Name().String())
 		b.Checkout(b.Reference)
 	}
 }
@@ -188,6 +191,7 @@ func (b *Branch) Checkout(ref *plumbing.Reference) {
 		Branch: ref.Name(),
 		Create: false,
 	})
+
 	e.ShowAndExit(e.ThrowE(e.CheckoutErrror, err))
 }
 
@@ -197,6 +201,7 @@ func (b *Branch) Exist(name string) bool {
 
 	err = i.ForEach(func(r *plumbing.Reference) error {
 		if r.Name().Short() == name {
+			om.Log.ToWarn("branch", "branch name "+r.Name().Short()+" is exist.")
 			return errors.New("error")
 		}
 		return nil
