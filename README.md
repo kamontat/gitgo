@@ -22,7 +22,7 @@ This project create to make every commit and branch name be same format for all 
 ### Commit
 
 ```text
-[key]: title
+[key] title
 message
 ```
 
