@@ -19,7 +19,7 @@ printf "Generate godoc     | "
 godoc -html . >docs/godoc.html && echo "Completed" || echo "Failure"
 
 printf "Generate changelog | "
-git changelog --all --prune-old --stdout >docs/changelog.md && echo "Completed" || echo "Failure"
+gitgo cl --location ./docs/changelog.md  &>/dev/null && echo "Completed" || echo "Failure"
 
 printf "Generate summary   | "
 echo "# Summary" >docs/summary.txt &&
