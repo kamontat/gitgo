@@ -24,21 +24,21 @@ type Branch struct {
 
 func (b *Branch) check() {
 	if b.Repository == nil {
-		e.ShowAndExit(e.Throw(e.BranchError, "cannot get repository"))
+		e.ShowAndExit(e.ErrorMessage(e.IsBranch, "cannot get repository"))
 	}
 
 	if b.Worktree == nil {
-		e.ShowAndExit(e.Throw(e.BranchError, "cannot get git worktree"))
+		e.ShowAndExit(e.ErrorMessage(e.IsBranch, "cannot get git worktree"))
 	}
 
 	if b.HEAD == nil {
-		e.ShowAndExit(e.Throw(e.BranchError, "cannot get commit HEAD"))
+		e.ShowAndExit(e.ErrorMessage(e.IsBranch, "cannot get commit HEAD"))
 	}
 }
 
 func (b *Branch) getQuestion(requireDesc, requireIter, requireIssue, issueHashtag bool) []*survey.Question {
 	if !b.KeyList.IsContain() {
-		e.ShowAndExit(e.Throw(e.InitialError, "No key list for branch"))
+		e.ShowAndExit(e.ErrorMessage(e.IsInitial, "No key list for branch"))
 	}
 
 	var qs = []*survey.Question{}
@@ -151,7 +151,7 @@ func (b *Branch) AskCreate(requireDesc, requireIter, requireIssue, issueHashtag 
 
 		b.Create(name.Name())
 	}).IfError(func(t *manager.Throwable) {
-		e.ShowAndExit(e.Update(t, e.UserError))
+		e.ShowAndExit(e.Update(t, e.IsUser))
 	})
 
 	return b
@@ -161,15 +161,16 @@ func (b *Branch) Create(name string) *Branch {
 	b.check()
 
 	if b.Exist(name) {
-		e.ShowAndExit(e.Throw(e.BranchError, "This branch name is exist."))
+		e.ShowAndExit(e.ErrorMessage(e.IsBranch, "This branch name is exist."))
 	}
 
-	branchName := (plumbing.ReferenceName)("refs/heads/" + name)
+	normalize := b.NormalizeBranchName(name)
+	branchName := (plumbing.ReferenceName)("refs/heads/" + normalize)
 	om.Log.ToVerbose("branch", "name "+branchName)
 	b.Reference = plumbing.NewHashReference(branchName, b.HEAD.Hash())
 
 	err := b.Repository.Storer.SetReference(b.Reference)
-	e.ShowAndExit(e.ThrowE(e.BranchError, err))
+	e.ShowAndExit(e.Error(e.IsBranch, err))
 
 	return b
 }
@@ -192,12 +193,12 @@ func (b *Branch) Checkout(ref *plumbing.Reference) {
 		Create: false,
 	})
 
-	e.ShowAndExit(e.ThrowE(e.CheckoutErrror, err))
+	e.ShowAndExit(e.Error(e.IsCheckout, err))
 }
 
 func (b *Branch) Exist(name string) bool {
 	i, err := b.Repository.Branches()
-	e.ShowAndExit(e.ThrowE(e.BranchError, err))
+	e.ShowAndExit(e.Error(e.IsBranch, err))
 
 	err = i.ForEach(func(r *plumbing.Reference) error {
 		if r.Name().Short() == name {
@@ -214,7 +215,7 @@ func (b *Branch) List(all bool, fn func(title string, i int, r *plumbing.Referen
 	b.check()
 
 	i, err := b.Repository.Branches()
-	e.ShowAndExit(e.ThrowE(e.BranchError, err))
+	e.ShowAndExit(e.Error(e.IsBranch, err))
 
 	var index = 0
 	i.ForEach(func(r *plumbing.Reference) error {
@@ -226,12 +227,12 @@ func (b *Branch) List(all bool, fn func(title string, i int, r *plumbing.Referen
 	if all {
 		var index = 0
 		rs, err := b.Repository.Remotes()
-		e.ShowAndExit(e.ThrowE(e.BranchError, err))
+		e.ShowAndExit(e.Error(e.IsBranch, err))
 
 		// list all remote
 		for _, remote := range rs {
 			refs, err := remote.List(&git.ListOptions{})
-			e.ShowAndExit(e.ThrowE(e.BranchError, err))
+			e.ShowAndExit(e.Error(e.IsBranch, err))
 			// list all ref
 			for _, ref := range refs {
 				if ref.Name().IsBranch() {
@@ -241,4 +242,11 @@ func (b *Branch) List(all bool, fn func(title string, i int, r *plumbing.Referen
 			}
 		}
 	}
+}
+
+// NormalizeBranchName will make name as lower case and remove spacebar
+func (b *Branch) NormalizeBranchName(name string) (newname string) {
+	newname = strings.ToLower(name)
+	newname = strings.Replace(newname, " ", "-", -1)
+	return
 }

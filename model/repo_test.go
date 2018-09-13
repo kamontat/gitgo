@@ -4,8 +4,10 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/bouk/monkey"
 	"github.com/kamontat/go-error-manager"
 
+	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -36,7 +38,7 @@ func TestRepoObject(t *testing.T) {
 				Convey("Then can get git worktree", func() {
 					worktree := r.GetWorktree()
 
-					So(r.Manager.HaveError(), ShouldBeFalse)
+					So(r.Throw().CanBeThrow(), ShouldBeFalse)
 
 					t := worktree.Unwrap(func(i interface{}) {
 						So(i, ShouldNotBeNil)
@@ -67,23 +69,44 @@ func TestRepoObject(t *testing.T) {
 					})
 				})
 
-				Convey("Then commit will return Commit object", nil)
+				Convey("Then commit will return Commit object", func() {
+					commit := r.GetCommit()
+					Convey("And commit shouldn't be nil", func() {
+						So(commit, ShouldNotBeNil)
+					})
 
+					Convey("And commit keylist shouldn't exist before load list", func() {
+						So(commit.KeyList.IsContain(), ShouldBeFalse)
+					})
+				})
 			})
 		})
 
 		Convey("When create new not exist repo", func() {
+			var throw *manager.Throwable
+			var guard *monkey.PatchGuard
+
+			guard = monkey.Patch(e.ShowAndExit, func(t *manager.Throwable) {
+				if t.CanBeThrow() {
+					throw = t
+				}
+			})
+
 			// new repo will setup repo on this folder (/model)
 			r := model.NewRepo()
 
 			Convey("Then cannot get any git repository", func() {
-				repo := r.GetGitRepository()
-				So(repo.NotExist(), ShouldBeTrue)
+				repo := r.GetRawGitRepository()
+
+				So(repo, ShouldBeNil)
+
+				So(throw, ShouldNotBeNil)
+				So(throw.GCode(), ShouldEqual, e.IsInitial)
 			})
 
 			Convey("Then cannot get any git worktree", func() {
-				worktree := r.GetWorktree()
-				So(worktree.NotExist(), ShouldBeTrue)
+				worktree := r.GetRawWorktree()
+				So(worktree, ShouldBeNil)
 			})
 
 			Convey("Then cannot add", func() {
@@ -110,10 +133,7 @@ func TestRepoObject(t *testing.T) {
 				})
 			})
 
-			Convey("Then commit shouldn't exist", func() {
-				commit := r.GetCommit()
-				So(commit.CanCommit(), ShouldBeFalse)
-			})
+			guard.Unpatch()
 		})
 	})
 }

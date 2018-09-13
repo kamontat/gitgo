@@ -41,13 +41,13 @@ func TestConfig(t *testing.T) {
 				So(g, ShouldContainSubstring, "version: ")
 			})
 
-			Convey("Then it should contain list array", func() {
-				So(g, ShouldContainSubstring, "list:")
+			Convey("Then it should contain commit array", func() {
+				So(g, ShouldContainSubstring, "commits:")
 				So(g, ShouldContainSubstring, "- key: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 
-			Convey("Then it should contain some default list", func() {
+			Convey("Then it should contain some default commit list", func() {
 				So(g, ShouldContainSubstring, "feature")
 				So(g, ShouldContainSubstring, "improve")
 				So(g, ShouldContainSubstring, "fix")
@@ -61,8 +61,14 @@ func TestConfig(t *testing.T) {
 				So(g, ShouldContainSubstring, "version: ")
 			})
 
-			Convey("Then it should contain list array", func() {
-				So(g, ShouldContainSubstring, "list:")
+			Convey("Then it should contain commits array", func() {
+				So(g, ShouldContainSubstring, "commits:")
+				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "value: ")
+			})
+
+			Convey("Then it should contain branch array", func() {
+				So(g, ShouldContainSubstring, "branches:")
 				So(g, ShouldContainSubstring, "- key: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})

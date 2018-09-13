@@ -42,13 +42,13 @@ var changelogCmd = &cobra.Command{
 		c := exec.Command("git-chglog", "--version")
 		c.Stdout = os.Stdout
 		err := c.Run()
-		e.ShowAndExit(e.ThrowE(e.ChangelogError, err))
+		e.ShowAndExit(e.Error(e.IsChangelog, err))
 
 		gitgoFolder := path.Dir(localList.ConfigFileUsed())
 		config := path.Join(gitgoFolder, "chglog", "config.yml")
 		_, err = os.Open(config)
 		if err != nil {
-			e.ShowAndExit(e.Throw(e.ChangelogError, "Config file not exist in .gitgo folder"))
+			e.ShowAndExit(e.ErrorMessage(e.IsChangelog, "Config file not exist in .gitgo folder"))
 		}
 
 		c = exec.Command("git-chglog", "--config", config, "-o", changelogName)
@@ -56,7 +56,7 @@ var changelogCmd = &cobra.Command{
 		c.Stderr = os.Stderr
 
 		err = c.Run()
-		e.ShowAndExit(e.ThrowE(e.ChangelogError, err))
+		e.ShowAndExit(e.Error(e.IsChangelog, err))
 	},
 }
 

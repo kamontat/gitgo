@@ -16,8 +16,8 @@ type Repo struct {
 	isSetup    bool
 	path       string
 	repo       *git.Repository
+	worktree   *git.Worktree
 	gitCommand *GitCommand
-	Manager    *manager.ResultManager
 }
 
 // NewRepo will return new repository with current path.
@@ -34,7 +34,6 @@ func CustomRepo(path string) *Repo {
 		isSetup:    false,
 		path:       management.Execute1ParametersB(filepath.Abs, path).GetResult(),
 		gitCommand: Git(),
-		Manager:    management,
 		repo:       nil,
 	}
 }
@@ -49,10 +48,15 @@ func (r *Repo) Setup() {
 	om.Log.ToVerbose("Repository", "initial path "+r.path)
 	result, err := git.PlainOpen(r.path)
 
-	e.ShowAndExit(e.ThrowE(e.InitialError, err))
+	e.ShowAndExit(e.Error(e.IsInitial, err))
+
 	if err == nil {
-		r.isSetup = result != nil
 		r.repo = result
+
+		r.worktree, err = r.repo.Worktree()
+		e.ShowAndExit(e.Error(e.IsInitial, err))
+
+		r.isSetup = result != nil && r.worktree != nil
 	}
 }
 
@@ -73,13 +77,10 @@ func (r *Repo) GetGitRepository() *manager.ResultWrapper {
 
 // GetRawWorktree is getter to get worktree, this method can return nil value
 func (r *Repo) GetRawWorktree() *git.Worktree {
+	r.Setup()
+
 	if r.isSetup {
-		work, err := r.repo.Worktree()
-		e.ShowAndExit(e.ThrowE(e.InitialError, err))
-		if err == nil {
-			return work
-		}
-		return nil
+		return r.worktree
 	}
 	return nil
 }
@@ -93,9 +94,12 @@ func (r *Repo) GetWorktree() *manager.ResultWrapper {
 func (r *Repo) Status() *manager.ResultWrapper {
 	resultWrapper := r.GetWorktree()
 	return resultWrapper.UnwrapNext(func(i interface{}) interface{} {
+		if r.Throw().CanBeThrow() {
+			return nil
+		}
+
 		status, err := i.(*git.Worktree).Status()
-		r.Manager.Save("", err)
-		if r.Manager.NoError() {
+		if err == nil {
 			return status
 		}
 		return nil
@@ -104,33 +108,38 @@ func (r *Repo) Status() *manager.ResultWrapper {
 
 // Add get array of filepath, and return ErrManager.
 // anyway, It's will run os.Exit with code 10 if any error occurred.
-func (r *Repo) Add(filepath []string) *manager.Throwable {
-	worktree := r.GetWorktree()
+func (r *Repo) Add(filepath []string) (t *manager.Throwable) {
+	t = r.Throw()
+	if t.CanBeThrow() {
+		return
+	}
 
-	worktree.Unwrap(func(i interface{}) {
-		work := i.(*git.Worktree)
-		for _, f := range filepath {
-			work.Add(f)
-		}
-	})
+	worktree := r.GetRawWorktree()
+	for _, f := range filepath {
+		worktree.Add(f)
+	}
 
-	return r.Manager.Throw()
+	return
 }
 
 // AddAll will run git add -A command in cli.
 func (r *Repo) AddAll() *manager.Throwable {
-	r.Setup()
-	t := r.gitCommand.Exec("add", "-A").Throw()
-	for _, e := range t.ListErrors() {
-		r.Manager.Save("", e)
+	if t := r.Throw(); t.CanBeThrow() {
+		return t
 	}
 
-	return r.Manager.Throw()
+	t := r.gitCommand.Exec("add", "-A").Throw()
+	manager := manager.NewR()
+	for _, e := range t.ListErrors() {
+		manager.Save("", e)
+	}
+
+	return manager.Throw()
 }
 
 func (r *Repo) GetBranch() *Branch {
 	ref, err := r.repo.Head()
-	e.ShowAndExit(e.ThrowE(e.InitialError, err))
+	e.ShowAndExit(e.Error(e.IsInitial, err))
 
 	return &Branch{
 		KeyList:    (&List{}).Setup("branches"),
@@ -142,10 +151,15 @@ func (r *Repo) GetBranch() *Branch {
 
 // GetCommit will return Commit object.
 func (r *Repo) GetCommit() *Commit {
-	r.Setup()
-
 	return &Commit{
 		KeyList:   (&List{}).Setup("commits"),
-		throwable: r.Manager.Throw(),
+		throwable: r.Throw(),
 	}
+}
+
+func (r *Repo) Throw() *manager.Throwable {
+	if !r.isSetup {
+		return e.ErrorMessage(e.IsInitial, "This repository is not setup yet, or have error while setting.")
+	}
+	return manager.NewE().Throw()
 }

@@ -19,7 +19,7 @@ type Commit struct {
 
 func (c *Commit) getQuestion() []*survey.Question {
 	if !c.KeyList.IsContain() {
-		e.ShowAndExit(e.Throw(e.InitialError, "No key list for commit"))
+		e.ShowAndExit(e.ErrorMessage(e.IsInitial, "No key list for commit"))
 	}
 
 	return []*survey.Question{
@@ -81,7 +81,7 @@ func (c *Commit) Commit(add, hasMessage bool, key string) {
 
 		c.CustomCommit(add, answers)
 	}).IfError(func(t *manager.Throwable) {
-		e.ShowAndExit(e.Update(t, e.UserError))
+		e.ShowAndExit(e.Update(t, e.IsUser))
 	})
 }
 
@@ -100,5 +100,5 @@ func (c *Commit) CustomCommit(add bool, answers CommitMessage) {
 		t = Git().Exec("commit", "-m", commitMessage).Throw()
 	}
 
-	e.ShowAndExit(e.Update(t, e.CommitError))
+	e.ShowAndExit(e.Update(t, e.IsCommit))
 }

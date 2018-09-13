@@ -44,7 +44,7 @@ var changelogInitialCmd = &cobra.Command{
 		gitgoStr := path.Dir(localList.ConfigFileUsed())
 		_, err := os.Open(gitgoStr)
 		if err != nil {
-			e.ShowAndExit(e.Throw(e.InitialError, "Cannot initial changelog before initial configuration files"))
+			e.ShowAndExit(e.ErrorMessage(e.IsInitial, "Cannot initial changelog before initial configuration files"))
 		}
 
 		if initialForce {
@@ -84,7 +84,7 @@ func openFile(parent, file string) *os.File {
 
 	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 
-	e.ShowAndExit(e.ThrowE(e.InitialError, err))
+	e.ShowAndExit(e.Error(e.IsInitial, err))
 	return f
 }
 

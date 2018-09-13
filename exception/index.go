@@ -13,29 +13,33 @@ func (e ErrorType) Code() int {
 }
 
 const (
-	// InitialError is error when first output
-	InitialError ErrorType = 10
-	// CommitError is error while try to commit
-	CommitError ErrorType = 11
-	// PreCommitError is error when setup to commit
-	PreCommitError ErrorType = 12
-	// BranchError is error when branch management
-	BranchError ErrorType = 20
-	// ChangelogError is error when export changelog
-	ChangelogError ErrorType = 40
-	// CheckoutErrror is error occurred when checkout code
-	CheckoutErrror ErrorType = 30
-	// UserError is error cause by user
-	UserError ErrorType = 50
+	// IsInitial is error when first output
+	IsInitial ErrorType = 10
+	// IsCommit is error while try to commit
+	IsCommit ErrorType = 20
+	// IsPreCommit is error when setup to commit
+	IsPreCommit ErrorType = 19
+	// IsPostCommit is error when cleanup after commit completed
+	IsPostCommit ErrorType = 21
+	// IsBranch is error when branch management
+	IsBranch ErrorType = 20
+	// IsCheckout is error occurred when checkout code
+	IsCheckout ErrorType = 30
+	// IsChangelog is error when export changelog
+	IsChangelog ErrorType = 40
+	// IsUser is error cause by user
+	IsUser ErrorType = 50
+	// IsLibrary is error cause by external libraries
+	IsLibrary ErrorType = 100
 )
 
-// Throw throw by message
-func Throw(t ErrorType, message string) *manager.Throwable {
+// ErrorMessage throw by message
+func ErrorMessage(t ErrorType, message string) *manager.Throwable {
 	return manager.NewE().AddMessage(message).Throw().SCode(t.Code())
 }
 
-// ThrowE throw by error
-func ThrowE(t ErrorType, e error) *manager.Throwable {
+// Error throw by error
+func Error(t ErrorType, e error) *manager.Throwable {
 	return manager.NewE().Add(e).Throw().SCode(t.Code())
 }
 
