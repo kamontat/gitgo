@@ -37,8 +37,8 @@ commits:
     value: Fixing a bug.
   - key: refactor
     value: A code change that neither fixes a bug nor adds a feature.
-  - key: file
-    value: Add or remove file(s) or folder(s).
+  - key: config
+    value: Update configuration file or add new ones
   - key: doc
     value: Documenting source code / user manual.
   - key: test
