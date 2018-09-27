@@ -2,6 +2,24 @@
 ## [Unreleased]
 
 
+<a name="v2.3.2"></a>
+## [v2.3.2] - 2018-09-28
+### Documentation
+- Update help command
+- Fix commit format
+- Update documents (docs)
+
+### Fixes Bug
+- Fix test error
+- Fix deployment script
+
+### Improving User Experience
+- Add config as default global config list
+- Make hashtag always add if setting true
+- Update default config file
+- Add testing
+
+
 <a name="v2.3.1"></a>
 ## [v2.3.1] - 2018-09-13
 ### Documentation
@@ -170,7 +188,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.2...HEAD
+[v2.3.2]: https://github.com/kamontat/gitgo/compare/v2.3.1...v2.3.2
 [v2.3.1]: https://github.com/kamontat/gitgo/compare/v2.3.0...v2.3.1
 [v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
