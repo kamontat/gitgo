@@ -57,7 +57,7 @@ func (c *Commit) getQuestion() []*survey.Question {
 }
 
 // Commit is action for ask the message from user and call CustomCommit.
-func (c *Commit) Commit(add, hasMessage bool, key string) {
+func (c *Commit) Commit(add, empty, hasMessage bool, key string) {
 	// the questions to ask
 	var qs = c.getQuestion()
 
@@ -79,26 +79,35 @@ func (c *Commit) Commit(add, hasMessage bool, key string) {
 		om.Log.ToDebug("commit title", answers.Title)
 		om.Log.ToDebug("commit message", answers.Message)
 
-		c.CustomCommit(add, answers)
+		c.CustomCommit(add, empty, answers)
 	}).IfError(func(t *manager.Throwable) {
 		e.ShowAndExit(e.Update(t, e.IsUser))
 	})
 }
 
 // CustomCommit will run git commit -m "<message>" with the default format.
-func (c *Commit) CustomCommit(add bool, answers CommitMessage) {
+func (c *Commit) CustomCommit(add bool, empty bool, answers CommitMessage) {
 
 	var commitMessage = answers.GetMessage()
 
 	var t *manager.Throwable
 
+	args := []string{"commit"}
 	om.Log.ToDebug("commit full", commitMessage)
+
 	if add {
+		args = append(args, "-a")
 		om.Log.ToVerbose("commit", "with -a flag")
-		t = Git().Exec("commit", "-am", commitMessage).Throw()
-	} else {
-		t = Git().Exec("commit", "-m", commitMessage).Throw()
 	}
 
+	if empty {
+		args = append(args, "--allow-empty")
+		om.Log.ToVerbose("commit", "with --allow-empty flag")
+	}
+
+	args = append(args, "-m")
+	args = append(args, commitMessage)
+
+	t = Git().Exec(args...).Throw()
 	e.ShowAndExit(e.Update(t, e.IsCommit))
 }

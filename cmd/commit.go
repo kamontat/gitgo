@@ -61,13 +61,14 @@ var commitCmd = &cobra.Command{
 		commit := repo.GetCommit()
 
 		commit.KeyList.Load(globalList).Merge(localList)
-		commit.Commit(all, hasMessage, customKey)
+		commit.Commit(all, empty, hasMessage, customKey)
 	},
 }
 
 var each []string
 var add bool
 var all bool
+var empty bool
 
 var customKey string
 
@@ -79,4 +80,6 @@ func init() {
 	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
 	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
 	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
+
+	commitCmd.Flags().BoolVarP(&empty, "empty", "m", false, "Commit with --allow-empty flag")
 }

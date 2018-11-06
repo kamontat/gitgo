@@ -57,7 +57,7 @@ var commitInitialCmd = &cobra.Command{
 			message = ""
 		}
 
-		commit.CustomCommit(true, model.CommitMessage{
+		commit.CustomCommit(true, false, model.CommitMessage{
 			Key:     key,
 			Title:   title,
 			Message: message,
