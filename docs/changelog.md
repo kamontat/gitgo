@@ -2,6 +2,15 @@
 ## [Unreleased]
 
 
+<a name="v2.4.0"></a>
+## [v2.4.0] - 2018-11-06
+### Documentation
+- Update documents (docs)
+
+### Improving User Experience
+- Add --empty to allow empty changes
+
+
 <a name="v2.3.2"></a>
 ## [v2.3.2] - 2018-09-28
 ### Documentation
@@ -188,7 +197,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.3.2...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v2.4.0...HEAD
+[v2.4.0]: https://github.com/kamontat/gitgo/compare/v2.3.2...v2.4.0
 [v2.3.2]: https://github.com/kamontat/gitgo/compare/v2.3.1...v2.3.2
 [v2.3.1]: https://github.com/kamontat/gitgo/compare/v2.3.0...v2.3.1
 [v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
