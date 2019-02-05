@@ -1,7 +1,7 @@
-version: 2
+version: 3
 commits:
-  - key: empty
+  - type: empty
     value: Update this commit header
 branches:
-  - key: empty
+  - type: empty
     value: Update this branch header

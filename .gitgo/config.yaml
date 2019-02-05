@@ -1,7 +1,7 @@
-version: 2
+version: 3
 log: true
 commit:
-  message: false
+  message: true
 branch:
   iteration:
     require: true

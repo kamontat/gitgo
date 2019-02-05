@@ -57,13 +57,14 @@ And the problem I got is I forget which emoji is represent what.
 And hard to generate changelog file. 
 So I think 'short key text' is the solution of situation.
 
+3.0.0 -> Change commit format and refactor code
 2.4.0 -> Add --empty to allow empty changes to commit code
 2.3.2 -> Issue hash tag will be always add if setting is true
 2.3.1 -> Fix branch creator error, and improve logger
 2.3.0 -> Add changelog command with initial changelog
 2.2.1 -> Improve branch creator and commit creator
   `,
-	Version: "2.4.0",
+	Version: "3.0.0",
 }
 
 // Execute is execute method that call by cobra cli.

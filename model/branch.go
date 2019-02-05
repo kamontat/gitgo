@@ -63,7 +63,7 @@ func (b *Branch) getQuestion(requireDesc, requireIter, requireIssue, issueHashta
 	}
 
 	qs = append(qs, &survey.Question{
-		Name: "key",
+		Name: "type",
 		Prompt: &survey.Select{
 			Message:  "Select branch header",
 			Options:  b.KeyList.MakeList(),
@@ -144,7 +144,7 @@ func (b *Branch) AskCreate(requireDesc, requireIter, requireIssue, issueHashtag 
 
 	name := BranchName{}
 	manager.StartResultManager().Save("", survey.Ask(qs, &name)).IfNoError(func() {
-		om.Log.ToVerbose("branch key", name.GetKey())
+		om.Log.ToVerbose("branch type", name.GetType())
 		om.Log.ToVerbose("branch title", name.Title)
 		om.Log.ToVerbose("branch descript", name.Desc)
 		om.Log.ToVerbose("branch issue", name.Issue)

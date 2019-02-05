@@ -10,10 +10,10 @@ func GeneratorYAML() *YAML {
 
 // GDefaultConfig is global default config.yaml
 func (y *YAML) GDefaultConfig() string {
-	return `version: 2
+	return `version: 3
 log: true
 commit:
-  message: false
+  message: true
 branch:
   iteration:
     require: true
@@ -27,44 +27,42 @@ branch:
 
 // GDefaultList is global default list.yaml
 func (y *YAML) GDefaultList() string {
-	return `version: 2
+	return `version: 3
 commits:
-  - key: feature
+  - type: feature
     value: Introducing new features.
-  - key: improve
+  - type: improve
     value: Improving user experience / usability / performance.
-  - key: fix
+  - type: fix
     value: Fixing a bug.
-  - key: refactor
+  - type: refactor
     value: A code change that neither fixes a bug nor adds a feature.
-  - key: config
+  - type: config
     value: Update configuration file or add new ones
-  - key: doc
+  - type: doc
     value: Documenting source code / user manual.
-  - key: test
+  - type: test
     value: Adding missing tests or correcting existing tests.
-  - key: release
+  - type: release
     value: Release stable version or tags.
-  - key: BREAKING CHANGE
-    value: introduce break change code.
 branches:
-  - key: enhance
+  - type: enhance
     value: Introducing new features or project enhancement.
-  - key: improve
+  - type: improve
     value: Improving user experience / usability / performance.
-  - key: fix
+  - type: fix
     value: Fixing a bug.
 `
 }
 
 // LEmptyList is empty list.yaml
 func (y *YAML) LEmptyList() string {
-	return `version: 2
+	return `version: 3
 commits:
-  - key: empty
+  - type: empty
     value: Update this commit header
 branches:
-  - key: empty
+  - type: empty
     value: Update this branch header
 `
 }
@@ -79,32 +77,32 @@ options:
   commits:
     filters:
       Type:
-        - feature
+        - feat
         - improve
+        - perf
         - fix
-        - refactor
         - doc
         - test
   commit_groups:
     title_maps:
-      feature: Features
-      improve: Improving User Experience
-      refactor: Code Refactoring
+      feat: Feature
+      improve: Improving application
+      perf: Improving performance
       fix: Fixes Bug
       doc: Documentation
       test: Testing
   header:
-    pattern: "^\\[(\\w*)\\]\\s(.*)$"
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:
       - Type
+      - Scope
       - Subject
   issues: 
     prefix: 
       - "#"
   notes:
     keywords:
-      - BREAKING CHANGE
-`
+      - BREAKING CHANGE`
 }
 
 func (y *YAML) ChgLogTpl() string {

@@ -49,17 +49,17 @@ func (l *List) Merge(vp *viper.Viper) *List {
 	for i, element := range vp.Get(l.key).([]interface{}) {
 		cm := element.(map[interface{}]interface{})
 
-		if _, ok := cm["key"]; !ok {
-			om.Log.ToError("Load list", "Have invalid key format")
+		if _, ok := cm["type"]; !ok {
+			om.Log.ToError("Load list", "Have invalid type format")
 			break
 		}
 
 		if _, ok := cm["value"]; !ok {
-			om.Log.ToError("Load list", "Value of key="+cm["key"].(string)+" is not exist.")
+			om.Log.ToError("Load list", "Value of type="+cm["type"].(string)+" is not exist.")
 		}
 
 		commitHeader := Header{
-			Key:   cm["key"].(string),
+			Type:  cm["type"].(string),
 			Value: cm["value"].(string),
 		}
 

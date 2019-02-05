@@ -22,13 +22,14 @@ This project create to make every commit and branch name be same format for all 
 ### Commit
 
 ```text
-[key] title
+type(scope): title
 message
 ```
 
-1. `Key` is the word (usually contain only 1 word) that represent the commit
-2. `Title` is the important part, that show what the commit for (should less that 50 word)
-3. `Message` (optional) is the long description about the commit that might/might not relate to the commit, e.g. add sign text, add long description for more detail
+1. `Type` is the word (usually contain only 1 word) that represent the commit
+2. `Scope` is a scope of commit type
+3. `Title` is the important part, that show what the commit for (should less that 50 word)
+4. `Message` (optional) is the long description about the commit that might/might not relate to the commit, e.g. add sign text, add long description for more detail
 
 ### Branch
 

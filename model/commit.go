@@ -11,6 +11,14 @@ import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 )
 
+// CommitOption is a option of commit
+type CommitOption struct {
+	Add     bool
+	Empty   bool
+	Dry     bool
+	Message bool
+}
+
 // Commit is Commit object of deal with commit things.
 type Commit struct {
 	throwable *manager.Throwable
@@ -24,7 +32,7 @@ func (c *Commit) getQuestion() []*survey.Question {
 
 	return []*survey.Question{
 		{
-			Name: "key",
+			Name: "type",
 			Prompt: &survey.Select{
 				Message:  "Select commit header",
 				Options:  c.KeyList.MakeList(),
@@ -48,7 +56,7 @@ func (c *Commit) getQuestion() []*survey.Question {
 			},
 		}, {
 			Name: "message",
-			Prompt: &survey.Editor{
+			Prompt: &survey.Multiline{
 				Message: "Enter commit message",
 				Help:    "Message will represent everything that commit have done",
 			},
@@ -57,7 +65,7 @@ func (c *Commit) getQuestion() []*survey.Question {
 }
 
 // Commit is action for ask the message from user and call CustomCommit.
-func (c *Commit) Commit(add, empty, hasMessage bool, key string) {
+func (c *Commit) Commit(key string, option CommitOption) {
 	// the questions to ask
 	var qs = c.getQuestion()
 
@@ -65,42 +73,42 @@ func (c *Commit) Commit(add, empty, hasMessage bool, key string) {
 		qs = qs[1:]
 	}
 
-	if !hasMessage {
+	if !option.Message {
 		qs = qs[:len(qs)-1]
 	}
 
 	om.Log.ToDebug("question list", len(qs))
 
 	answers := CommitMessage{
-		Key: key,
+		Type: key,
 	}
+
 	manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
-		om.Log.ToDebug("commit key", answers.GetKey())
+		om.Log.ToDebug("commit type", answers.GetType())
 		om.Log.ToDebug("commit title", answers.Title)
 		om.Log.ToDebug("commit message", answers.Message)
 
-		c.CustomCommit(add, empty, answers)
+		c.CustomCommit(answers, option)
 	}).IfError(func(t *manager.Throwable) {
 		e.ShowAndExit(e.Update(t, e.IsUser))
 	})
 }
 
 // CustomCommit will run git commit -m "<message>" with the default format.
-func (c *Commit) CustomCommit(add bool, empty bool, answers CommitMessage) {
+func (c *Commit) CustomCommit(answers CommitMessage, option CommitOption) {
 
 	var commitMessage = answers.GetMessage()
 
 	var t *manager.Throwable
 
 	args := []string{"commit"}
-	om.Log.ToDebug("commit full", commitMessage)
 
-	if add {
+	if option.Add {
 		args = append(args, "-a")
 		om.Log.ToVerbose("commit", "with -a flag")
 	}
 
-	if empty {
+	if option.Empty {
 		args = append(args, "--allow-empty")
 		om.Log.ToVerbose("commit", "with --allow-empty flag")
 	}
@@ -108,6 +116,9 @@ func (c *Commit) CustomCommit(add bool, empty bool, answers CommitMessage) {
 	args = append(args, "-m")
 	args = append(args, commitMessage)
 
-	t = Git().Exec(args...).Throw()
-	e.ShowAndExit(e.Update(t, e.IsCommit))
+	om.Log.ToInfo("Commit", commitMessage)
+	if !option.Dry {
+		t = Git().Exec(args...).Throw()
+		e.ShowAndExit(e.Update(t, e.IsCommit))
+	}
 }

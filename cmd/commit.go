@@ -27,6 +27,7 @@ import (
 	"github.com/spf13/viper"
 
 	e "github.com/kamontat/gitgo/exception"
+	"github.com/kamontat/gitgo/model"
 	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
@@ -61,7 +62,12 @@ var commitCmd = &cobra.Command{
 		commit := repo.GetCommit()
 
 		commit.KeyList.Load(globalList).Merge(localList)
-		commit.Commit(all, empty, hasMessage, customKey)
+		commit.Commit(customKey, model.CommitOption{
+			Add:     add,
+			Empty:   empty,
+			Message: hasMessage,
+			Dry:     dry,
+		})
 	},
 }
 
@@ -69,17 +75,19 @@ var each []string
 var add bool
 var all bool
 var empty bool
+var dry bool
 
 var customKey string
 
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
-	commitCmd.Flags().StringVarP(&customKey, "key", "k", "", "Custom commit key [shouldn't use]")
+	commitCmd.Flags().StringVarP(&customKey, "type", "t", "", "Custom commit type [shouldn't use]")
 
 	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
 	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
 	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
+	commitCmd.Flags().BoolVarP(&dry, "dry", "d", false, "dry run with never commit anything in git")
 
 	commitCmd.Flags().BoolVarP(&empty, "empty", "m", false, "Commit with --allow-empty flag")
 }

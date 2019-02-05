@@ -7,22 +7,25 @@ options:
   commits:
     filters:
       Type:
-        - feature
+        - feat
         - fix
         - improve
+        - perf
         - refactor
-        - doc
+        - docs
   commit_groups:
     title_maps:
-      feature: Features
-      improve: Improving User Experience
+      feat: Features
+      improve: Improving program
+      perf: Improving performance
       refactor: Code Refactoring
       fix: Fixes Bug
-      doc: Documentation
+      docs: Documentation
   header:
-    pattern: "^\\[(\\w*)\\]\\s(.*)$"
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:
       - Type
+      - Scope
       - Subject
   issues: 
     prefix: 
