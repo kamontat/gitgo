@@ -42,6 +42,13 @@ func (c *Commit) getQuestion() []*survey.Question {
 			},
 			Validate: survey.Required,
 		}, {
+			Name: "scope",
+			Prompt: &survey.Input{
+				Message: "Enter commit type scope",
+				Help:    "Scope should represent the scope of commit type",
+			},
+			Validate: survey.MaxLength(8),
+		}, {
 			Name: "title",
 			Prompt: &survey.Input{
 				Message: "Enter commit title",
@@ -55,10 +62,9 @@ func (c *Commit) getQuestion() []*survey.Question {
 				return err
 			},
 		}, {
-			Name: "message",
-			Prompt: &survey.Multiline{
-				Message: "Enter commit message",
-				Help:    "Message will represent everything that commit have done",
+			Name: "hasMessage",
+			Prompt: &survey.Confirm{
+				Message: "Do you have commit message?",
 			},
 		},
 	}
@@ -84,7 +90,16 @@ func (c *Commit) Commit(key string, option CommitOption) {
 	}
 
 	manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
+		if answers.HasMessage {
+			messageQuestion := &survey.Multiline{
+				Message: "Enter commit message",
+				Help:    "Message will represent everything that commit have done",
+			}
+			survey.AskOne(messageQuestion, &answers.Message, nil)
+		}
+
 		om.Log.ToDebug("commit type", answers.GetType())
+		om.Log.ToDebug("commit scope", answers.Scope)
 		om.Log.ToDebug("commit title", answers.Title)
 		om.Log.ToDebug("commit message", answers.Message)
 
