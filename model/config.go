@@ -10,41 +10,41 @@ func GeneratorYAML() *YAML {
 
 // GDefaultConfig is global default config.yaml
 func (y *YAML) GDefaultConfig() string {
-	return `version: 2
+	return `version: 3
 log: true
 commit:
-  message: false
+  message: true
 `
 }
 
 // GDefaultList is global default list.yaml
 func (y *YAML) GDefaultList() string {
-	return `version: 2
+	return `version: 3
 list:
-  - key: feature
+  - type: feature
     value: Introducing new features.
-  - key: improve
+  - type: improve
     value: Improving user experience / usability / performance.
-  - key: fix
+  - type: fix
     value: Fixing a bug.
-  - key: refactor
+  - type: refactor
     value: Refactoring code.
-  - key: file
+  - type: file
     value: Updating file(s) or folder(s).
-  - key: doc
+  - type: doc
     value: Documenting source code / user manual.
-  - key: init
+  - type: init
     value: Start project or Initial commit.
-  - key: release
+  - type: release
     value: Release stable version or tags.
 `
 }
 
 // LEmptyList is empty list.yaml
 func (y *YAML) LEmptyList() string {
-	return `version: 2
+	return `version: 3
 list:
-  - key: empty
+  - type: empty
     value: Update this commit header
 `
 }

@@ -1,4 +1,4 @@
-version: 2
+version: 3
 list:
-  - key: empty
+  - type: empty
     value: Update this commit header

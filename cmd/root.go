@@ -47,8 +47,7 @@ var verbose bool
 var rootCmd = &cobra.Command{
 	Use:     "gitgo",
 	Short:   "gitgo command by Kamontat Chantrachurathumrong",
-	Version: "2.0.2",
-	Long:    ``,
+	Version: "3.0.0",
 }
 
 // Execute is execute method that call by cobra cli.

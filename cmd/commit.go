@@ -55,16 +55,19 @@ var commitCmd = &cobra.Command{
 		} else {
 			om.Log.ToVerbose("commit", "without message")
 		}
-		repo.GetCommit().LoadList(globalList).MergeList(localList).Commit(hasMessage)
+		repo.GetCommit(dry).LoadList(globalList).MergeList(localList).Commit(hasMessage)
 	},
 }
 
 var add []string
 var all bool
+var dry bool
 
 func init() {
 	rootCmd.AddCommand(commitCmd)
 
 	commitCmd.PersistentFlags().StringArrayVarP(&add, "add", "a", []string{}, "Commit with add [multiple use]")
 	commitCmd.PersistentFlags().BoolVarP(&all, "all", "A", false, "Commit with add all")
+
+	commitCmd.PersistentFlags().BoolVarP(&dry, "dry", "d", false, "dry run will show only the commit message, but not commit anything")
 }

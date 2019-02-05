@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 
 			Convey("Then it should contain list array", func() {
 				So(g, ShouldContainSubstring, "list:")
-				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "- type: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 
@@ -63,7 +63,7 @@ func TestConfig(t *testing.T) {
 
 			Convey("Then it should contain list array", func() {
 				So(g, ShouldContainSubstring, "list:")
-				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "- type: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 		})

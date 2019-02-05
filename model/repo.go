@@ -120,10 +120,13 @@ func (r *Repo) AddAll() *manager.Throwable {
 }
 
 // GetCommit will return Commit object.
-func (r *Repo) GetCommit() *Commit {
+func (r *Repo) GetCommit(dry bool) *Commit {
 	r.Setup()
 
-	return &Commit{
+	commit := &Commit{
 		throwable: r.Manager.Throw(),
 	}
+
+	commit.options.dry = dry
+	return commit
 }

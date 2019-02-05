@@ -18,6 +18,9 @@ import (
 type Commit struct {
 	throwable *manager.Throwable
 	list      []CommitHeader
+	options   struct {
+		dry bool
+	}
 }
 
 // CanCommit mean this commit contain no errors
@@ -44,15 +47,21 @@ func (c *Commit) getQuestion() *manager.ResultWrapper {
 	return c.ListHeaderOptions().UnwrapNext(func(i interface{}) interface{} {
 		return []*survey.Question{
 			{
-				Name: "key",
+				Name: "type",
 				Prompt: &survey.Select{
 					Message:  "Select commit header",
 					Options:  i.([]string),
-					Help:     "Header will represent 'one word' key of the commit",
+					Help:     "Header will represent 'one word' type of the commit",
 					PageSize: 5,
 					VimMode:  true,
 				},
 				Validate: survey.Required,
+			}, {
+				Name: "scope",
+				Prompt: &survey.Input{
+					Message: "Enter commit scope",
+					Help:    "Message should represent the scope of commit type",
+				},
 			}, {
 				Name: "title",
 				Prompt: &survey.Input{
@@ -67,10 +76,9 @@ func (c *Commit) getQuestion() *manager.ResultWrapper {
 					return err
 				},
 			}, {
-				Name: "message",
-				Prompt: &survey.Editor{
-					Message: "Enter commit message",
-					Help:    "Message will represent everything that commit have done",
+				Name: "hasMessage",
+				Prompt: &survey.Confirm{
+					Message: "Do you have commit message?",
 				},
 			},
 		}
@@ -110,7 +118,7 @@ func (c *Commit) MergeList(vp *viper.Viper) *Commit {
 		cm := element.(map[interface{}]interface{})
 
 		commitHeader := CommitHeader{
-			Key:   cm["key"].(string),
+			Type:  cm["type"].(string),
 			Value: cm["value"].(string),
 		}
 
@@ -135,11 +143,20 @@ func (c *Commit) Commit(hasMessage bool) {
 
 		om.Log.ToDebug("question list", strconv.Itoa(len(qs)))
 
-		answers := CommitMessage{}
+		answers := CommitMessage{Message: "", HasMessage: false}
 		manager.StartResultManager().Save("", survey.Ask(qs, &answers)).IfNoError(func() {
+			if answers.HasMessage {
+				messageQuestion := &survey.Multiline{
+					Message: "Enter commit message",
+					Help:    "Message will represent everything that commit have done",
+				}
+				survey.AskOne(messageQuestion, &answers.Message, nil)
+			}
 
-			om.Log.ToDebug("commit key", answers.GetKey())
+			om.Log.ToDebug("commit type", answers.GetType())
+			om.Log.ToDebug("commit scope", answers.Scope)
 			om.Log.ToDebug("commit title", answers.Title)
+			om.Log.ToDebug("has commit message", answers.HasMessage)
 			om.Log.ToDebug("commit message", answers.Message)
 
 			c.CustomCommit(answers)
@@ -158,12 +175,15 @@ func (c *Commit) Commit(hasMessage bool) {
 // CustomCommit will run git commit -m "<message>" with the default format.
 func (c *Commit) CustomCommit(answers CommitMessage) {
 	var commitMessage string
-	if answers.Message == "" {
-		commitMessage = fmt.Sprintf("[%s] %s", answers.GetKey(), answers.Title)
-	} else {
-		commitMessage = fmt.Sprintf("[%s] %s\n%s", answers.GetKey(), answers.Title, answers.Message)
+
+	if answers.Scope != "" {
+		answers.Scope = "(" + answers.Scope + ")"
 	}
 
-	om.Log.ToVerbose("commit full", commitMessage)
-	Git().Exec("commit", "-m", commitMessage)
+	commitMessage = fmt.Sprintf("%s%s: %s\n%s", answers.GetType(), answers.Scope, answers.Title, answers.Message)
+	om.Log.ToInfo("Commit", commitMessage)
+
+	if !c.options.dry {
+		Git().Exec("commit", "-m", commitMessage)
+	}
 }
