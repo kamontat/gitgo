@@ -30,7 +30,7 @@ func TestConfig(t *testing.T) {
 			})
 
 			Convey("Then it should contain commit.message setting", func() {
-				So(g, ShouldContainSubstring, "message: false")
+				So(g, ShouldContainSubstring, "message: ")
 			})
 		})
 
@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 
 			Convey("Then it should contain commit array", func() {
 				So(g, ShouldContainSubstring, "commits:")
-				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "- type: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 
@@ -63,13 +63,13 @@ func TestConfig(t *testing.T) {
 
 			Convey("Then it should contain commits array", func() {
 				So(g, ShouldContainSubstring, "commits:")
-				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "- type: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 
 			Convey("Then it should contain branch array", func() {
 				So(g, ShouldContainSubstring, "branches:")
-				So(g, ShouldContainSubstring, "- key: ")
+				So(g, ShouldContainSubstring, "- type: ")
 				So(g, ShouldContainSubstring, "value: ")
 			})
 		})
