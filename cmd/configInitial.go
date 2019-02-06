@@ -66,6 +66,13 @@ var configInitialCmd = &cobra.Command{
 				return errors.New("Cannot save list.yaml in local")
 			}, throw)
 
+			file = getFile(getLPath("README.md"))
+			file.Unwrap(func(i interface{}) {
+				writeTo(i.(*os.File), yaml.ReadmeMarkdown(version))
+			}).Catch(func() error {
+				return errors.New("Cannot save list.yaml in local")
+			}, throw)
+
 			init = true
 		}
 

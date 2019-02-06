@@ -1,11 +1,32 @@
 package model
 
+import "time"
+
 // YAML is object of config yaml
 type YAML struct{}
 
 // GeneratorYAML will return YAML Object
 func GeneratorYAML() *YAML {
 	return &YAML{}
+}
+
+func (y *YAML) ReadmeMarkdown(version string) string {
+	t := time.Now()
+	return `# Gitgo (v` + version + `)
+
+  This is a configuration file for gitgo repository with hosting on https://github.com/kamontat/gitgo/tree/version/3.x.x
+
+### Creator
+
+- Kamontat Chantrachirathumrong (https://github.com/kamontat)
+
+### Datetime
+
+Someone create this configuration on '` + t.UTC().Format(time.UnixDate) + `'
+
+### Thank you
+Thank you for using this command to manage your project :)
+`
 }
 
 // GDefaultConfig is global default config.yaml

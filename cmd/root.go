@@ -43,6 +43,8 @@ var repo *model.Repo
 var debug bool
 var verbose bool
 
+var version = "3.0.1"
+
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "gitgo",
@@ -57,6 +59,7 @@ And the problem I got is I forget which emoji is represent what.
 And hard to generate changelog file. 
 So I think 'short key text' is the solution of situation.
 
+3.0.1 -> Add README file to local config
 3.0.0 -> Change commit format and refactor code
 2.4.0 -> Add --empty to allow empty changes to commit code
 2.3.2 -> Issue hash tag will be always add if setting is true
@@ -64,7 +67,7 @@ So I think 'short key text' is the solution of situation.
 2.3.0 -> Add changelog command with initial changelog
 2.2.1 -> Improve branch creator and commit creator
   `,
-	Version: "3.0.0",
+	Version: version,
 }
 
 // Execute is execute method that call by cobra cli.
