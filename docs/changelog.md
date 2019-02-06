@@ -2,9 +2,27 @@
 ## [Unreleased]
 
 
+<a name="v3.1.0"></a>
+## [v3.1.0] - 2019-02-06
+### Feature
+- **changelog:** add --tag to custom tag name
+
+### Fixes Bug
+- **changelog:** increase scope length and changelog error
+
+
+<a name="v3.0.1"></a>
+## [v3.0.1] - 2019-02-06
+### Improving application
+- **local:** add readme file in local configuration
+
+### Testing
+- **config:** refactor test due to model changes
+
+
 <a name="v3.0.0"></a>
 ## [v3.0.0] - 2019-02-05
-### Features
+### Feature
 - **ui-prompt:** add scope to commit message
 
 ### Improving performance
@@ -31,6 +49,9 @@
 
 <a name="v2.1.0"></a>
 ## [v2.1.0] - 2018-09-12
+
+<a name="3.0.0"></a>
+## [3.0.0] - 2018-08-23
 
 <a name="v2.0.2"></a>
 ## [v2.0.2] - 2018-08-21
@@ -74,7 +95,9 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.1.0...HEAD
+[v3.1.0]: https://github.com/kamontat/gitgo/compare/v3.0.1...v3.1.0
+[v3.0.1]: https://github.com/kamontat/gitgo/compare/v3.0.0...v3.0.1
 [v3.0.0]: https://github.com/kamontat/gitgo/compare/v2.4.0...v3.0.0
 [v2.4.0]: https://github.com/kamontat/gitgo/compare/v2.3.2...v2.4.0
 [v2.3.2]: https://github.com/kamontat/gitgo/compare/v2.3.1...v2.3.2
@@ -82,7 +105,8 @@
 [v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
 [v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/kamontat/gitgo/compare/v2.1.0...v2.2.0
-[v2.1.0]: https://github.com/kamontat/gitgo/compare/v2.0.2...v2.1.0
+[v2.1.0]: https://github.com/kamontat/gitgo/compare/3.0.0...v2.1.0
+[3.0.0]: https://github.com/kamontat/gitgo/compare/v2.0.2...3.0.0
 [v2.0.2]: https://github.com/kamontat/gitgo/compare/v2.0.1...v2.0.2
 [v2.0.1]: https://github.com/kamontat/gitgo/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/kamontat/gitgo/compare/v1.4.1...v2.0.0
