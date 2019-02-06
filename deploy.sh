@@ -61,11 +61,14 @@ git add -A
 git commit -m "[doc] Update documents (docs)"
 
 git push &&
-	git push --tag
+  git push --tag
 
 printf "create pull-request; press <enter> to next"
 # shellcheck disable=SC2034
 read -r ans
 
 command -v "hub" &>/dev/null &&
-	hub pull-request -m "create pull request to release latest version $tag" -b master
+  hub pull-request -m "create pull request to release latest version $tag" -b master
+
+command -v "hub" &>/dev/null &&
+  hub release create -m "Refactor core commit message and formatting" -a ./build/gitgo.darwin.386.sh -a ./build/gitgo.darwin.amd64.sh -a ./build/gitgo.freebsd.386.sh -a ./build/gitgo.freebsd.amd64.sh -a ./build/gitgo.freebsd.arm.sh -a ./build/gitgo.linux.386.sh -a ./build/gitgo.linux.amd64.sh -a ./build/gitgo.linux.arm.sh -a ./build/gitgo.linux.arm64.sh -a ./build/gitgo.netbsd.386.sh -a ./build/gitgo.netbsd.amd64.sh -a ./build/gitgo.netbsd.arm.sh -a ./build/gitgo.windows.386.exe -a ./build/gitgo.windows.amd64.exe "3.0.0"
