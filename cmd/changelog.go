@@ -50,14 +50,14 @@ var changelogCmd = &cobra.Command{
 		if err != nil {
 			e.ShowAndExit(e.ErrorMessage(e.IsChangelog, "Config file not exist in .gitgo folder"))
 		}
-		
-		args := []string{"--config", config, "--output", changelogName}
+
+		chgArgs := []string{"--config", config, "--output", changelogName}
 		if nextTag != "" {
-			args = append(args, "--next-tag")
-			args = append(args, nextTag)
+			chgArgs = append(chgArgs, "--next-tag")
+			chgArgs = append(chgArgs, nextTag)
 		}
 
-		c = exec.Command("git-chglog", args...)
+		c = exec.Command("git-chglog", chgArgs...)
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
 
@@ -81,6 +81,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	changelogCmd.Flags().StringVarP(&changelogName, "location", "l", "./CHANGELOG.md", "Output file location")
-	
+
 	changelogCmd.Flags().StringVarP(&nextTag, "tag", "t", "", "custom tag instead of git-tag")
 }

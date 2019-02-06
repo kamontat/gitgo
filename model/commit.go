@@ -47,7 +47,7 @@ func (c *Commit) getQuestion() []*survey.Question {
 				Message: "Enter commit type scope",
 				Help:    "Scope should represent the scope of commit type",
 			},
-			Validate: survey.MaxLength(8),
+			Validate: survey.MaxLength(12),
 		}, {
 			Name: "title",
 			Prompt: &survey.Input{
