@@ -8,5 +8,5 @@ branch:
   description:
     require: true
   issue:
-    require: true
+    require: false
     hashtag: false

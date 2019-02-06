@@ -48,8 +48,8 @@ func TestConfig(t *testing.T) {
 			})
 
 			Convey("Then it should contain some default commit list", func() {
-				So(g, ShouldContainSubstring, "feature")
-				So(g, ShouldContainSubstring, "improve")
+				So(g, ShouldContainSubstring, "feat")
+				So(g, ShouldContainSubstring, "impr")
 				So(g, ShouldContainSubstring, "fix")
 			})
 		})

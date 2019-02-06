@@ -56,7 +56,7 @@ commits:
     value: Improving user experience / usability / reliablity.
   - type: fix
     value: Fixing a bug.
-  - type: refactor
+  - type: refac
     value: A code change that neither fixes a bug nor adds a feature.
   - type: chore
     value: Other changes that don't modify src or test files.
@@ -85,6 +85,8 @@ commits:
   - type: custom
     value: this is a custom commit header
 branches:
+  - type: refac
+    value: A code change that neither fixes a bug nor adds a feature.
   - type: test
     value: Adding missing tests or correcting existing tests.
   - type: custom
