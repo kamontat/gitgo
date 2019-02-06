@@ -41,7 +41,7 @@ branch:
   description:
     require: true
   issue:
-    require: true
+    require: false
     hashtag: false
 `
 }
@@ -50,26 +50,20 @@ branch:
 func (y *YAML) GDefaultList() string {
 	return `version: 3
 commits:
-  - type: feature
+  - type: feat
     value: Introducing new features.
-  - type: improve
-    value: Improving user experience / usability / performance.
+  - type: impr
+    value: Improving user experience / usability / reliablity.
   - type: fix
     value: Fixing a bug.
   - type: refactor
     value: A code change that neither fixes a bug nor adds a feature.
-  - type: config
-    value: Update configuration file or add new ones
-  - type: doc
-    value: Documenting source code / user manual.
-  - type: test
-    value: Adding missing tests or correcting existing tests.
-  - type: release
-    value: Release stable version or tags.
+  - type: chore
+    value: Other changes that don't modify src or test files.
 branches:
-  - type: enhance
+  - type: feat
     value: Introducing new features or project enhancement.
-  - type: improve
+  - type: impr
     value: Improving user experience / usability / performance.
   - type: fix
     value: Fixing a bug.
@@ -80,11 +74,21 @@ branches:
 func (y *YAML) LEmptyList() string {
 	return `version: 3
 commits:
-  - type: empty
-    value: Update this commit header
+  - type: perf
+    value: A code change that improves performance.
+  - type: doc
+    value: Documenting source code / user manual.
+  - type: test
+    value: Adding missing tests or correcting existing tests.
+  - type: build
+    value: Changes that affect the build system or external dependencies.
+  - type: custom
+    value: this is a custom commit header
 branches:
-  - type: empty
-    value: Update this branch header
+  - type: test
+    value: Adding missing tests or correcting existing tests.
+  - type: custom
+    value: this is a custom branch header
 `
 }
 
@@ -99,19 +103,17 @@ options:
     filters:
       Type:
         - feat
-        - improve
+        - impr
         - perf
         - fix
         - doc
-        - test
   commit_groups:
     title_maps:
       feat: Feature
-      improve: Improving application
+      impr: Improving application
       perf: Improving performance
       fix: Fixes Bug
       doc: Documentation
-      test: Testing
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:
