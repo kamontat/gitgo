@@ -42,3 +42,47 @@ iter/key/title/desc/issue
 3. `Title` is the title of branch mostly we call 'action'. This is the action or subtype of the key and should stay on 1-2 word only. Notes that this should be *noun*
 4. `Desc` (Optional) is the description of branch but it should more and 2-3 word and seperate each word by `-` (dash)
 5. `Issue` (Optional) is the requirement of Waffle.io for make automate workflow in github. This represent github issue with or without `#` sign (Optional).
+
+### Help
+
+```sh 
+
+Gitgo: git commit for organize user.
+
+This command create by golang with cobra cli.
+
+Motivation by gitmoji,
+I used to like gitmoji but emoji isn't made for none developer.
+And the problem I got is I forget which emoji is represent what.
+And hard to generate changelog file.
+So I think 'short key text' is the solution of situation.
+
+3.1.1 -> Change default and local configuration list
+3.1.0 -> Add --tag to changelog generator
+3.0.1 -> Add README file to local config
+3.0.0 -> Change commit format and refactor code
+2.4.0 -> Add --empty to allow empty changes to commit code
+2.3.2 -> Issue hash tag will be always add if setting is true
+2.3.1 -> Fix branch creator error, and improve logger
+2.3.0 -> Add changelog command with initial changelog
+2.2.1 -> Improve branch creator and commit creator
+
+Usage:
+  gitgo [command]
+
+Available Commands:
+  branch      git branch management, get current branch
+  changelog   Create changelog
+  commit      Git commit with format string
+  config      Gitgo configuration
+  help        Help about any command
+
+Flags:
+  -D, --debug     add debug output
+  -h, --help      help for gitgo
+  -V, --verbose   add verbose output
+      --version   version for gitgo
+
+Use "gitgo [command] --help" for more information about a command.
+
+```
