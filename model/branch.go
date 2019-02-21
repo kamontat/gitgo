@@ -20,6 +20,11 @@ type Branch struct {
 	HEAD       *plumbing.Reference
 	Reference  *plumbing.Reference
 	KeyList    *List
+	dry        bool
+}
+
+func (b *Branch) dryrun(isDry bool) {
+	b.dry = isDry
 }
 
 func (b *Branch) check() {
@@ -151,7 +156,12 @@ func (b *Branch) AskCreate(requireDesc, requireIter, requireIssue, issueHashtag 
 
 		om.Log.ToDebug("Branch name", name.Name())
 
-		b.Create(name.Name())
+		if b.dry {
+			om.Log.ToInfo("Branch name", name.Name())
+		} else {
+			b.Create(name.Name())
+		}
+
 	}).IfError(func(t *manager.Throwable) {
 		e.ShowAndExit(e.Update(t, e.IsUser))
 	})

@@ -40,6 +40,7 @@ var branchNewCmd = &cobra.Command{
 		allowIssueHashtag := viper.GetBool("branch.issue.hashtag")
 
 		branch := repo.GetBranch()
+		branch.dryrun(dry)
 
 		if name == "" {
 			branch.KeyList.Load(globalList).Merge(localList)
@@ -68,5 +69,6 @@ func init() {
 	branchCmd.AddCommand(branchNewCmd)
 
 	branchNewCmd.Flags().BoolVarP(&disableCheckout, "no-checkout", "C", false, "not checkout to new branch")
+	branchNewCmd.Flags().BoolVarP(&dry, "dry", "d", false, "dry run")
 	branchNewCmd.Flags().StringVarP(&name, "name", "n", "", "custom branch name [shouldn't use]")
 }
