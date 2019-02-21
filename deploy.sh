@@ -42,7 +42,7 @@ read -r ans
 
 tag="v$(gitgo --version | sed -e 's/gitgo version //g')"
 git add -A
-git commit -m "[release] Version $tag"
+git commit -m "chore(release): version: $tag"
 
 printf "create tag %s; press <enter> to next" "$tag"
 # shellcheck disable=SC2034
