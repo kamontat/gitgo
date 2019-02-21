@@ -43,7 +43,7 @@ var repo *model.Repo
 var debug bool
 var verbose bool
 
-var version = "3.1.1"
+var version = "3.1.2"
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{

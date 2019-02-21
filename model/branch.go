@@ -23,7 +23,7 @@ type Branch struct {
 	dry        bool
 }
 
-func (b *Branch) dryrun(isDry bool) {
+func (b *Branch) SetDryrun(isDry bool) {
 	b.dry = isDry
 }
 

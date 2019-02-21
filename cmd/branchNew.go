@@ -40,7 +40,7 @@ var branchNewCmd = &cobra.Command{
 		allowIssueHashtag := viper.GetBool("branch.issue.hashtag")
 
 		branch := repo.GetBranch()
-		branch.dryrun(dry)
+		branch.SetDryrun(dry)
 
 		if name == "" {
 			branch.KeyList.Load(globalList).Merge(localList)
