@@ -23,13 +23,15 @@ package cmd
 import (
 	"os"
 	"path"
+	"path/filepath"
 
 	"gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/kamontat/gitgo/exception"
+	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
+	homedir "github.com/mitchellh/go-homedir"
 
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +46,17 @@ var changelogInitialCmd = &cobra.Command{
 		gitgoStr := path.Dir(localList.ConfigFileUsed())
 		_, err := os.Open(gitgoStr)
 		if err != nil {
-			e.ShowAndExit(e.ErrorMessage(e.IsInitial, "Cannot initial changelog before initial configuration files"))
+			home, err := homedir.Dir()
+			yaml := model.GeneratorYAML()
+
+			if err == nil {
+				path := filepath.Join(home, ".gitgo", "config.yml")
+				os.MkdirAll(filepath.Dir(path), os.ModePerm)
+				f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+				if err == nil {
+					writeTo(f, yaml.GDefaultConfig())
+				}
+			}
 		}
 
 		if initialForce {

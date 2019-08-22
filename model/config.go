@@ -14,7 +14,7 @@ func (y *YAML) ReadmeMarkdown(version string) string {
 	t := time.Now()
 	return `# Gitgo (v` + version + `)
 
-  This is a configuration file for gitgo repository with hosting on https://github.com/kamontat/gitgo/tree/version/3.x.x
+This is a configuration file for gitgo repository with hosting on https://github.com/kamontat/gitgo/tree/version/3.x.x
 
 ### Creator
 
@@ -35,6 +35,7 @@ func (y *YAML) GDefaultConfig() string {
 log: true
 commit:
   message: true
+  size: 50
 branch:
   iteration:
     require: true

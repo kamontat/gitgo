@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kamontat/gitgo/exception"
+	e "github.com/kamontat/gitgo/exception"
 	manager "github.com/kamontat/go-error-manager"
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"

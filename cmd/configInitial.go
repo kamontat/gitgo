@@ -26,9 +26,9 @@ import (
 	"path/filepath"
 
 	"github.com/kamontat/gitgo/model"
+	om "github.com/kamontat/go-log-manager"
 
 	manager "github.com/kamontat/go-error-manager"
-	"github.com/kamontat/go-log-manager"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
