@@ -28,7 +28,7 @@ import (
 
 	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
@@ -60,6 +60,11 @@ var commitCmd = &cobra.Command{
 		}
 
 		commit := repo.GetCommit()
+
+		commit.SetSettings(
+			viper.GetInt("commit.scope.size"),
+			viper.GetInt("commit.message.size"),
+		)
 
 		commit.KeyList.Load(globalList).Merge(localList)
 		commit.Commit(customKey, model.CommitOption{

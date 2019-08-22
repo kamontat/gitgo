@@ -35,7 +35,10 @@ func (y *YAML) GDefaultConfig() string {
 log: true
 commit:
   message: true
-  size: 50
+  scope:
+    size: 15
+  message:
+    size: 50
 branch:
   iteration:
     require: true
