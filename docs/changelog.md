@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v3.2.0"></a>
+## [v3.2.0] - 2019-08-22
 ### Documentation
 - **readme:** add help command to readme file
 
@@ -122,7 +125,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.1.1...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.2.0...HEAD
+[v3.2.0]: https://github.com/kamontat/gitgo/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/kamontat/gitgo/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/kamontat/gitgo/compare/v3.0.1...v3.1.0
 [v3.0.1]: https://github.com/kamontat/gitgo/compare/v3.1.2...v3.0.1
