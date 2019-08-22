@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"bou.ke/monkey"
-	"github.com/kamontat/go-error-manager"
 
 	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
+	manager "github.com/kamontat/go-error-manager"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
