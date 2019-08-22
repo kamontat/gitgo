@@ -1,22 +1,18 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
-
-<a name="v3.2.0"></a>
-## [v3.2.0] - 2019-02-21
 ### Documentation
 - **readme:** add help command to readme file
 
-### Improving application
-- **branch:** add new option call --dry for dryrun
+### Feature
+- **cli:** add new config scope and message size
+
+### Fixes Bug
+- **lint:** update linter
 
 
 <a name="v3.1.1"></a>
 ## [v3.1.1] - 2019-02-07
-### Improving application
-- **config:** change initial type of commit message
-- **config:** changes default configuration file
-
 
 <a name="v3.1.0"></a>
 ## [v3.1.0] - 2019-02-06
@@ -32,8 +28,14 @@
 ### Feature
 - **ui-prompt:** add scope to commit message
 
+### Improving application
+- **local:** add readme file in local configuration
+
 ### Improving performance
 - **config:** start implement new format of commit message BREAKING CHANGE: change format of config file which no able to use with the old version
+
+### Testing
+- **config:** refactor test due to model changes
 
 
 <a name="v3.1.2"></a>
@@ -120,32 +122,31 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/abc/compare/v3.2.0...HEAD
-[v3.2.0]: https://github.com/kamontat/abc/compare/v3.1.1...v3.2.0
-[v3.1.1]: https://github.com/kamontat/abc/compare/v3.1.0...v3.1.1
-[v3.1.0]: https://github.com/kamontat/abc/compare/v3.0.1...v3.1.0
-[v3.0.1]: https://github.com/kamontat/abc/compare/v3.1.2...v3.0.1
-[v3.1.2]: https://github.com/kamontat/abc/compare/v--version...v3.1.2
-[v--version]: https://github.com/kamontat/abc/compare/v3.0.0...v--version
-[v3.0.0]: https://github.com/kamontat/abc/compare/v2.4.0...v3.0.0
-[v2.4.0]: https://github.com/kamontat/abc/compare/v2.3.2...v2.4.0
-[v2.3.2]: https://github.com/kamontat/abc/compare/v2.3.1...v2.3.2
-[v2.3.1]: https://github.com/kamontat/abc/compare/v2.3.0...v2.3.1
-[v2.3.0]: https://github.com/kamontat/abc/compare/v2.2.1...v2.3.0
-[v2.2.1]: https://github.com/kamontat/abc/compare/v2.2.0...v2.2.1
-[v2.2.0]: https://github.com/kamontat/abc/compare/v2.1.0...v2.2.0
-[v2.1.0]: https://github.com/kamontat/abc/compare/3.0.0...v2.1.0
-[3.0.0]: https://github.com/kamontat/abc/compare/v2.0.2...3.0.0
-[v2.0.2]: https://github.com/kamontat/abc/compare/v2.0.1...v2.0.2
-[v2.0.1]: https://github.com/kamontat/abc/compare/v2.0.0...v2.0.1
-[v2.0.0]: https://github.com/kamontat/abc/compare/v1.4.1...v2.0.0
-[v1.4.1]: https://github.com/kamontat/abc/compare/1.4.0-alpha.1...v1.4.1
-[1.4.0-alpha.1]: https://github.com/kamontat/abc/compare/1.3.0-beta.1...1.4.0-alpha.1
-[1.3.0-beta.1]: https://github.com/kamontat/abc/compare/1.3.0-alpha.1...1.3.0-beta.1
-[1.3.0-alpha.1]: https://github.com/kamontat/abc/compare/1.1.6...1.3.0-alpha.1
-[1.1.6]: https://github.com/kamontat/abc/compare/1.1.4...1.1.6
-[1.1.4]: https://github.com/kamontat/abc/compare/1.1.3...1.1.4
-[1.1.3]: https://github.com/kamontat/abc/compare/1.0.0-beta.2...1.1.3
-[1.0.0-beta.2]: https://github.com/kamontat/abc/compare/0.0.1-alpha.6...1.0.0-beta.2
-[0.0.1-alpha.6]: https://github.com/kamontat/abc/compare/0.0.1-alpha.5...0.0.1-alpha.6
-[0.0.1-alpha.5]: https://github.com/kamontat/abc/compare/0.0.1-alpha.3...0.0.1-alpha.5
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.1.1...HEAD
+[v3.1.1]: https://github.com/kamontat/gitgo/compare/v3.1.0...v3.1.1
+[v3.1.0]: https://github.com/kamontat/gitgo/compare/v3.0.1...v3.1.0
+[v3.0.1]: https://github.com/kamontat/gitgo/compare/v3.1.2...v3.0.1
+[v3.1.2]: https://github.com/kamontat/gitgo/compare/v--version...v3.1.2
+[v--version]: https://github.com/kamontat/gitgo/compare/v3.0.0...v--version
+[v3.0.0]: https://github.com/kamontat/gitgo/compare/v2.4.0...v3.0.0
+[v2.4.0]: https://github.com/kamontat/gitgo/compare/v2.3.2...v2.4.0
+[v2.3.2]: https://github.com/kamontat/gitgo/compare/v2.3.1...v2.3.2
+[v2.3.1]: https://github.com/kamontat/gitgo/compare/v2.3.0...v2.3.1
+[v2.3.0]: https://github.com/kamontat/gitgo/compare/v2.2.1...v2.3.0
+[v2.2.1]: https://github.com/kamontat/gitgo/compare/v2.2.0...v2.2.1
+[v2.2.0]: https://github.com/kamontat/gitgo/compare/v2.1.0...v2.2.0
+[v2.1.0]: https://github.com/kamontat/gitgo/compare/3.0.0...v2.1.0
+[3.0.0]: https://github.com/kamontat/gitgo/compare/v2.0.2...3.0.0
+[v2.0.2]: https://github.com/kamontat/gitgo/compare/v2.0.1...v2.0.2
+[v2.0.1]: https://github.com/kamontat/gitgo/compare/v2.0.0...v2.0.1
+[v2.0.0]: https://github.com/kamontat/gitgo/compare/v1.4.1...v2.0.0
+[v1.4.1]: https://github.com/kamontat/gitgo/compare/1.4.0-alpha.1...v1.4.1
+[1.4.0-alpha.1]: https://github.com/kamontat/gitgo/compare/1.3.0-beta.1...1.4.0-alpha.1
+[1.3.0-beta.1]: https://github.com/kamontat/gitgo/compare/1.3.0-alpha.1...1.3.0-beta.1
+[1.3.0-alpha.1]: https://github.com/kamontat/gitgo/compare/1.1.6...1.3.0-alpha.1
+[1.1.6]: https://github.com/kamontat/gitgo/compare/1.1.4...1.1.6
+[1.1.4]: https://github.com/kamontat/gitgo/compare/1.1.3...1.1.4
+[1.1.3]: https://github.com/kamontat/gitgo/compare/1.0.0-beta.2...1.1.3
+[1.0.0-beta.2]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.6...1.0.0-beta.2
+[0.0.1-alpha.6]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.5...0.0.1-alpha.6
+[0.0.1-alpha.5]: https://github.com/kamontat/gitgo/compare/0.0.1-alpha.3...0.0.1-alpha.5
