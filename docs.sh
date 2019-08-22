@@ -15,17 +15,18 @@
 #/ Since:        16/08/2018
 #/ -----------------------------------
 
-printf "Generate godoc     | "
-godoc -html . >docs/godoc.html && echo "Completed" || echo "Failure"
+# godoc remove -html
+# printf "Generate godoc     | "
+# godoc -html . >docs/godoc.html && echo "Completed" || echo "Failure"
 
 printf "Generate changelog | "
-gitgo cl --location ./docs/changelog.md  &>/dev/null && echo "Completed" || echo "Failure"
+gitgo cl --location ./docs/changelog.md &>/dev/null && echo "Completed" || echo "Failure"
 
 printf "Generate summary   | "
 echo "# Summary" >docs/summary.txt &&
-	git summary >>docs/summary.txt &&
-	echo "## Lines report" >>docs/summary.txt &&
-	echo >>docs/summary.txt &&
-	git summary --line | grep -A 100 "lines" >>docs/summary.txt &&
-	echo "Completed" ||
-	echo "Failure"
+  git summary >>docs/summary.txt &&
+  echo "## Lines report" >>docs/summary.txt &&
+  echo >>docs/summary.txt &&
+  git summary --line | grep -A 100 "lines" >>docs/summary.txt &&
+  echo "Completed" ||
+  echo "Failure"
