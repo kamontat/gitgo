@@ -30,7 +30,7 @@
 
 go install
 
-gitgo --version
+../../../../bin/gitgo --version
 
 printf "Check version; press <enter> to next"
 # shellcheck disable=SC2034
