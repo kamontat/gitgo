@@ -30,8 +30,9 @@
 
 go install
 
-../../../../bin/gitgo --version
+VERSION="$(../../../../bin/gitgo --version)"
 
+echo "$VERSION"
 printf "Check version; press <enter> to next"
 # shellcheck disable=SC2034
 read -r ans
@@ -40,7 +41,7 @@ git status
 printf "Check status; press <enter> to next"
 read -r ans
 
-tag="v$(gitgo --version | sed -e 's/gitgo version //g')"
+tag="v$(echo "$VERSION" | sed -e 's/gitgo version //g')"
 git add -A
 git commit -m "chore(release): version: $tag"
 
