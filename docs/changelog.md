@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v3.2.1"></a>
+## [v3.2.1] - 2019-08-23
+### Fixes Bug
+- **commit:** commit size didn't fallback to default
+
+
 <a name="v3.2.0"></a>
 ## [v3.2.0] - 2019-08-22
 ### Documentation
@@ -125,7 +131,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.2.1...HEAD
+[v3.2.1]: https://github.com/kamontat/gitgo/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/kamontat/gitgo/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/kamontat/gitgo/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/kamontat/gitgo/compare/v3.0.1...v3.1.0
