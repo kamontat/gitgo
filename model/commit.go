@@ -32,6 +32,14 @@ type Commit struct {
 }
 
 func (c *Commit) SetSettings(scopeSize int, messageSize int) {
+	if scopeSize == 0 {
+		scopeSize = 12
+	}
+
+	if messageSize == 0 {
+		messageSize = 50
+	}
+
 	c.Settings = &CommitSettings{
 		ScopeSize:   scopeSize,
 		MessageSize: messageSize,
