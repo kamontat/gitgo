@@ -1,0 +1,11 @@
+version: 3
+jobs:
+  build:
+    docker:
+      - image: 'circleci/golang:1.10.3'
+    working_directory: /go/src/github.com/kamontat/gitgo
+    steps:
+      - checkout
+      - run: go get -v -t -d ./...
+      - run: go test ./... -cover -coverprofile=coverage.txt -covermode=atomic
+      - run: 'bash <(curl -s https://codecov.io/bash)'
