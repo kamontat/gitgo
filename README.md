@@ -38,6 +38,7 @@ This project create to make every commit and branch name be same format for all 
 
 ```text
 type(scope): title
+
 message
 ```
 
@@ -49,14 +50,13 @@ message
 ### Branch
 
 ```text
-iter/key/title/desc/issue
+iter/key/title/description
 ```
 
-1. `Iter` (Optional) is the **iteration** number for agile project, to seperate the branch to each of iteration and make easy to review overall of each iteration
-2. `Key` is the main part of the branch, it should be only 1 word to represent the action of this branch (e.g. update, add, refactor). Notes that this should be *verb*
-3. `Title` is the title of branch mostly we call 'action'. This is the action or subtype of the key and should stay on 1-2 word only. Notes that this should be *noun*
-4. `Desc` (Optional) is the description of branch but it should more and 2-3 word and seperate each word by `-` (dash)
-5. `Issue` (Optional) is the requirement of Waffle.io for make automate workflow in github. This represent github issue with or without `#` sign (Optional).
+1. `iter` (configable) is the **iteration** number for agile project, to seperate the branch to each of iteration and make easy to review overall of each iteration
+2. `key` (require) is the key part of the branch, it should be only 1 word to represent the action of this branch (e.g. update, add, refactor). Notes that this should be *verb*
+3. `title` (require) is the title of branch mostly we call 'action'. This is the action or subtype of the key and should stay on 1-2 word only. Notes that this should be *sentence* and seperate each word by `-` (dash)
+4. `description` (configable) is the description of branch but it should more and 2-3 word and seperate each word by `-` (dash)
 
 ### Help
 
