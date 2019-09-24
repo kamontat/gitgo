@@ -22,8 +22,8 @@ package cmd
 
 import (
 	"github.com/kamontat/gitgo/model"
+	om "github.com/kamontat/go-log-manager"
 
-	"github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
@@ -34,6 +34,7 @@ var commitInitialCmd = &cobra.Command{
 	Short:   "Start commit and add every file if not add",
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToVerbose("Commit initial", "start...")
+
 		repo.AddAll().ShowMessage().Exit()
 		om.Log.ToVerbose("Status", "Added all files or folders")
 
@@ -41,43 +42,29 @@ var commitInitialCmd = &cobra.Command{
 		commit := repo.GetCommit()
 
 		om.Log.ToVerbose("Commit", "Start create commit")
-
-		if key == "" {
-			key = "init"
-		}
-
-		if title == "" {
-			title = "Initial commit with files"
-		}
-
-		message := `We create this commit for initial repostiory.
-      Commit 'gitgo' project [https://github.com/kamontat/gitgo].`
-
-		if !hasMessage {
-			message = ""
-		}
-
-		commit.CustomCommit(model.CommitMessage{
+		commit.Make(model.CommitMessage{
 			Type:    key,
+			Scope:   scope,
 			Title:   title,
 			Message: message,
-		}, model.CommitOption{
-			Add:     true,
-			Dry:     false,
-			Message: true,
-			Empty:   true,
+		}, model.CommitOptions{
+			Dry:   false,
+			Empty: true,
 		})
 	},
 }
 
 var key string
+var scope string
 var title string
-var hasMessage bool
+var message string
 
 func init() {
 	commitCmd.AddCommand(commitInitialCmd)
 
 	commitInitialCmd.Flags().StringVarP(&key, "key", "k", "init", "Custom commit key")
-	commitInitialCmd.Flags().StringVarP(&title, "title", "t", "Initial commit with files", "Custom commit title.")
-	commitInitialCmd.Flags().BoolVarP(&hasMessage, "no-message", "N", false, "Force commit to not use message.")
+	commitInitialCmd.Flags().StringVarP(&key, "scope", "s", "project", "Custom commit scope")
+	commitInitialCmd.Flags().StringVarP(&title, "title", "t", "Initial commit", "Custom commit title.")
+	commitInitialCmd.Flags().StringVarP(&message, "message", "m", `We create this commit for initial repostiory.
+Commit 'gitgo' project [https://github.com/kamontat/gitgo].`, "Custom commit message.")
 }

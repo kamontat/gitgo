@@ -9,7 +9,7 @@ import (
 	e "github.com/kamontat/gitgo/exception"
 	manager "github.com/kamontat/go-error-manager"
 	om "github.com/kamontat/go-log-manager"
-	survey "gopkg.in/AlecAivazis/survey.v1"
+	survey "gopkg.in/AlecAivazis/survey.v2"
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )

@@ -22,12 +22,11 @@
 package cmd
 
 import (
-	"strings"
-
-	"github.com/spf13/viper"
-
-	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
+	"github.com/kamontat/gitgo/util"
+	"github.com/spf13/viper"
+	"gopkg.in/AlecAivazis/survey.v2"
+
 	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
@@ -40,45 +39,47 @@ var commitCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("commit", "start...")
 
-		if all {
-			om.Log.ToVerbose("git add", "git add all files by git add --all")
-			t := repo.AddAll()
-			e.Show(t)
-		} else {
-			if len(each) > 0 {
-				om.Log.ToDebug("git add", "add files ["+strings.Join(each, ", ")+"]")
-				t := repo.Add(each)
-				e.Show(t)
-			}
-		}
+		config := model.LoadCommitConfiguration(viper.GetViper())
+		om.Log.ToLog("commit config", config)
 
-		hasMessage := viper.GetBool("commit.message")
-		if hasMessage {
-			om.Log.ToVerbose("commit", "with message")
-		} else {
-			om.Log.ToVerbose("commit", "without message")
-		}
+		commitMessage := model.CommitMessage{}
 
-		commit := repo.GetCommit()
+		keyQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit type", config.Key, listYAML)
+		survey.AskOne(keyQuestion, &commitMessage.Type)
 
-		commit.SetSettings(
-			viper.GetInt("commit.scope.size"),
-			viper.GetInt("commit.message.size"),
-		)
+		scopeQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit scope", config.Scope, listYAML)
+		survey.AskOne(scopeQuestion, &commitMessage.Type)
 
-		commit.KeyList.Load(globalList).Merge(localList)
-		commit.Commit(customKey, model.CommitOption{
-			Add:     add,
-			Empty:   empty,
-			Message: hasMessage,
-			Dry:     dry,
-		})
+		titleQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit title", config.Title, listYAML)
+		survey.AskOne(titleQuestion, &commitMessage.Title)
+
+		messageQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit message", config.Message, listYAML)
+		survey.AskOne(messageQuestion, &commitMessage.Title)
+
+		// hasMessage := viper.GetBool("commit.message")
+		// if hasMessage {
+		// 	om.Log.ToVerbose("commit", "with message")
+		// } else {
+		// 	om.Log.ToVerbose("commit", "without message")
+		// }
+
+		// commit := repo.GetCommit()
+
+		// commit.SetSettings(
+		// 	viper.GetInt("commit.scope.size"),
+		// 	viper.GetInt("commit.message.size"),
+		// )
+
+		// commit.KeyList.Merge(listYAML)
+		// commit.Commit(customKey, model.CommitOption{
+		// 	Add:     false,
+		// 	Empty:   empty,
+		// 	Message: hasMessage,
+		// 	Dry:     dry,
+		// })
 	},
 }
 
-var each []string
-var add bool
-var all bool
 var empty bool
 var dry bool
 
@@ -89,9 +90,6 @@ func init() {
 
 	commitCmd.Flags().StringVarP(&customKey, "type", "t", "", "Custom commit type [shouldn't use]")
 
-	commitCmd.Flags().StringArrayVarP(&each, "each", "e", []string{}, "Commit with add [multiple use]")
-	commitCmd.Flags().BoolVarP(&all, "all", "A", false, "Commit with add all")
-	commitCmd.Flags().BoolVarP(&add, "add", "a", false, "Commit with -a flag")
 	commitCmd.Flags().BoolVarP(&dry, "dry", "d", false, "dry run with never commit anything in git")
 
 	commitCmd.Flags().BoolVarP(&empty, "empty", "m", false, "Commit with --allow-empty flag")

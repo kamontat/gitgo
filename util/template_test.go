@@ -1,4 +1,4 @@
-package model_test
+package util_test
 
 import (
 	"testing"
@@ -19,7 +19,7 @@ func TestConfig(t *testing.T) {
 		})
 
 		Convey("When check global default config", func() {
-			g := yaml.GDefaultConfig()
+			g := yaml.Config()
 
 			Convey("Then it should contain version", func() {
 				So(g, ShouldContainSubstring, "version: ")
@@ -34,28 +34,8 @@ func TestConfig(t *testing.T) {
 			})
 		})
 
-		Convey("When check global default list", func() {
-			g := yaml.GDefaultList()
-
-			Convey("Then it should contain version", func() {
-				So(g, ShouldContainSubstring, "version: ")
-			})
-
-			Convey("Then it should contain commit array", func() {
-				So(g, ShouldContainSubstring, "commits:")
-				So(g, ShouldContainSubstring, "- type: ")
-				So(g, ShouldContainSubstring, "value: ")
-			})
-
-			Convey("Then it should contain some default commit list", func() {
-				So(g, ShouldContainSubstring, "feat")
-				So(g, ShouldContainSubstring, "impr")
-				So(g, ShouldContainSubstring, "fix")
-			})
-		})
-
 		Convey("When check local empty list", func() {
-			g := yaml.LEmptyList()
+			g := yaml.EmptyList()
 
 			Convey("Then it should contain version", func() {
 				So(g, ShouldContainSubstring, "version: ")

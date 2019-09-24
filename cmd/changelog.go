@@ -25,9 +25,9 @@ import (
 	"os/exec"
 	"path"
 
-	"github.com/kamontat/gitgo/exception"
+	e "github.com/kamontat/gitgo/exception"
 
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +44,7 @@ var changelogCmd = &cobra.Command{
 		err := c.Run()
 		e.ShowAndExit(e.Error(e.IsChangelog, err))
 
-		gitgoFolder := path.Dir(localList.ConfigFileUsed())
+		gitgoFolder := path.Dir(listYAML.ConfigFileUsed())
 		config := path.Join(gitgoFolder, "chglog", "config.yml")
 		_, err = os.Open(config)
 		if err != nil {

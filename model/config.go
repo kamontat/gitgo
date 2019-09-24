@@ -1,187 +1,132 @@
 package model
 
-import "time"
+import (
+	"github.com/spf13/viper"
+)
 
-// YAML is object of config yaml
-type YAML struct{}
-
-// GeneratorYAML will return YAML Object
-func GeneratorYAML() *YAML {
-	return &YAML{}
+// ConfigableConfig is a type of configuration inside commit and branch config
+type ConfigableConfig struct {
+	Enable  bool
+	Require bool
 }
 
-func (y *YAML) ReadmeMarkdown(version string) string {
-	t := time.Now()
-	return `# Gitgo (v` + version + `)
-
-This is a configuration file for gitgo repository with hosting on https://github.com/kamontat/gitgo/tree/version/3.x.x
-
-### Creator
-
-- Kamontat Chantrachirathumrong (https://github.com/kamontat)
-
-### Datetime
-
-Someone create this configuration on '` + t.UTC().Format(time.UnixDate) + `'
-
-### Thank you
-Thank you for using this command to manage your project :)
-`
+// TypeConfig is a type of configuration inside commit and branch config
+type TypeConfig struct {
+	Key  string
+	Type string
+	size int
+	page int
 }
 
-// GDefaultConfig is global default config.yaml
-func (y *YAML) GDefaultConfig() string {
-	return `version: 3
-log: true
-commit:
-  message: true
-  scope:
-    size: 15
-  message:
-    size: 50
-branch:
-  iteration:
-    require: true
-  description:
-    require: true
-  issue:
-    require: false
-    hashtag: false
-`
+// IsList for check type is list type ?
+func (t *TypeConfig) IsList() bool {
+	return t.Type == "list"
 }
 
-// GDefaultList is global default list.yaml
-func (y *YAML) GDefaultList() string {
-	return `version: 3
-commits:
-  - type: feat
-    value: Introducing new features.
-  - type: impr
-    value: Improving user experience / usability / reliablity.
-  - type: fix
-    value: Fixing a bug.
-  - type: refac
-    value: A code change that neither fixes a bug nor adds a feature.
-  - type: chore
-    value: Other changes that don't modify src or test files.
-branches:
-  - type: feat
-    value: Introducing new features or project enhancement.
-  - type: impr
-    value: Improving user experience / usability / performance.
-  - type: fix
-    value: Fixing a bug.
-`
+// IsCustom for check type is custom type ?
+func (t *TypeConfig) IsCustom() bool {
+	return t.Type == "custom"
 }
 
-// LEmptyList is empty list.yaml
-func (y *YAML) LEmptyList() string {
-	return `version: 3
-commits:
-  - type: perf
-    value: A code change that improves performance.
-  - type: doc
-    value: Documenting source code / user manual.
-  - type: test
-    value: Adding missing tests or correcting existing tests.
-  - type: build
-    value: Changes that affect the build system or external dependencies.
-  - type: custom
-    value: this is a custom commit header
-branches:
-  - type: refac
-    value: A code change that neither fixes a bug nor adds a feature.
-  - type: test
-    value: Adding missing tests or correcting existing tests.
-  - type: custom
-    value: this is a custom branch header
-`
+// IsMix for check type is mix type ?
+func (t *TypeConfig) IsMix() bool {
+	return t.Type == "mix"
 }
 
-func (y *YAML) ChgLogConfig(style, repoUrl string) string {
-	return `style: ` + style + `
-template: CHANGELOG.tpl.md
-info:
-  title: CHANGELOG
-  repository_url: ` + repoUrl + `
-options:
-  commits:
-    filters:
-      Type:
-        - feat
-        - impr
-        - perf
-        - fix
-        - doc
-  commit_groups:
-    title_maps:
-      feat: Feature
-      impr: Improving application
-      perf: Improving performance
-      fix: Fixes Bug
-      doc: Documentation
-  header:
-    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
-    pattern_maps:
-      - Type
-      - Scope
-      - Subject
-  issues: 
-    prefix: 
-      - "#"
-  notes:
-    keywords:
-      - BREAKING CHANGE`
+// Size will return size or default size if not exist
+func (t *TypeConfig) Size() int {
+	if t.size == 0 {
+		return 20
+	}
+
+	return t.size
 }
 
-func (y *YAML) ChgLogTpl() string {
-	return `{{ if .Versions -}}
-<a name="unreleased"></a>
-## [Unreleased]
+// Page will return page size or default page size if not exist
+func (t *TypeConfig) Page() int {
+	if t.page == 0 {
+		return 5
+	}
 
-{{ if .Unreleased.CommitGroups -}}
-{{ range .Unreleased.CommitGroups -}}
-### {{ .Title }}
-{{ range .Commits -}}
-- {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }}
-{{ end }}
-{{ end -}}
-{{ end -}}
-{{ end -}}
+	return t.page
+}
 
-{{ range .Versions }}
-<a name="{{ .Tag.Name }}"></a>
-## {{ if .Tag.Previous }}[{{ .Tag.Name }}]{{ else }}{{ .Tag.Name }}{{ end }} - {{ datetime "2006-01-02" .Tag.Date }}
-{{ range .CommitGroups -}}
-### {{ .Title }}
-{{ range .Commits -}}
-- {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }}
-{{ end }}
-{{ end -}}
+// CommitConfig is a structure of commit configuration
+type CommitConfig struct {
+	Version int
+	Key     *TypeConfig
+	Scope   *TypeConfig
+	Title   *TypeConfig
+	Message *TypeConfig
+}
 
-{{- if .MergeCommits -}}
-### Pull Requests
-{{ range .MergeCommits -}}
-- {{ .Header }}
-{{ end }}
-{{ end -}}
+// BranchConfig is a structure of branch configuration
+type BranchConfig struct {
+	Version     int
+	Iteration   ConfigableConfig
+	Key         *TypeConfig
+	Title       *TypeConfig
+	Description ConfigableConfig
+}
 
-{{- if .NoteGroups -}}
-{{ range .NoteGroups -}}
-### {{ .Title }}
-{{ range .Notes }}
-{{ .Body }}
-{{ end }}
-{{ end -}}
-{{ end -}}
-{{ end -}}
+// LoadCommitConfiguration will return Commit config object from yaml config
+func LoadCommitConfiguration(vp *viper.Viper) *CommitConfig {
+	viper.SetDefault("commit.key.size", 15)
+	viper.SetDefault("commit.key.type", "list")
+	viper.SetDefault("commit.key.page", 5)
 
-{{- if .Versions }}
-[Unreleased]: {{ .Info.RepositoryURL }}/compare/{{ $latest := index .Versions 0 }}{{ $latest.Tag.Name }}...HEAD
-{{ range .Versions -}}
-{{ if .Tag.Previous -}}
-[{{ .Tag.Name }}]: {{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}
-{{ end -}}
-{{ end -}}
-{{ end -}}`
+	return &CommitConfig{
+		Version: vp.GetInt("version"),
+		Key: &TypeConfig{
+			Key:  "commit.keys",
+			size: vp.GetInt("commit.key.size"),
+			Type: vp.GetString("commit.key.type"),
+			page: vp.GetInt("commit.key.page"),
+		},
+		Title: &TypeConfig{
+			Key:  "commit.titles",
+			size: vp.GetInt("commit.title.size"),
+			Type: vp.GetString("commit.title.type"),
+			page: vp.GetInt("commit.title.page"),
+		},
+		Scope: &TypeConfig{
+			Key:  "commit.scopes",
+			size: vp.GetInt("commit.scope.size"),
+			Type: vp.GetString("commit.scope.type"),
+			page: vp.GetInt("commit.scope.page"),
+		},
+		Message: &TypeConfig{
+			Key:  "commit.messages",
+			size: vp.GetInt("commit.message.size"),
+			Type: vp.GetString("commit.message.type"),
+			page: vp.GetInt("commit.message.page"),
+		},
+	}
+}
+
+// LoadBranchConfiguration will return Branch config object from yaml config
+func LoadBranchConfiguration(vp *viper.Viper) *BranchConfig {
+	return &BranchConfig{
+		Version: vp.GetInt("version"),
+		Iteration: ConfigableConfig{
+			Enable:  vp.GetBool("branch.iteration.enable"),
+			Require: vp.GetBool("branch.iteration.require"),
+		},
+		Key: &TypeConfig{
+			Key:  "branch.keys",
+			size: vp.GetInt("branch.key.size"),
+			Type: vp.GetString("branch.key.type"),
+			page: vp.GetInt("branch.key.page"),
+		},
+		Title: &TypeConfig{
+			Key:  "branch.titles",
+			size: vp.GetInt("branch.title.size"),
+			Type: vp.GetString("branch.title.type"),
+			page: vp.GetInt("branch.title.page"),
+		},
+		Description: ConfigableConfig{
+			Enable:  vp.GetBool("branch.description.enable"),
+			Require: vp.GetBool("branch.description.require"),
+		},
+	}
 }

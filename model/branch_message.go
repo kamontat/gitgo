@@ -25,6 +25,7 @@ func (b *BranchName) GetType() string {
 	return b.Type
 }
 
+// Name will merge all information and return name as formatted
 func (b *BranchName) Name() string {
 	return path.Join(b.Iter, b.GetType(), b.Title, b.Desc, b.Issue)
 }

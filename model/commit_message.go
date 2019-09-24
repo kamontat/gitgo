@@ -7,11 +7,10 @@ import (
 
 // CommitMessage is the commit message for save in commit.
 type CommitMessage struct {
-	Type       string
-	Scope      string
-	Title      string
-	HasMessage bool
-	Message    string
+	Type    string
+	Scope   string
+	Title   string
+	Message string
 }
 
 // GetType will try to format the key to right way.
@@ -22,16 +21,22 @@ func (c *CommitMessage) GetType() string {
 		s := arr[0]
 		return strings.TrimSpace(s)
 	}
+
 	return c.Type
 }
 
+// GetMessage will return formatted commit message
 func (c *CommitMessage) GetMessage() string {
+	scope := ""
 	if c.Scope != "" {
-		c.Scope = "(" + c.Scope + ")"
+		scope = "(" + c.Scope + ")"
 	}
 
-	if c.Message == "" {
-		return fmt.Sprintf("%s%s: %s", c.GetType(), c.Scope, c.Title)
+	// Add message to commit message
+	if c.Message != "" {
+		return fmt.Sprintf("%s%s: %s\n\n%s", c.GetType(), scope, c.Title, c.Message)
 	}
-	return fmt.Sprintf("%s%s: %s\n\n%s", c.GetType(), c.Scope, c.Title, c.Message)
+
+	// generate without message
+	return fmt.Sprintf("%s%s: %s", c.GetType(), scope, c.Title)
 }

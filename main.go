@@ -18,29 +18,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package cmd
+package main
 
-import (
-	om "github.com/kamontat/go-log-manager"
-	"github.com/spf13/cobra"
-)
+import "github.com/kamontat/gitgo/cmd"
 
-// var (
-// 	inGlobal bool
-// 	inLocal  bool
-// )
+// gitgo commit [--empty] [--dry]
+// Please enter commit key:
+//    1. feat - Introduce new features
+//    2. impr - Improvement and Enhancement
+// Please enter commit scope:
+//    1. scope1 - This is a scope A
+//    2. scope2 - This is a scope B
+//    3. other  - Create new custom scope
+// Please enter commit message:
 
-// configCmd represents the config command
-var configCmd = &cobra.Command{
-	Use:     "config",
-	Aliases: []string{"C", "configuration"},
-	Short:   "Gitgo configuration",
-	Run: func(cmd *cobra.Command, args []string) {
-		om.Log.ToLog("config", "start...")
-		// open.Run(viper.ConfigFileUsed())
-	},
-}
+// gitgo branch [--dry]
 
-func init() {
-	rootCmd.AddCommand(configCmd)
+// gitgo config init [--all|--changelog|--config|--list]
+
+// gitgo config path
+
+func main() {
+	cmd.Execute()
 }

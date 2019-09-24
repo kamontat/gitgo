@@ -3,10 +3,10 @@ package model
 import (
 	"path/filepath"
 
-	"github.com/kamontat/gitgo/exception"
+	e "github.com/kamontat/gitgo/exception"
 
-	"github.com/kamontat/go-error-manager"
-	"github.com/kamontat/go-log-manager"
+	manager "github.com/kamontat/go-error-manager"
+	om "github.com/kamontat/go-log-manager"
 
 	git "gopkg.in/src-d/go-git.v4"
 )
@@ -142,7 +142,7 @@ func (r *Repo) GetBranch() *Branch {
 	e.ShowAndExit(e.Error(e.IsInitial, err))
 
 	return &Branch{
-		KeyList:    (&List{}).Setup("branches"),
+		KeyList:    (&List{Key: "branches"}),
 		Repository: r.repo,
 		Worktree:   r.GetRawWorktree(),
 		HEAD:       ref,
@@ -152,11 +152,11 @@ func (r *Repo) GetBranch() *Branch {
 // GetCommit will return Commit object.
 func (r *Repo) GetCommit() *Commit {
 	return &Commit{
-		KeyList:   (&List{}).Setup("commits"),
 		throwable: r.Throw(),
 	}
 }
 
+// Throw method will check has anything to throw and return Throwable object
 func (r *Repo) Throw() *manager.Throwable {
 	if !r.isSetup {
 		return e.ErrorMessage(e.IsInitial, "This repository is not setup yet, or have error while setting.")

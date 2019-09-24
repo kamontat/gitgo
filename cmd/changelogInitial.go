@@ -25,10 +25,10 @@ import (
 	"path"
 	"path/filepath"
 
-	"gopkg.in/AlecAivazis/survey.v1"
+	"gopkg.in/AlecAivazis/survey.v2"
 
 	e "github.com/kamontat/gitgo/exception"
-	"github.com/kamontat/gitgo/model"
+	"github.com/kamontat/gitgo/util"
 	homedir "github.com/mitchellh/go-homedir"
 
 	om "github.com/kamontat/go-log-manager"
@@ -43,18 +43,18 @@ var changelogInitialCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("changelog", "initial start...")
 
-		gitgoStr := path.Dir(localList.ConfigFileUsed())
+		gitgoStr := path.Dir(listYAML.ConfigFileUsed())
 		_, err := os.Open(gitgoStr)
 		if err != nil {
 			home, err := homedir.Dir()
-			yaml := model.GeneratorYAML()
+			yaml := util.GeneratorYAML()
 
 			if err == nil {
 				path := filepath.Join(home, ".gitgo", "config.yml")
 				os.MkdirAll(filepath.Dir(path), os.ModePerm)
 				f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 				if err == nil {
-					writeTo(f, yaml.GDefaultConfig())
+					writeTo(f, yaml.Config())
 				}
 			}
 		}
@@ -63,7 +63,7 @@ var changelogInitialCmd = &cobra.Command{
 			om.Log.ToVerbose("config", "initial with force")
 		}
 
-		yaml := model.GeneratorYAML()
+		yaml := util.GeneratorYAML()
 
 		conf := openFile(gitgoStr, "config.yml")
 		tmp := openFile(gitgoStr, "CHANGELOG.tpl.md")

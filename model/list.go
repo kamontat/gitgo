@@ -3,18 +3,14 @@ package model
 import (
 	"strconv"
 
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/viper"
 )
 
+// List is a list object from list.yaml
 type List struct {
-	key     string
+	Key     string
 	headers []Header
-}
-
-func (l *List) Setup(key string) *List {
-	l.key = key
-	return l
 }
 
 func (l *List) Load(vp *viper.Viper) *List {
@@ -36,8 +32,8 @@ func (l *List) Merge(vp *viper.Viper) *List {
 		return l
 	}
 
-	if vp.Get(l.key) == nil {
-		om.Log.ToWarn("Merge list", l.key+" key not exist @"+vp.ConfigFileUsed())
+	if vp.Get(l.Key) == nil {
+		om.Log.ToWarn("Merge list", l.Key+" key not exist @"+vp.ConfigFileUsed())
 		return l
 	}
 
@@ -46,7 +42,7 @@ func (l *List) Merge(vp *viper.Viper) *List {
 	}
 
 	om.Log.ToVerbose("Merge list", vp.ConfigFileUsed())
-	for i, element := range vp.Get(l.key).([]interface{}) {
+	for i, element := range vp.Get(l.Key).([]interface{}) {
 		cm := element.(map[interface{}]interface{})
 
 		if _, ok := cm["type"]; !ok {

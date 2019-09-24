@@ -21,56 +21,26 @@
 package cmd
 
 import (
-	"path"
-
-	"github.com/kamontat/go-log-manager"
-	"github.com/skratchdot/open-golang/open"
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
 
-var parent bool
+	om "github.com/kamontat/go-log-manager"
+	"github.com/spf13/cobra"
+)
 
 // configOpenCmd represents the configOpen command
 var configOpenCmd = &cobra.Command{
-	Use:     "open",
-	Aliases: []string{"o"},
-	Short:   "open config in your default editor",
-	Long: `
-Open configuration have some logic to open file,
-
-1. If no flag passed, program will open used config file.
-2. If '-l' passed, program will open local list file.
-3. If '-g' passed, program will open global list file.
-  `,
+	Use:     "path",
+	Aliases: []string{"p"},
+	Short:   "return current config path",
+	Long:    `configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		om.Log.ToLog("config", "open start...")
+		om.Log.ToLog("config", "path start...")
 
-		if inLocal {
-			if parent {
-				om.Log.ToVerbose("config", "On local parent")
-				open.Run(path.Dir(localList.ConfigFileUsed()))
-			} else {
-				om.Log.ToVerbose("config", "On local list")
-				open.Run(localList.ConfigFileUsed())
-			}
-		} else if inGlobal {
-			if parent {
-				om.Log.ToVerbose("config", "on global parent")
-				open.Run(path.Dir(globalList.ConfigFileUsed()))
-			} else {
-				om.Log.ToVerbose("config", "on global list")
-				open.Run(globalList.ConfigFileUsed())
-			}
-		} else {
-			om.Log.ToVerbose("config", "on using config")
-			open.Run(viper.ConfigFileUsed())
-		}
+		om.Log.ToInfo("Configuration", viper.ConfigFileUsed())
+		om.Log.ToInfo("List", listYAML.ConfigFileUsed())
 	},
 }
 
 func init() {
 	configCmd.AddCommand(configOpenCmd)
-
-	configOpenCmd.Flags().BoolVarP(&parent, "parent", "p", false, "open folder instead of config file")
 }

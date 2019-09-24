@@ -25,11 +25,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kamontat/gitgo/model"
+	"github.com/kamontat/gitgo/util"
 	om "github.com/kamontat/go-log-manager"
 
 	manager "github.com/kamontat/go-error-manager"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -42,85 +41,38 @@ var configInitialCmd = &cobra.Command{
 	Short:   "Create and initial gitgo configuration files",
 	Run: func(cmd *cobra.Command, args []string) {
 		om.Log.ToLog("config", "initial start...")
-		yaml := model.GeneratorYAML()
+		yaml := util.GeneratorYAML()
 
 		if initialForce {
 			om.Log.ToVerbose("config", "initial with force")
 		}
 
-		init := false
 		var file *manager.ResultWrapper
 
-		if inLocal {
-			file = getFile(getLPath("config.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.GDefaultConfig())
-			}).Catch(func() error {
-				return errors.New("Cannot save config.yaml in local")
-			}, throw)
+		file = getFile(getConfigPath("config.yaml"))
+		file.Unwrap(func(i interface{}) {
+			writeTo(i.(*os.File), yaml.Config())
+		}).Catch(func() error {
+			return errors.New("Cannot save config.yaml in local")
+		}, throw)
 
-			file = getFile(getLPath("list.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.LEmptyList())
-			}).Catch(func() error {
-				return errors.New("Cannot save list.yaml in local")
-			}, throw)
+		file = getFile(getConfigPath("list.yaml"))
+		file.Unwrap(func(i interface{}) {
+			writeTo(i.(*os.File), yaml.ListConfig())
+		}).Catch(func() error {
+			return errors.New("Cannot save list.yaml in local")
+		}, throw)
 
-			file = getFile(getLPath("README.md"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.ReadmeMarkdown(version))
-			}).Catch(func() error {
-				return errors.New("Cannot save list.yaml in local")
-			}, throw)
-
-			init = true
-		}
-
-		if inGlobal {
-			file = getFile(getGPath("config.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.GDefaultConfig())
-			}).Catch(func() error {
-				return errors.New("Cannot save config.yaml in global")
-			}, throw)
-
-			file = getFile(getGPath("list.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.GDefaultList())
-			}).Catch(func() error {
-				return errors.New("Cannot save list.yaml in global")
-			}, throw)
-
-			init = true
-		}
-
-		if !init {
-			file = getFile(getGPath("config.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.GDefaultConfig())
-			}).Catch(func() error {
-				return errors.New("Cannot save config.yaml in global")
-			}, throw)
-
-			file = getFile(getGPath("list.yaml"))
-			file.Unwrap(func(i interface{}) {
-				writeTo(i.(*os.File), yaml.GDefaultList())
-			}).Catch(func() error {
-				return errors.New("Cannot save list.yaml in global")
-			}, throw)
-		}
+		file = getFile(getConfigPath("README.md"))
+		file.Unwrap(func(i interface{}) {
+			writeTo(i.(*os.File), yaml.ReadmeMarkdown(version))
+		}).Catch(func() error {
+			return errors.New("Cannot save list.yaml in local")
+		}, throw)
 	},
 }
 
-func getGPath(filename string) *manager.ResultWrapper {
-	return manager.StartResultManager().Exec02(homedir.Dir).IfResultThen(func(home string) interface{} {
-		path := filepath.Join(home, ".gitgo", filename)
-		os.MkdirAll(filepath.Dir(path), os.ModePerm)
-		return path
-	})
-}
-
-func getLPath(filename string) *manager.ResultWrapper {
+func getConfigPath(filename string) *manager.ResultWrapper {
 	return manager.StartResultManager().Exec12(filepath.Abs, ".").IfResultThen(func(home string) interface{} {
 		path := filepath.Join(home, ".gitgo", filename)
 		os.MkdirAll(filepath.Dir(path), os.ModePerm)

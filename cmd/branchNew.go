@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"github.com/kamontat/go-log-manager"
+	om "github.com/kamontat/go-log-manager"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,7 +43,7 @@ var branchNewCmd = &cobra.Command{
 		branch.SetDryrun(dry)
 
 		if name == "" {
-			branch.KeyList.Load(globalList).Merge(localList)
+			branch.KeyList.Merge(listYAML)
 			om.Log.ToVerbose("branch", "ask for branch name")
 			branch.AskCreate(
 				isRequireDesc,
