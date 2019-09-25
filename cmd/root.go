@@ -42,7 +42,7 @@ var repo *model.Repo
 var debug bool
 var verbose bool
 
-var version = "4.0.0-beta.3"
+var version = "4.0.0-beta.4"
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
@@ -55,6 +55,7 @@ This command create by golang with cobra cli.
 Motivation by gitmoji and GitFlow,
 Force everyone to create the exect same templates of commit and branch
 
+4.0.0-beta.4 - update README on config folder to be version 4 instead of 3
 4.0.0-beta.3 - fix commit always call git commit even prompt was exited
 4.0.0-beta.2 - refactor how configuration will be loaded
                and add more key to configable
