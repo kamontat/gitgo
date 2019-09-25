@@ -42,19 +42,21 @@ var repo *model.Repo
 var debug bool
 var verbose bool
 
-var version = "4.0.0-beta.1"
+var version = "4.0.0-beta.2"
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "gitgo",
 	Short: "gitgo command by Kamontat Chantrachurathumrong",
 	Long: `Gitgo: git commit for organize user.
-  
+
 This command create by golang with cobra cli.
 
 Motivation by gitmoji and GitFlow,
 Force everyone to create the exect same templates of commit and branch
 
+4.0.0-beta.2 - refactor how configuration will be loaded
+               and add more key to configable
 4.0.0-beta.1 - remove global configuration settings; 
                force every settings should place in project
   `,
