@@ -48,7 +48,7 @@ func GenerateQuestionViaTypeConfig(title string, config *model.TypeConfig, listC
 		options := list.MakeList()
 
 		if !config.Require() {
-			header := model.Header{Type: "", Value: "Empty"}
+			header := model.Header{Type: "", Value: "go to next question"}
 			options = append(options, header.Format())
 		}
 

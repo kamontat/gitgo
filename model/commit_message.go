@@ -39,9 +39,9 @@ func (c *CommitMessage) GetScope() string {
 
 // GetMessage will return formatted commit message
 func (c *CommitMessage) GetMessage() string {
-	scope := ""
-	if c.Scope != "" {
-		scope = "(" + c.GetScope() + ")"
+	scope := c.GetScope()
+	if scope != "" {
+		scope = "(" + scope + ")"
 	}
 
 	// Add message to commit message
