@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v4.0.0-beta.4"></a>
+## [v4.0.0-beta.4] - 2019-09-25
+### Fixes Bug
+- **cli:** update README in gitgo config folder
+
+
 <a name="v4.0.0-beta.3"></a>
 ## [v4.0.0-beta.3] - 2019-09-25
 ### Fixes Bug
@@ -152,7 +158,8 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.4...HEAD
+[v4.0.0-beta.4]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.3...v4.0.0-beta.4
 [v4.0.0-beta.3]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.2...v4.0.0-beta.3
 [v4.0.0-beta.2]: https://github.com/kamontat/gitgo/compare/v3.2.1...v4.0.0-beta.2
 [v3.2.1]: https://github.com/kamontat/gitgo/compare/v3.2.0...v3.2.1
