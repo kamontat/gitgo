@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-# Gitgo - agile process management
-
-## What is this ?
-
-Basically, this is a `git commit` with `interactive prompt` that help you to create formatting commit message that able to use to generate `CHANGELOG` file and easy to read the same commit format.
-
-## Version
-
-I seperate each individual version into each branch (current 6 Feb 2019 is version 3.0.0)
-
-1. version 1 on [version/1.x.x](https://github.com/kamontat/gitgo/tree/version/1.x.x)
-2. version 2 on [version/2.x.x](https://github.com/kamontat/gitgo/tree/version/2.x.x)
-3. version 3 on [version/3.x.x](https://github.com/kamontat/gitgo/tree/version/3.x.x)
-=======
 # gitgo
 
 git commit and branch creator for organize developer
@@ -42,10 +27,10 @@ type(scope): title
 message
 ```
 
-1. `Type` is the word (usually contain only 1 word) that represent the commit
-2. `Scope` is a scope of commit type
-3. `Title` is the important part, that show what the commit for (should less that 50 word)
-4. `Message` (optional) is the long description about the commit that might/might not relate to the commit, e.g. add sign text, add long description for more detail
+1. `Type` (configable) is the word (usually contain only 1 word) that represent the commit
+2. `Scope` (configable) is a scope of commit type
+3. `Title` (configable) is the important part, that show what the commit for (should less that 50 word)
+4. `Message` (configable) is the long description about the commit that might/might not relate to the commit, e.g. add sign text, add long description for more detail
 
 ### Branch
 
@@ -54,33 +39,27 @@ iter/key/title/description
 ```
 
 1. `iter` (configable) is the **iteration** number for agile project, to seperate the branch to each of iteration and make easy to review overall of each iteration
-2. `key` (require) is the key part of the branch, it should be only 1 word to represent the action of this branch (e.g. update, add, refactor). Notes that this should be *verb*
-3. `title` (require) is the title of branch mostly we call 'action'. This is the action or subtype of the key and should stay on 1-2 word only. Notes that this should be *sentence* and seperate each word by `-` (dash)
+2. `key` (configable) is the key part of the branch, it should be only 1 word to represent the action of this branch (e.g. update, add, refactor). Notes that this should be *verb*
+3. `title` (configable) is the title of branch mostly we call 'action'. This is the action or subtype of the key and should stay on 1-2 word only. Notes that this should be *sentence* and seperate each word by `-` (dash)
 4. `description` (configable) is the description of branch but it should more and 2-3 word and seperate each word by `-` (dash)
 
 ### Help
 
-```sh 
+```sh
 
 Gitgo: git commit for organize user.
 
 This command create by golang with cobra cli.
 
-Motivation by gitmoji,
-I used to like gitmoji but emoji isn't made for none developer.
-And the problem I got is I forget which emoji is represent what.
-And hard to generate changelog file.
-So I think 'short key text' is the solution of situation.
+Motivation by gitmoji and GitFlow,
+Force everyone to create the exect same templates of commit and branch
 
-3.1.1 -> Change default and local configuration list
-3.1.0 -> Add --tag to changelog generator
-3.0.1 -> Add README file to local config
-3.0.0 -> Change commit format and refactor code
-2.4.0 -> Add --empty to allow empty changes to commit code
-2.3.2 -> Issue hash tag will be always add if setting is true
-2.3.1 -> Fix branch creator error, and improve logger
-2.3.0 -> Add changelog command with initial changelog
-2.2.1 -> Improve branch creator and commit creator
+4.0.0-beta.4 - update README on config folder to be version 4 instead of 3
+4.0.0-beta.3 - fix commit always call git commit even prompt was exited
+4.0.0-beta.2 - refactor how configuration will be loaded
+               and add more key to configable
+4.0.0-beta.1 - remove global configuration settings;
+               force every settings should place in project
 
 Usage:
   gitgo [command]
@@ -101,4 +80,10 @@ Flags:
 Use "gitgo [command] --help" for more information about a command.
 
 ```
->>>>>>> version/3.x.x
+
+## Development
+
+### How to
+
+1. Install all dependencies via `go get ./...`
+2. Install Gitgo to GOBIN via `go install`
