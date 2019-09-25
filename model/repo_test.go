@@ -74,10 +74,6 @@ func TestRepoObject(t *testing.T) {
 					Convey("And commit shouldn't be nil", func() {
 						So(commit, ShouldNotBeNil)
 					})
-
-					Convey("And commit keylist shouldn't exist before load list", func() {
-						So(commit.KeyList.IsContain(), ShouldBeFalse)
-					})
 				})
 			})
 		})
