@@ -22,6 +22,7 @@
 package cmd
 
 import (
+	e "github.com/kamontat/gitgo/exception"
 	"github.com/kamontat/gitgo/model"
 	"github.com/kamontat/gitgo/util"
 	"github.com/spf13/viper"
@@ -46,12 +47,14 @@ var commitCmd = &cobra.Command{
 
 		keyQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit type", config.Key, listYAML)
 		if keyQuestion != nil {
-			survey.AskOne(keyQuestion, &commitMessage.Type, validates...)
+			err := survey.AskOne(keyQuestion, &commitMessage.Type, validates...)
+			e.Error(e.IsCommit, err).ShowMessage().Exit()
 		}
 
 		scopeQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit scope", config.Scope, listYAML)
 		if scopeQuestion != nil {
-			survey.AskOne(scopeQuestion, &commitMessage.Scope, validates...)
+			err := survey.AskOne(scopeQuestion, &commitMessage.Scope, validates...)
+			e.Error(e.IsCommit, err).ShowMessage().Exit()
 		}
 
 		titleQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit title", config.Title, listYAML)
@@ -61,7 +64,8 @@ var commitCmd = &cobra.Command{
 
 		messageQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit message", config.Message, listYAML)
 		if messageQuestion != nil {
-			survey.AskOne(messageQuestion, &commitMessage.Message, validates...)
+			err := survey.AskOne(messageQuestion, &commitMessage.Message, validates...)
+			e.Error(e.IsCommit, err).ShowMessage().Exit()
 		}
 
 		commit := repo.GetCommit()
