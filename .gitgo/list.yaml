@@ -11,16 +11,14 @@ commit:
       value: A code change that neither fixes a bug nor adds a feature.
     - type: chore
       value: Other changes that don't modify src or test files.
-    - type: perf
-      value: A code change that improves performance.
   scopes:
-    - type: model
-      value: Model folders
-    - type: api
-      value: APIs folders
-    - type: controller
-      value: Controller folders
-  titles: 
+    - type: core
+      value: Core command of gitgo
+    - type: lib
+      value: Gitgo libraries
+    - type: cli
+      value: Commandline includes options and parameters
+  titles:
     - type: Start new project
       value: Start new project
 branch:
