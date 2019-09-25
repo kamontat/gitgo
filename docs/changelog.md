@@ -2,6 +2,25 @@
 ## [Unreleased]
 
 
+<a name="v4.0.0-beta.3"></a>
+## [v4.0.0-beta.3] - 2019-09-25
+### Fixes Bug
+- commit always run even info is not ready
+
+
+<a name="v4.0.0-beta.2"></a>
+## [v4.0.0-beta.2] - 2019-09-25
+### Documentation
+- **master:** add README document to master branch
+
+### Feature
+- **app:** rewrite most of code in cli
+- **release:** make improvement and released
+
+### Improving application
+- **cli:** update commit message to easier to understand
+
+
 <a name="v3.2.1"></a>
 ## [v3.2.1] - 2019-08-23
 ### Fixes Bug
@@ -19,9 +38,17 @@
 ### Fixes Bug
 - **lint:** update linter
 
+### Improving application
+- **branch:** add new option call --dry for dryrun
+- **changelog:** init changelog not require config init anymore
+
 
 <a name="v3.1.1"></a>
 ## [v3.1.1] - 2019-02-07
+### Improving application
+- **config:** change initial type of commit message
+- **config:** changes default configuration file
+
 
 <a name="v3.1.0"></a>
 ## [v3.1.0] - 2019-02-06
@@ -37,21 +64,15 @@
 ### Feature
 - **ui-prompt:** add scope to commit message
 
-### Improving application
-- **local:** add readme file in local configuration
-
 ### Improving performance
 - **config:** start implement new format of commit message BREAKING CHANGE: change format of config file which no able to use with the old version
 
-### Testing
-- **config:** refactor test due to model changes
-
-
-<a name="v3.1.2"></a>
-## [v3.1.2] - 2019-02-06
 
 <a name="v--version"></a>
 ## [v--version] - 2019-02-06
+
+<a name="v3.1.2"></a>
+## [v3.1.2] - 2019-02-06
 ### Documentation
 - **master:** add README document to master branch
 
@@ -131,14 +152,16 @@
 <a name="0.0.1-alpha.3"></a>
 ## 0.0.1-alpha.3 - 2018-04-02
 
-[Unreleased]: https://github.com/kamontat/gitgo/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.3...HEAD
+[v4.0.0-beta.3]: https://github.com/kamontat/gitgo/compare/v4.0.0-beta.2...v4.0.0-beta.3
+[v4.0.0-beta.2]: https://github.com/kamontat/gitgo/compare/v3.2.1...v4.0.0-beta.2
 [v3.2.1]: https://github.com/kamontat/gitgo/compare/v3.2.0...v3.2.1
 [v3.2.0]: https://github.com/kamontat/gitgo/compare/v3.1.1...v3.2.0
 [v3.1.1]: https://github.com/kamontat/gitgo/compare/v3.1.0...v3.1.1
 [v3.1.0]: https://github.com/kamontat/gitgo/compare/v3.0.1...v3.1.0
-[v3.0.1]: https://github.com/kamontat/gitgo/compare/v3.1.2...v3.0.1
-[v3.1.2]: https://github.com/kamontat/gitgo/compare/v--version...v3.1.2
-[v--version]: https://github.com/kamontat/gitgo/compare/v3.0.0...v--version
+[v3.0.1]: https://github.com/kamontat/gitgo/compare/v--version...v3.0.1
+[v--version]: https://github.com/kamontat/gitgo/compare/v3.1.2...v--version
+[v3.1.2]: https://github.com/kamontat/gitgo/compare/v3.0.0...v3.1.2
 [v3.0.0]: https://github.com/kamontat/gitgo/compare/v2.4.0...v3.0.0
 [v2.4.0]: https://github.com/kamontat/gitgo/compare/v2.3.2...v2.4.0
 [v2.3.2]: https://github.com/kamontat/gitgo/compare/v2.3.1...v2.3.2
