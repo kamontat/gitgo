@@ -13,6 +13,7 @@ type List struct {
 	headers []Header
 }
 
+// Load will load configuration base on key in List struct
 func (l *List) Load(vp *viper.Viper) *List {
 	if vp == nil {
 		om.Log.ToDebug("commit list", "viper is nil, cannot load list")
@@ -26,6 +27,7 @@ func (l *List) Load(vp *viper.Viper) *List {
 	return l.Merge(vp)
 }
 
+// Merge will load and merge configuration without delete any config in list struct
 func (l *List) Merge(vp *viper.Viper) *List {
 	if vp == nil {
 		om.Log.ToWarn("Merge list", "config object is nil, cannot merge")

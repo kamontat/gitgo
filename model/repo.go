@@ -137,6 +137,7 @@ func (r *Repo) AddAll() *manager.Throwable {
 	return manager.Throw()
 }
 
+// GetBranch will return config Branch struct
 func (r *Repo) GetBranch() *Branch {
 	ref, err := r.repo.Head()
 	e.ShowAndExit(e.Error(e.IsInitial, err))
