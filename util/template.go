@@ -33,10 +33,11 @@ Thank you for using this command to manage your project :)
 // Config is a default config.yaml
 func (y *YAML) Config() string {
 	return `# All **type** on each configuration can be 3 value only
-#   1. list   -> in order to use this key the list.yaml must be presented and list of root name must be presented
-#                the prompt will show as choice input
-#   2. custom -> the prompt will show as string input
-#   3. mix    -> this will mix between list and custom
+#   1. list      -> in order to use this key the list.yaml must be presented and list of root name must be presented
+#                   the prompt will show as choice input
+#   2. input     -> the prompt will show as string input
+#   3. mulitline -> the prompt will show as multiple line input
+#   4. mix       -> this will mix between list and custom
 
 # enable and require is configuration root level
 # if enable is true, mean command will prompt user to input something
@@ -47,17 +48,25 @@ settings:
   log: info
 commit:
   key:
+    enable: true
+    require: true
     type: list
-    size: 15
     page: 5
   scope:
-    type: mix
-    size: 15
+    enable: true
+    require: false
+    type: list
     page: 5
+  title:
+    enable: true
+    require: true
+    type: input
+    size: 75
   message:
-    type: mix
-    size: 50
-    page: 5
+    enable: false
+    require: false
+    type: multiline
+    size: 200
 branch:
   iteration:
     enable: true
@@ -100,7 +109,7 @@ commit:
       value: APIs folders
     - type: controller
       value: Controller folders
-  messages:
+  titles: 
     - type: Start new project
       value: Start new project
 branch:

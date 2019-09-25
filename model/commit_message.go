@@ -25,11 +25,23 @@ func (c *CommitMessage) GetType() string {
 	return c.Type
 }
 
+// GetScope will try to format the key to right way.
+// Otherwise, return normal Key
+func (c *CommitMessage) GetScope() string {
+	arr := strings.Split(c.Scope, ":")
+	if len(arr) > 0 {
+		s := arr[0]
+		return strings.TrimSpace(s)
+	}
+
+	return c.Type
+}
+
 // GetMessage will return formatted commit message
 func (c *CommitMessage) GetMessage() string {
 	scope := ""
 	if c.Scope != "" {
-		scope = "(" + c.Scope + ")"
+		scope = "(" + c.GetScope() + ")"
 	}
 
 	// Add message to commit message

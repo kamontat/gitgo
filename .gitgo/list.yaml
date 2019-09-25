@@ -20,7 +20,7 @@ commit:
       value: APIs folders
     - type: controller
       value: Controller folders
-  messages:
+  titles: 
     - type: Start new project
       value: Start new project
 branch:

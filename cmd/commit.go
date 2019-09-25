@@ -44,51 +44,39 @@ var commitCmd = &cobra.Command{
 
 		commitMessage := model.CommitMessage{}
 
-		keyQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit type", config.Key, listYAML)
-		survey.AskOne(keyQuestion, &commitMessage.Type)
+		keyQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit type", config.Key, listYAML)
+		if keyQuestion != nil {
+			survey.AskOne(keyQuestion, &commitMessage.Type, validates...)
+		}
 
-		scopeQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit scope", config.Scope, listYAML)
-		survey.AskOne(scopeQuestion, &commitMessage.Type)
+		scopeQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit scope", config.Scope, listYAML)
+		if scopeQuestion != nil {
+			survey.AskOne(scopeQuestion, &commitMessage.Scope, validates...)
+		}
 
-		titleQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit title", config.Title, listYAML)
-		survey.AskOne(titleQuestion, &commitMessage.Title)
+		titleQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit title", config.Title, listYAML)
+		if titleQuestion != nil {
+			survey.AskOne(titleQuestion, &commitMessage.Title, validates...)
+		}
 
-		messageQuestion := util.GenerateQuestionViaTypeConfig("Please enter commit message", config.Message, listYAML)
-		survey.AskOne(messageQuestion, &commitMessage.Title)
+		messageQuestion, validates := util.GenerateQuestionViaTypeConfig("Please enter commit message", config.Message, listYAML)
+		if messageQuestion != nil {
+			survey.AskOne(messageQuestion, &commitMessage.Message, validates...)
+		}
 
-		// hasMessage := viper.GetBool("commit.message")
-		// if hasMessage {
-		// 	om.Log.ToVerbose("commit", "with message")
-		// } else {
-		// 	om.Log.ToVerbose("commit", "without message")
-		// }
-
-		// commit := repo.GetCommit()
-
-		// commit.SetSettings(
-		// 	viper.GetInt("commit.scope.size"),
-		// 	viper.GetInt("commit.message.size"),
-		// )
-
-		// commit.KeyList.Merge(listYAML)
-		// commit.Commit(customKey, model.CommitOption{
-		// 	Add:     false,
-		// 	Empty:   empty,
-		// 	Message: hasMessage,
-		// 	Dry:     dry,
-		// })
+		commit := repo.GetCommit()
+		commit.Make(commitMessage, model.CommitOptions{
+			Dry:   dry,
+			Empty: empty,
+		})
 	},
 }
 
 var empty bool
 var dry bool
 
-var customKey string
-
 func init() {
 	rootCmd.AddCommand(commitCmd)
-
-	commitCmd.Flags().StringVarP(&customKey, "type", "t", "", "Custom commit type [shouldn't use]")
 
 	commitCmd.Flags().BoolVarP(&dry, "dry", "d", false, "dry run with never commit anything in git")
 
