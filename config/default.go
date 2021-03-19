@@ -2,6 +2,20 @@ package config
 
 import "github.com/kamontat/gitgo/config/models"
 
+func DefaultOption() *models.ConfigurationOption {
+	return &models.ConfigurationOption{
+		WdPath:     "",
+		ConfigPath: "",
+		Setting: &models.OptionSetting{
+			FileName:      "config",
+			FileType:      "yml",
+			DirectoryName: ".gitgo",
+			EnvPrefix:     "GG",
+			Paths:         []string{},
+		},
+	}
+}
+
 func Default() *models.Configuration {
 	return &models.Configuration{
 		Version: 5,
