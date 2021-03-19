@@ -1,0 +1,14 @@
+module github.com/kamontat/gitgo/prompt
+
+go 1.16
+
+replace (
+	github.com/kamontat/gitgo/config v0.0.0-local => ../config
+	github.com/kamontat/gitgo/git v0.0.0-local => ../git
+)
+
+require (
+	github.com/AlecAivazis/survey/v2 v2.2.9
+	github.com/kamontat/gitgo/config v0.0.0-local
+	github.com/kamontat/gitgo/git v0.0.0-local
+)
