@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/kamontat/gitgo/utils/phase"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -15,21 +17,27 @@ var configInitCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		phase.OnCommandPhase()
 
+		// Update viper instance
+		viper.Set("settings", configuration.Settings)
+		viper.Set("version", configuration.Version)
+
+		// Log debug information
 		phase.Debug("starting create new config")
-		phase.Debug("create config at %s", configPath)
+		phase.Debug("create config at %s", configOption.GetConfigPath())
 		if force {
 			phase.Debug("start with force mode")
 		}
 
-		viper.Set("settings", configuration.Settings)
-		viper.Set("version", configuration.Version)
-
 		var err error
+
+		err = os.MkdirAll(configOption.Setting.DefaultDirectoryPath(), os.ModePerm)
+		phase.Warn(err)
+
 		if force {
-			err = viper.WriteConfig()
+			err = viper.WriteConfigAs(configOption.GetConfigPath())
 			phase.Error(err)
 		} else {
-			err = viper.SafeWriteConfig()
+			err = viper.SafeWriteConfigAs(configOption.GetConfigPath())
 			phase.Warn(err)
 		}
 	},
