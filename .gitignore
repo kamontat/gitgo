@@ -101,3 +101,5 @@ tags
 !.vscode/extensions.json
 
 # End of https://www.toptal.com/developers/gitignore/api/go,linux,macos,vim,vscode,visualstudiocode
+
+./cli/cli
