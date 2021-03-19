@@ -93,7 +93,8 @@ func initConfigPath() {
 }
 
 func validateVersion() {
-	utils.VersionChecker(viper.GetString("version"), core.Version)
+	err := utils.VersionChecker(viper.GetString("version"), core.Version)
+	phase.Error(err)
 }
 
 func postConfig() {

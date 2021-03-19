@@ -17,7 +17,8 @@ jobs:
 
       - name: Get dependencies
         run: |
-          go build ./...
+          ./scripts/go.sh all build
 
       - name: Test unittest
-        run: go test ./... -cover -coverprofile=coverage.txt -covermode=atomic
+        run: |
+          ./scripts/go.sh all test -cover -coverprofile=coverage.txt -covermode=atomic
