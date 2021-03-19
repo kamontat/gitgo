@@ -13,7 +13,7 @@ var changelogCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		phase.OnCommandPhase()
 
-		repo, err := git.New(pwdPath)
+		repo, err := git.New(configOption.WdPath)
 		phase.Error(err)
 
 		phase.Debug("initial repository: %s", repo.Path())

@@ -31,7 +31,7 @@ var commitCmd = &cobra.Command{
 			phase.Info("Dryrun")
 		}
 
-		repo, err := git.New(pwdPath)
+		repo, err := git.New(configOption.WdPath)
 		phase.Error(err)
 
 		phase.Debug("initial repository: %s", repo.Path())

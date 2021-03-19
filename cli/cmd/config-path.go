@@ -11,7 +11,7 @@ var configPathCmd = &cobra.Command{
 	Short:   "show current used config file path",
 	Run: func(cmd *cobra.Command, args []string) {
 		phase.OnCommandPhase()
-		phase.Log(configPath)
+		phase.Log(configOption.ConfigPath)
 	},
 }
 
