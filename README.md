@@ -12,3 +12,4 @@ I seperate each individual version into each branch (current 25 Sep 2019 is vers
 2. version 2 on [version/2.x.x](https://github.com/kamontat/gitgo/tree/version/2.x.x)
 3. version 3 on [version/3.x.x](https://github.com/kamontat/gitgo/tree/version/3.x.x)
 4. version 4 on [version/4.x.x](https://github.com/kamontat/gitgo/tree/version/4.x.x)
+5. version 5 on [version/5.x.x](https://github.com/kamontat/gitgo/tree/version/5.x.x)
