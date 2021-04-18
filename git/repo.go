@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/kamontat/gitgo/git/models"
+	"github.com/kamontat/gitgo/utils/exec"
 )
 
 type Repo struct {
@@ -43,6 +44,7 @@ func (r *Repo) Changelog(option *ChangelogOption) (*models.ChangeLog, error) {
 	return models.NewChangelog("v1.0.0", commits), err
 }
 
+// Commit create commit message to repository and return commit hash
 func (r *Repo) Commit(msg *models.CommitMessage) (string, error) {
 	message, err := msg.Formatted()
 	if err != nil {
@@ -63,6 +65,24 @@ func (r *Repo) Commit(msg *models.CommitMessage) (string, error) {
 	}
 }
 
+// HackCommit will execute raw git command instead go-git module
+func (r *Repo) HackCommit(msg *models.CommitMessage, args ...string) (string, error) {
+	message, err := msg.Formatted()
+	if err != nil {
+		return "", err
+	}
+
+	arguments := make([]string, 0)
+	arguments = append(arguments, "commit", "-m", message)
+	if len(args) > 0 {
+		arguments = append(arguments, args...)
+	}
+
+	option := exec.NewOption()
+	err = exec.Run(option, "git", arguments...)
+	return "", err
+}
+
 func (r *Repo) Branches() (branches []string) {
 	iter, err := r.git.Branches()
 	if err != nil {
@@ -76,6 +96,15 @@ func (r *Repo) Branches() (branches []string) {
 	})
 
 	return
+}
+
+func (r *Repo) IsClean() bool {
+	s, err := r.tree.Status()
+	if err != nil {
+		return false
+	}
+
+	return s.IsClean()
 }
 
 func (r *Repo) Path() string {

@@ -128,6 +128,10 @@ func init() {
 	root.PersistentFlags().StringP("wd", "W", "", "custom current directory")
 	viper.BindPFlag(constants.SettingWdPath, root.PersistentFlags().Lookup("wd"))
 	viper.SetDefault(constants.SettingWdPath, "")
+
+	root.PersistentFlags().BoolP("hack", "H", false, "hack git command")
+	viper.BindPFlag(constants.SettingHack, root.PersistentFlags().Lookup("hack"))
+	viper.SetDefault(constants.SettingHack, false)
 }
 
 // Execute will run commandline interface
