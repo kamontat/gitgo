@@ -9,11 +9,27 @@
 # set -n #EVALUATE - Check syntax of the script but don't execute.
 
 scripts="$(dirname "$0")"
+root="$(dirname "$scripts")"
 go="$scripts/raw-go.sh"
+cmd="$scripts/raw-cmd.sh"
+
+modules=(
+  "utils"
+  "config"
+  "git"
+  "prompt"
+  "core"
+  "cli"
+)
 
 exec_go() {
   echo "go" "$@"
   $go "$@"
+}
+
+exec_cmd() {
+  echo "$@"
+  $cmd "$@"
 }
 
 command="$1"
@@ -39,13 +55,28 @@ elif [[ "$command" == "start" ]]; then
   "$PWD/cli/cli" "${args[@]}"
 elif [[ "$command" == "new" ]]; then
   exec_go "$1" mod init "$2"
+elif [[ "$command" == "coverage" ]]; then
+  module_filename="coverage.out"
+
+  for module in "${modules[@]}"; do
+    if ! exec_go "$module" test -cover "-coverprofile=${module_filename}" -covermode=atomic; then
+      exit 1
+    fi
+  done
+elif [[ "$command" == "html" ]]; then
+  module_filename="coverage.out"
+
+  for module in "${modules[@]}"; do
+    if ! exec_go "$module" test -cover "-coverprofile=${module_filename}" -covermode=atomic; then
+      exit 1
+    fi
+  done
 elif [[ "$command" == "all" ]]; then
-  exec_go cli "${args[@]}" &&
-    exec_go core "${args[@]}" &&
-    exec_go prompt "${args[@]}" &&
-    exec_go git "${args[@]}" &&
-    exec_go config "${args[@]}" &&
-    exec_go utils "${args[@]}" || exit $?
+  for module in "${modules[@]}"; do
+    if ! exec_go "$module" "${args[@]}"; then
+      exit 1
+    fi
+  done
 elif [[ "$command" == "publishLocal" ]]; then
   exec_go cli build || exit $?
   cp "$PWD/cli/cli" "/usr/local/bin/gitgo-next"

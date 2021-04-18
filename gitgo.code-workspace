@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "cli"
+		},
+		{
+			"path": "core"
+		},
+		{
+			"path": "config"
+		},
+		{
+			"path": "git"
+		},
+		{
+			"path": "prompt"
+		},
+		{
+			"path": "utils"
+		},
+		{
+			"path": "scripts"
+		},
+    {
+      "path": ".",
+      "name": "root"
+    }
+	],
+  "settings": {}
+}
