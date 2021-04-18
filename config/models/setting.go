@@ -4,6 +4,7 @@ import "fmt"
 
 // Setting TODO
 type Setting struct {
+	Hack   bool
 	Config *ConfigFileSetting
 	Log    *LogSetting
 	Commit *CommitSetting

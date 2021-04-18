@@ -11,6 +11,7 @@ import (
 type CommitOption struct {
 	enabledMessage bool
 	dryrun         bool
+	allowEmpty     bool
 }
 
 var commitOption = &CommitOption{}
@@ -27,10 +28,6 @@ var commitCmd = &cobra.Command{
 			configuration.Settings.Commit.EnabledMessage()
 		}
 
-		if commitOption.dryrun {
-			phase.Info("Dryrun")
-		}
-
 		repo, err := git.New(configOption.WdPath)
 		phase.Error(err)
 
@@ -39,11 +36,30 @@ var commitCmd = &cobra.Command{
 		msg, err := prompt.CommitMessage(configuration.Settings.Commit)
 		phase.Error(err)
 
-		if !commitOption.dryrun {
-			hash, err := repo.Commit(&msg)
-			phase.Error(err)
+		// TODO: change whether has files staged or not
+		// this code only check whether has files modified or not
+		// if !commitOption.allowEmpty && repo.IsClean() {
+		// 	phase.Error(errors.New("cannot create commit because it not allow empty"))
+		// }
 
-			phase.Info(hash)
+		if !commitOption.dryrun {
+			// This should go away if go-git support sign auto
+			if configuration.Settings.Hack {
+				phase.Debug("run git commit with hack mode")
+
+				args = make([]string, 0)
+				if commitOption.allowEmpty {
+					args = append(args, "--allow-empty")
+				}
+
+				_, err := repo.HackCommit(&msg, args...)
+				phase.Error(err)
+			} else {
+				hash, err := repo.Commit(&msg)
+				phase.Error(err)
+
+				phase.Info(hash)
+			}
 		} else {
 			message, err := msg.Formatted()
 			phase.Error(err)
@@ -58,4 +74,5 @@ func init() {
 
 	commitCmd.Flags().BoolVarP(&commitOption.enabledMessage, "message", "M", false, "override enabled message key on config file")
 	commitCmd.Flags().BoolVarP(&commitOption.dryrun, "dry-run", "D", false, "not create any commit to current worktree")
+	commitCmd.Flags().BoolVarP(&commitOption.allowEmpty, "empty", "E", false, "create whether empty tree or not")
 }
