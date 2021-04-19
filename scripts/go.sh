@@ -9,7 +9,6 @@
 # set -n #EVALUATE - Check syntax of the script but don't execute.
 
 scripts="$(dirname "$0")"
-root="$(dirname "$scripts")"
 go="$scripts/raw-go.sh"
 cmd="$scripts/raw-cmd.sh"
 
@@ -67,7 +66,7 @@ elif [[ "$command" == "html" ]]; then
   module_filename="coverage.out"
 
   for module in "${modules[@]}"; do
-    if ! exec_go "$module" test -cover "-coverprofile=${module_filename}" -covermode=atomic; then
+    if ! exec_go "$module" tool cover -html="${module_filename}"; then
       exit 1
     fi
   done
