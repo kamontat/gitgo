@@ -104,5 +104,5 @@ coverage.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/go,linux,macos,vim,vscode,visualstudiocode
 
-./cli/cli
+cli/cli
 dist/
