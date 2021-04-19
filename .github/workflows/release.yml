@@ -20,6 +20,10 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
+      - name: Get dependencies
+        run: |
+          ./scripts/go.sh all mod tidy
+          ./scripts/go.sh all build
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
