@@ -47,7 +47,7 @@ func askSelect(data *string, message string, config *models.CommitTypeSetting, v
 
 		prompt = &survey.Select{
 			Message:  message,
-			Options:  config.Prompt.Select.List(),
+			Options:  values,
 			PageSize: pageSize,
 		}
 	}
@@ -58,10 +58,8 @@ func askSelect(data *string, message string, config *models.CommitTypeSetting, v
 	}
 
 	// update result and remove formatted string on select type
-	if !suggestion {
-		var result = updateSelectResult(*data)
-		*data = result
-	}
+	var result = updateSelectResult(*data)
+	*data = result
 
 	return nil
 }
