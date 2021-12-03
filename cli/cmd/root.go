@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kamontat/gitgo/config"
+	"github.com/kamontat/gitgo/configs"
+
 	"github.com/kamontat/gitgo/config/constants"
-	"github.com/kamontat/gitgo/config/models"
 	"github.com/kamontat/gitgo/core"
 	"github.com/kamontat/gitgo/utils"
 	"github.com/kamontat/gitgo/utils/logger"
@@ -17,8 +17,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configuration models.Configuration = *config.Default()
-var configOption models.ConfigurationOption = *config.DefaultOption()
+var config = *configs.Default()
+
+// var configuration models.Configuration = *config.Default()
+// var configOption models.ConfigurationOption = *config.DefaultOption()
 
 var root = &cobra.Command{
 	Use:   "gitgo",
@@ -28,6 +30,7 @@ var root = &cobra.Command{
 This command create by golang with cobra cli.
 Force everyone to create the exect same templates of commit and branch
 
+v5.0.0-alpha.2 - update new config file syntax
 v5.0.0-alpha.1 - create new project with new golang version (1.10 -> 1.16)
 
 Motivated by gitmoji and GitFlow.`,
@@ -40,38 +43,42 @@ func initLocation() {
 	var path string
 	var err error
 
-	if viper.GetString(constants.SettingWdPath) != "" {
-		configOption.SetWdPath(viper.GetString(constants.SettingWdPath))
-	} else {
-		path, err = os.Getwd()
-		if err != nil {
-			phase.Error(err)
-		}
-		configOption.SetWdPath(path)
+	// Add current working directory
+	path, err = os.Getwd()
+	if err != nil {
+		phase.Error(err)
 	}
+	config.Location.AddPath(path)
 
+	// Add executable path
 	path, err = os.Executable()
 	if err != nil {
 		phase.Warn(err)
 	} else {
-		configOption.AddPath(path)
+		config.Location.AddPath(path)
 	}
 
+	// Add userdir ($HOME)
 	path, err = os.UserHomeDir()
 	if err != nil {
 		phase.Warn(err)
 	} else {
-		configOption.AddPath(path)
+		config.Location.AddPath(path)
+	}
+
+	// Add custom working directory
+	if viper.GetString(constants.SettingWdPath) != "" {
+		config.Location.AddPath(viper.GetString(constants.SettingWdPath))
 	}
 }
 
 func initConfig() {
-	for _, path := range configOption.Setting.ConfigDirectoryPaths() {
+	for _, path := range config.Location.ConfigPaths() {
 		viper.AddConfigPath(path)
 	}
 
-	viper.SetConfigName(configOption.Setting.FileName)
-	viper.SetConfigType(configOption.Setting.FileType)
+	viper.SetConfigName(config.Location.ConfigFile.FileName)
+	viper.SetConfigType(config.Location.ConfigFile.FileType)
 
 	if !viper.GetBool(constants.SettingDisabledConfig) {
 		// read configuration from files
@@ -84,12 +91,12 @@ func initConfig() {
 		}
 	}
 
-	viper.SetEnvPrefix(configOption.Setting.EnvPrefix)
+	viper.SetEnvPrefix(config.Location.ConfigFile.EnvPrefix)
 	viper.AutomaticEnv()
 }
 
 func initConfigPath() {
-	configOption.SetConfigPath(viper.ConfigFileUsed())
+	config.Location.ConfigFile.SetUsedPath(viper.ConfigFileUsed())
 }
 
 func validateVersion() {

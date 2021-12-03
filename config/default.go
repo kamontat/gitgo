@@ -102,3 +102,13 @@ func Default() *models.Configuration {
 		},
 	}
 }
+
+func DefaultV2(paths []string) *models.ConfigurationV2 {
+	return &models.ConfigurationV2{
+		Version:       5,
+		Settings:      models.DefaultSettingV2(),
+		CommitMessage: models.DefaultCommitMessageV2(),
+		Location:      models.DefaultLocationV2(paths),
+		Configs:       models.DefaultConfigFileV2(),
+	}
+}

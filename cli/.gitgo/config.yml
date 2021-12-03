@@ -1,55 +1,67 @@
 settings:
-  log:
-    level: ""
+  logLevel: INFO
   commit:
-    key:
+    type:
       enabled: true
       required: true
       prompt:
-        select:
+        name: "select"
+        options:
           page: 5
-          suggestion: false
-          values:
-          - key: feat
-            text: Introducing new features
-          - key: perf
-            text: Improving user experience / usability / reliablity
-          - key: fix
-            text: Fixing a bug
-          - key: chore
-            text: Other changes unrelated to user/client
-        input: null
+          force: false
     scope:
       enabled: true
       required: false
       prompt:
-        select:
+        name: "select"
+        options:
           page: 5
-          suggestion: false
-          values:
-          - key: core
-            text: Core modules of application
-          - key: model
-            text: Application models
-          - key: api
-            text: Application program interface
-          - key: deps
-            text: Application dependencies
-        input: null
-    title:
+          force: false
+    description:
       enabled: true
       required: true
       prompt:
-        select: null
-        input:
+        name: "input"
+        options:
           max: 75
           multiline: false
-    message:
-      enabled: false
+    body:
+      enabled: true
       required: false
       prompt:
-        select: null
-        input:
-          max: 200
-          multiline: true
+        name: "input"
+        options:
+          max: -1
+          multiline: false
+    footer:
+      enabled: true
+      required: false
+      prompt:
+        name: "input"
+        options:
+          max: -1
+          multiline: false
+
+# level must be 'type', 'scope', 'description', 'body', and 'footer'
+commitMessage:
+  values:
+    - level: "type"
+      key: "chore"
+      text: "Chore"
+      values:
+        - level: "scope"
+          key: "test"
+          text: "Testing"
+          values:
+            - level: "description"
+              key: "unittest"
+              text: "Create new unit test"
+    - level: "scope"
+      key: "config"
+      text: "Configuration"
+      values:
+        - level: "body"
+          key: "create"
+          text: "enable configuration for custom config"
+
 version: 5

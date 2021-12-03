@@ -4,6 +4,7 @@ go 1.16
 
 replace (
 	github.com/kamontat/gitgo/config v0.0.0-local => ../config
+  github.com/kamontat/gitgo/configs v0.0.0-local => ../configs
 	github.com/kamontat/gitgo/core v0.0.0-local => ../core
 	github.com/kamontat/gitgo/git v0.0.0-local => ../git
 	github.com/kamontat/gitgo/prompt v0.0.0-local => ../prompt
@@ -13,6 +14,7 @@ replace (
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/kamontat/gitgo/config v0.0.0-local
+  github.com/kamontat/gitgo/configs v0.0.0-local
 	github.com/kamontat/gitgo/core v0.0.0-local
 	github.com/kamontat/gitgo/git v0.0.0-local
 	github.com/kamontat/gitgo/prompt v0.0.0-local
