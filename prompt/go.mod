@@ -12,5 +12,4 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.2.9
 	github.com/kamontat/gitgo/config v0.0.0-local
 	github.com/kamontat/gitgo/git v0.0.0-local
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 )
