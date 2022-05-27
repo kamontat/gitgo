@@ -82,6 +82,13 @@ func initConfig() {
 		default:
 			phase.Warn(t)
 		}
+
+		// map configuration back if reading from file is passed
+		// otherwise, use default configuration
+		if err == nil {
+			err := viper.Unmarshal(&configuration)
+			phase.Error(err)
+		}
 	}
 
 	viper.SetEnvPrefix(configOption.Setting.EnvPrefix)
@@ -106,9 +113,6 @@ func postConfig() {
 }
 
 func initLogger() {
-	err := viper.Unmarshal(&configuration)
-	phase.Error(err)
-
 	logger.SetLevelStr(configuration.Settings.Log.Level)
 	phase.Debug(configuration.String())
 }
