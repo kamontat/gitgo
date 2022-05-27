@@ -74,7 +74,7 @@ var commitCmd = &cobra.Command{
 func init() {
 	root.AddCommand(commitCmd)
 
-	commitCmd.Flags().BoolVarP(&commitOption.enabledMessage, "message", "M", false, "override enabled message key on config file")
-	commitCmd.Flags().BoolVarP(&commitOption.dryrun, "dry-run", "D", false, "not create any commit to current worktree")
-	commitCmd.Flags().BoolVarP(&commitOption.allowEmpty, "empty", "P", false, "create whether empty tree or not")
+	commitCmd.Flags().BoolVarP(&commitOption.enabledMessage, "message", "m", false, "override enabled message key on config file")
+	commitCmd.Flags().BoolVarP(&commitOption.dryrun, "dry-run", "d", false, "not create any commit to current worktree")
+	commitCmd.Flags().BoolVarP(&commitOption.allowEmpty, "empty", "e", false, "create whether empty tree or not")
 }
