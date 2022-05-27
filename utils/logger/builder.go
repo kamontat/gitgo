@@ -1,5 +1,7 @@
 package logger
 
+import "strings"
+
 var logger *Logger = &Logger{
 	level: INFO,
 }
@@ -16,16 +18,16 @@ func SetLevel(level Level) {
 
 // SetLevelStr will transform string to level and set
 func SetLevelStr(level string) {
-	switch level {
-	case "debug":
+	switch strings.ToLower(level) {
+	case "debug", "5":
 		logger.SetLevel(DEBUG)
-	case "info":
+	case "info", "3":
 		logger.SetLevel(INFO)
-	case "warn":
+	case "warn", "2":
 		logger.SetLevel(WARN)
-	case "error":
+	case "error", "1":
 		logger.SetLevel(ERROR)
-	case "silent":
+	case "silent", "0":
 		logger.SetLevel(SILENT)
 	case "":
 		// do mothing
