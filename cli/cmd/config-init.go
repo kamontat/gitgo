@@ -52,5 +52,5 @@ var configInitCmd = &cobra.Command{
 
 func init() {
 	configCmd.AddCommand(configInitCmd)
-	configInitCmd.Flags().BoolVarP(&force, "force", "F", false, "Force create config even it exist")
+	configInitCmd.Flags().BoolVarP(&force, "force", "f", false, "Force create config even it exist")
 }
