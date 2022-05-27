@@ -20,6 +20,7 @@ var commitCmd = &cobra.Command{
 	Use:     "commit",
 	Aliases: []string{"c"},
 	Short:   "commit management",
+	//lint:ignore SA4009 we don't care what is user arguments
 	Run: func(cmd *cobra.Command, args []string) {
 		phase.OnCommandPhase()
 
