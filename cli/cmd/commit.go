@@ -76,5 +76,5 @@ func init() {
 
 	commitCmd.Flags().BoolVarP(&commitOption.enabledMessage, "message", "M", false, "override enabled message key on config file")
 	commitCmd.Flags().BoolVarP(&commitOption.dryrun, "dry-run", "D", false, "not create any commit to current worktree")
-	commitCmd.Flags().BoolVarP(&commitOption.allowEmpty, "empty", "E", false, "create whether empty tree or not")
+	commitCmd.Flags().BoolVarP(&commitOption.allowEmpty, "empty", "P", false, "create whether empty tree or not")
 }
