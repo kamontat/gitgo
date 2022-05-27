@@ -1,7 +1,6 @@
 package constants
 
-// This for hack git command
-const SettingHack = "settings.hack"
+const SettingEngine = "settings.engine"
 
 const SettingLogLevel = "settings.log.level"
 const SettingDisabledConfig = "settings.config.disabled"

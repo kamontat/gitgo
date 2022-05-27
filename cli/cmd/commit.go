@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/kamontat/gitgo/config/models"
 	"github.com/kamontat/gitgo/git"
 	"github.com/kamontat/gitgo/prompt"
 	"github.com/kamontat/gitgo/utils/phase"
@@ -45,15 +46,15 @@ var commitCmd = &cobra.Command{
 
 		if !commitOption.dryrun {
 			// This should go away if go-git support sign auto
-			if configuration.Settings.Hack {
-				phase.Debug("run git commit with hack mode")
+			if configuration.Settings.Engine == models.Cli {
+				phase.Debug("run git commit with cli mode")
 
 				args = make([]string, 0)
 				if commitOption.allowEmpty {
 					args = append(args, "--allow-empty")
 				}
 
-				_, err := repo.HackCommit(&msg, args...)
+				_, err := repo.CliCommit(&msg, args...)
 				phase.Error(err)
 			} else {
 				hash, err := repo.Commit(&msg)

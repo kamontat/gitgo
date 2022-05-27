@@ -20,7 +20,7 @@ func Default() *models.Configuration {
 	return &models.Configuration{
 		Version: 5,
 		Settings: &models.Setting{
-			Hack: true, // enabled this be default untils go-git commit support allow empty and auto sign key
+			Engine: models.Cli, // cli will be default until go-git commit support allow empty and auto sign key
 			Config: &models.ConfigFileSetting{
 				Disabled: false,
 			},

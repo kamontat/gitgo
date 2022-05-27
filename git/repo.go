@@ -65,8 +65,8 @@ func (r *Repo) Commit(msg *models.CommitMessage) (string, error) {
 	}
 }
 
-// HackCommit will execute raw git command instead go-git module
-func (r *Repo) HackCommit(msg *models.CommitMessage, args ...string) (string, error) {
+// CliCommit will execute raw git command instead go-git module
+func (r *Repo) CliCommit(msg *models.CommitMessage, args ...string) (string, error) {
 	message, err := msg.Formatted()
 	if err != nil {
 		return "", err

@@ -123,19 +123,19 @@ func init() {
 	// bind log flags with viper configuration
 	root.PersistentFlags().StringP("log-level", "L", "", "set log level")
 	viper.BindPFlag(constants.SettingLogLevel, root.PersistentFlags().Lookup("log-level"))
-	viper.SetDefault(constants.SettingLogLevel, "info")
+	viper.SetDefault(constants.SettingLogLevel, configuration.Settings.Log.Level)
 
 	root.PersistentFlags().BoolP("no-config", "N", false, "will not load config from file")
 	viper.BindPFlag(constants.SettingDisabledConfig, root.PersistentFlags().Lookup("no-config"))
-	viper.SetDefault(constants.SettingDisabledConfig, false)
+	viper.SetDefault(constants.SettingDisabledConfig, configuration.Settings.Config.Disabled)
 
 	root.PersistentFlags().StringP("wd", "W", "", "custom current directory")
 	viper.BindPFlag(constants.SettingWdPath, root.PersistentFlags().Lookup("wd"))
 	viper.SetDefault(constants.SettingWdPath, "")
 
-	root.PersistentFlags().BoolP("hack", "H", false, "hack git command")
-	viper.BindPFlag(constants.SettingHack, root.PersistentFlags().Lookup("hack"))
-	viper.SetDefault(constants.SettingHack, false)
+	root.PersistentFlags().StringP("engine", "E", "cli", "git engine")
+	viper.BindPFlag(constants.SettingEngine, root.PersistentFlags().Lookup("engine"))
+	viper.SetDefault(constants.SettingEngine, configuration.Settings.Engine)
 }
 
 // Execute will run commandline interface
