@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 
 	"github.com/kamontat/gitgo/utils/phase"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var force bool
@@ -32,6 +34,11 @@ var configInitCmd = &cobra.Command{
 
 		err = os.MkdirAll(configOption.Setting.DefaultDirectoryPath(), os.ModePerm)
 		phase.Warn(err)
+
+		// Override viper internal config with configurable config
+		data, err := yaml.Marshal(&configuration)
+		phase.Error(err)
+		viper.ReadConfig(bytes.NewReader(data))
 
 		if force {
 			err = viper.WriteConfigAs(configOption.GetConfigPath())
